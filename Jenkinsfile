@@ -10,11 +10,12 @@ node {
 
             withCredentials([usernamePassword(credentialsId: 'local-jenkins-creds', usernameVariable: 'LOCAL_JENKINS_USER', passwordVariable: 'LOCAL_JENKINS_PASS')]) {
                 // Encode credentials for local Jenkins
-                def authString = "${LOCAL_JENKINS_USER}:${LOCAL_JENKINS_PASS}".bytes.encodeBase64().toString()
+                def authString = "${LOCAL_JENKINS_USER}:${LOCAL_JENKINS_PASS}".toString()  // Explicitly convert to String
+                def encodedAuthString = authString.getBytes('UTF-8').encodeBase64().toString()
 
                 def response = httpRequest(
                         url: env.LOCAL_JENKINS_URL,
-                        customHeaders: [[name: 'Authorization', value: "Basic ${authString}"]],
+                        customHeaders: [[name: 'Authorization', value: "Basic ${encodedAuthString}"]],
                         httpMode: 'POST'
                 )
                 echo "Using local Jenkins user: ${LOCAL_JENKINS_USER}"
@@ -25,11 +26,12 @@ node {
 
             withCredentials([usernamePassword(credentialsId: 'remote-jenkins-creds', usernameVariable: 'REMOTE_JENKINS_USER', passwordVariable: 'REMOTE_JENKINS_PASS')]) {
                 // Encode credentials for remote Jenkins
-                def authString = "${REMOTE_JENKINS_USER}:${REMOTE_JENKINS_PASS}".bytes.encodeBase64().toString()
+                def authString = "${REMOTE_JENKINS_USER}:${REMOTE_JENKINS_PASS}".toString()  // Explicitly convert to String
+                def encodedAuthString = authString.getBytes('UTF-8').encodeBase64().toString()
 
                 def response = httpRequest(
                         url: env.REMOTE_JENKINS_URL,
-                        customHeaders: [[name: 'Authorization', value: "Basic ${authString}"]],
+                        customHeaders: [[name: 'Authorization', value: "Basic ${encodedAuthString}"]],
                         httpMode: 'POST'
                 )
                 echo "Triggered remote Jenkins job successfully. Response: ${response}"
