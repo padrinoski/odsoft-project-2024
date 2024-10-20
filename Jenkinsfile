@@ -3,7 +3,7 @@ import java.util.Base64
 node {
     // Set global environment variables
     env.REMOTE_JENKINS_URL = "https://vs-gate.dei.isep.ipp.pt:10518/"
-    env.LOCAL_JENKINS_URL = "https://localhost:8080/"
+    env.LOCAL_JENKINS_URL = "http://localhost:8080/"
 
     echo "Running on Jenkins URL: ${env.JENKINS_URL}"
     echo "Checking environment..."
