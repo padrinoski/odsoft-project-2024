@@ -1,4 +1,4 @@
-import java.util.Base64
+import groovy.json.JsonSlurperClassic
 
 node {
     // Set global environment variables
@@ -9,7 +9,7 @@ node {
     echo "Checking environment..."
 
     stage('Check Environment') {
-        // Determine if this is a local or remote Jenkins run using environment variables or custom logic
+        // Determine if this is a local or remote Jenkins run
         if (env.JENKINS_URL == "http://localhost:8080/") {
             echo "Running on Local Jenkins. Triggering local job."
 
@@ -21,14 +21,14 @@ node {
                             authentication: 'local-jenkins-creds'
                     )
 
-                    // Parse JSON using readJSON
-                    def crumbJson = readJSON(text: crumbResponse.content)
+                    // Parse JSON response
+                    def crumbJson = new JsonSlurperClassic().parseText(crumbResponse.content)
                     def crumb = crumbJson.crumb
                     def crumbField = crumbJson.crumbRequestField
 
                     // Trigger local Jenkins job with CSRF crumb
                     def response = httpRequest(
-                            url: env.LOCAL_JENKINS_URL,
+                            url: "${env.LOCAL_JENKINS_URL}job/your_job_name/build", // Specify the job name
                             httpMode: 'POST',
                             authentication: 'local-jenkins-creds',
                             customHeaders: [[name: crumbField, value: crumb]]
@@ -36,7 +36,7 @@ node {
                     echo "Using local Jenkins user: ${LOCAL_JENKINS_USER}"
                     echo "Triggered local Jenkins job successfully. Response: ${response}"
                 } catch (Exception e) {
-                    error "Failed to trigger local job: ${e.message}"
+                    echo "Error occurred while triggering local Jenkins job: ${e.message}"
                 }
             }
         } else {
@@ -50,14 +50,14 @@ node {
                             authentication: 'remote-jenkins-creds'
                     )
 
-                    // Parse JSON using readJSON
-                    def crumbJson = readJSON(text: crumbResponse.content)
+                    // Parse JSON response
+                    def crumbJson = new JsonSlurperClassic().parseText(crumbResponse.content)
                     def crumb = crumbJson.crumb
                     def crumbField = crumbJson.crumbRequestField
 
                     // Trigger remote Jenkins job with CSRF crumb
                     def response = httpRequest(
-                            url: env.REMOTE_JENKINS_URL,
+                            url: "${env.REMOTE_JENKINS_URL}job/your_job_name/build", // Specify the job name
                             httpMode: 'POST',
                             authentication: 'remote-jenkins-creds',
                             customHeaders: [[name: crumbField, value: crumb]]
@@ -65,7 +65,7 @@ node {
                     echo "Using remote Jenkins user: ${REMOTE_JENKINS_USER}"
                     echo "Triggered remote Jenkins job successfully. Response: ${response}"
                 } catch (Exception e) {
-                    error "Failed to trigger remote job: ${e.message}"
+                    echo "Error occurred while triggering remote Jenkins job: ${e.message}"
                 }
             }
         }
