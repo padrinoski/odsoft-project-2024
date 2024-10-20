@@ -15,13 +15,10 @@ node {
 
             withCredentials([usernamePassword(credentialsId: 'local-jenkins-creds', usernameVariable: 'LOCAL_JENKINS_USER', passwordVariable: 'LOCAL_JENKINS_PASS')]) {
                 // Encode credentials for local Jenkins
-                def authString = "${LOCAL_JENKINS_USER}:${LOCAL_JENKINS_PASS}".toString()
-                def encodedAuthString = Base64.getEncoder().encodeToString(authString.getBytes('UTF-8'))
-
                 def response = httpRequest(
                         url: env.LOCAL_JENKINS_URL,
-                        customHeaders: [[name: 'Authorization', value: "Basic ${encodedAuthString}"]],
-                        httpMode: 'POST'
+                        httpMode: 'POST',
+                        authentication: "${LOCAL_JENKINS_USER}:${LOCAL_JENKINS_PASS}"
                 )
                 echo "Using local Jenkins user: ${LOCAL_JENKINS_USER}"
                 echo "Triggered local Jenkins job successfully. Response: ${response}"
@@ -31,14 +28,11 @@ node {
 
             withCredentials([usernamePassword(credentialsId: 'remote-jenkins-creds', usernameVariable: 'REMOTE_JENKINS_USER', passwordVariable: 'REMOTE_JENKINS_PASS')]) {
                 // Encode credentials for remote Jenkins
-                def authString = "${REMOTE_JENKINS_USER}:${REMOTE_JENKINS_PASS}".toString()
-                def encodedAuthString = Base64.getEncoder().encodeToString(authString.getBytes('UTF-8'))
-
                 def response = httpRequest(
                         url: env.REMOTE_JENKINS_URL,
-                        customHeaders: [[name: 'Authorization', value: "Basic ${encodedAuthString}"]],
-                        httpMode: 'POST'
-                )
+                        httpMode: 'POST',
+                        authentication: "${REMOTE_JENKINS_USER}:${REMOTE_JENKINS_PASS}"
+                    )
                 echo "Using remote Jenkins user: ${REMOTE_JENKINS_USER}"
                 echo "Triggered remote Jenkins job successfully. Response: ${response}"
             }
