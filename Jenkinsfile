@@ -18,7 +18,7 @@ node {
                 def response = httpRequest(
                         url: env.LOCAL_JENKINS_URL,
                         httpMode: 'POST',
-                        authentication: "${LOCAL_JENKINS_USER}:${LOCAL_JENKINS_PASS}"
+                        authentication: 'local-jenkins-creds'
                 )
                 echo "Using local Jenkins user: ${LOCAL_JENKINS_USER}"
                 echo "Triggered local Jenkins job successfully. Response: ${response}"
@@ -31,7 +31,7 @@ node {
                 def response = httpRequest(
                         url: env.REMOTE_JENKINS_URL,
                         httpMode: 'POST',
-                        authentication: "${REMOTE_JENKINS_USER}:${REMOTE_JENKINS_PASS}"
+                        authentication: 'remote-jenkins-creds'
                     )
                 echo "Using remote Jenkins user: ${REMOTE_JENKINS_USER}"
                 echo "Triggered remote Jenkins job successfully. Response: ${response}"
