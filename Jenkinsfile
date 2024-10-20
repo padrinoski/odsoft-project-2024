@@ -1,37 +1,37 @@
 node {
     // Set global environment variables
     env.REMOTE_JENKINS_URL = "https://vs-gate.dei.isep.ipp.pt:10518/"
-    env.LOCAL_JENKINS_URL = "http://localhost:8081/"
-
-    echo "Running on Jenkins URL: ${env.JENKINS_URL}"
-    echo "Checking if running on local or remote Jenkins..."
+    env.LOCAL_JENKINS_URL = "https://localhost:8080/"
 
     stage('Check Environment and Trigger Job') {
-        // Check if this is a local or remote Jenkins run
-        if (env.JENKINS_URL == "http://localhost:8081/") {
+        // Determine if this is a local or remote Jenkins run using environment variables or custom logic
+        if (env.JENKINS_URL == "http://localhost:8080/") {
             echo "Running on Local Jenkins. Triggering local job."
 
-            withCredentials([usernamePassword(credentialsId: 'local-jenkins-creds', usernameVariable: 'LOCAL_USER', passwordVariable: 'LOCAL_PASS')]) {
-                // Trigger a local Jenkins job
+            withCredentials([usernamePassword(credentialsId: 'local-jenkins-creds', usernameVariable: 'LOCAL_JENKINS_USER', passwordVariable: 'LOCAL_JENKINS_PASS')]) {
+                // Encode credentials for local Jenkins
+                def authString = "${LOCAL_JENKINS_USER}:${LOCAL_JENKINS_PASS}".bytes.encodeBase64().toString()
+
                 def response = httpRequest(
                         url: env.LOCAL_JENKINS_URL,
-                        customHeaders: [[name: 'Authorization', value: "Basic ${"${LOCAL_USER}:${LOCAL_PASS}".bytes.encodeBase64().toString()}"]],
+                        customHeaders: [[name: 'Authorization', value: "Basic ${authString}"]],
                         httpMode: 'POST'
                 )
-                echo "Using local Jenkins user: ${LOCAL_USER}"
+                echo "Using local Jenkins user: ${LOCAL_JENKINS_USER}"
                 echo "Triggered local Jenkins job successfully. Response: ${response}"
             }
         } else {
             echo "Running on Remote Jenkins. Triggering remote job."
 
-            withCredentials([usernamePassword(credentialsId: 'remote-jenkins-creds', usernameVariable: 'REMOTE_USER', passwordVariable: 'REMOTE_PASS')]) {
-                // Trigger a remote Jenkins job
+            withCredentials([usernamePassword(credentialsId: 'remote-jenkins-creds', usernameVariable: 'REMOTE_JENKINS_USER', passwordVariable: 'REMOTE_JENKINS_PASS')]) {
+                // Encode credentials for remote Jenkins
+                def authString = "${REMOTE_JENKINS_USER}:${REMOTE_JENKINS_PASS}".bytes.encodeBase64().toString()
+
                 def response = httpRequest(
                         url: env.REMOTE_JENKINS_URL,
-                        customHeaders: [[name: 'Authorization', value: "Basic ${"${REMOTE_USER}:${REMOTE_PASS}".bytes.encodeBase64().toString()}"]],
+                        customHeaders: [[name: 'Authorization', value: "Basic ${authString}"]],
                         httpMode: 'POST'
                 )
-                echo "Using remote Jenkins user: ${REMOTE_USER}"
                 echo "Triggered remote Jenkins job successfully. Response: ${response}"
             }
         }
