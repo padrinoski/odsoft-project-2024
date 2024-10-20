@@ -3,6 +3,9 @@ node {
     env.REMOTE_JENKINS_URL = "https://vs-gate.dei.isep.ipp.pt:10518/"
     env.LOCAL_JENKINS_URL = "http://localhost:8081/"
 
+    echo "Running on Jenkins URL: ${env.JENKINS_URL}"
+    echo "Checking if running on local or remote Jenkins..."
+
     stage('Check Environment and Trigger Job') {
         // Check if this is a local or remote Jenkins run
         if (env.JENKINS_URL == "http://localhost:8081/") {
