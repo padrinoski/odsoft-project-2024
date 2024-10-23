@@ -1,0 +1,4 @@
+docker pull sonarqube
+docker run -d --name sonarqube -p 9000:9000 sonarqube
+
+sonarqube token localhost= sqp_9e852095a9a8f3b5dade08e8c48c03b8d10e4c36
