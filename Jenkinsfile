@@ -43,33 +43,21 @@ node {
 
     // Build stage (Compilation, Dependency resolution, Packaging)
     stage('Build') {
-        steps {
-            script {
-                // Assuming a Maven project for example, adjust for Gradle or other build systems
-                sh 'mvn clean compile package'
-            }
-        }
+        // Assuming a Maven project for example, adjust for Gradle or other build systems
+        sh 'mvn clean compile package'
     }
 
     // Static Code Analysis (e.g., SonarQube)
     stage('Static Code Analysis') {
-        steps {
-            script {
-                withSonarQubeEnv() {
-                  sh "mvn sonar:sonar -Dsonar.projectKey=sonarqube-project -Dsonar.projectName='odsoft-sonarqube-project' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_9e852095a9a8f3b5dade08e8c48c03b8d10e4c36"
-                }
-            }
+        withSonarQubeEnv() {
+          sh "mvn sonar:sonar -Dsonar.projectKey=sonarqube-project -Dsonar.projectName='odsoft-sonarqube-project' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_9e852095a9a8f3b5dade08e8c48c03b8d10e4c36"
         }
     }
 
     // Unit Testing
     stage('Unit Testing') {
-        steps {
-            script {
-                // Run unit tests
-                sh 'mvn test'
-            }
-        }
+        // Run unit tests
+        sh 'mvn test'
     }
 
     // Test Coverage
