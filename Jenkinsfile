@@ -148,4 +148,3 @@ node {
             archiveArtifacts artifacts: 'target/*.jar', fingerprint: true // Archive the built artifacts
         }
     }
-}
