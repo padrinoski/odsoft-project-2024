@@ -62,69 +62,45 @@ node {
 
     // Test Coverage
     stage('Test Coverage') {
-        steps {
-            script {
-                // Example for JaCoCo Coverage
-                sh 'mvn jacoco:report'
-            }
-        }
+        // Example for JaCoCo Coverage
+        sh 'mvn jacoco:report'
     }
 
     // Mutation Tests (e.g., using PIT)
     stage('Mutation Testing') {
-        steps {
-            script {
-                // Example of mutation testing with PIT
-                sh 'mvn org.pitest:pitest-maven:mutationCoverage'
-            }
-        }
+        // Example of mutation testing with PIT
+        sh 'mvn org.pitest:pitest-maven:mutationCoverage'
     }
 
     // Integration and Service Testing
     stage('Integration and Service Testing') {
-        steps {
-            script {
-                // Run integration tests, for example, with Maven Surefire
-                sh 'mvn verify'
-            }
-        }
+        // Run integration tests, for example, with Maven Surefire
+        sh 'mvn verify'
     }
 
     // Database Testing
     stage('Database Testing') {
-        steps {
-            script {
-                // Example of running database tests, adjust to your DB setup
-                sh 'mvn -Dtest=YourDatabaseTest test'
-            }
-        }
+        // Example of running database tests, adjust to your DB setup
+        sh 'mvn -Dtest=YourDatabaseTest test'
     }
 
     // Local Deployment
     stage('Local Deployment') {
-        steps {
-            script {
-                // Local deployment logic
-                echo 'Deploying locally...'
-                // Example using Docker for local deployment
-                sh 'docker-compose up -d'
-            }
-        }
+        // Local deployment logic
+        echo 'Deploying locally...'
+        // Example using Docker for local deployment
+        sh 'docker-compose up -d'
     }
 
     // Remote Deployment
     stage('Remote Deployment') {
-        steps {
-            script {
-                // Deployment to a remote server like the one you mentioned (e.g., vs-ctl.dei.isep.ipp.pt)
-                echo 'Deploying to remote server...'
-                sshagent(['remote-server-credentials']) {
-                    // Example using SCP to copy files
-                    sh 'scp target/your-artifact.jar user@vs-ctl.dei.isep.ipp.pt:/path/to/deploy'
-                    // Example of SSH command execution for deployment
-                    sh 'ssh user@vs-ctl.dei.isep.ipp.pt "bash /path/to/deploy-script.sh"'
-                }
-            }
+        // Deployment to a remote server like the one you mentioned (e.g., vs-ctl.dei.isep.ipp.pt)
+        echo 'Deploying to remote server...'
+        sshagent(['remote-server-credentials']) {
+            // Example using SCP to copy files
+            sh 'scp target/your-artifact.jar user@vs-ctl.dei.isep.ipp.pt:/path/to/deploy'
+            // Example of SSH command execution for deployment
+            sh 'ssh user@vs-ctl.dei.isep.ipp.pt "bash /path/to/deploy-script.sh"'
         }
     }
 }
