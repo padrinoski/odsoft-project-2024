@@ -56,11 +56,7 @@ node {
         steps {
             script {
                 withSonarQubeEnv() {
-                  sh "mvn sonar:sonar
-                  -Dsonar.projectKey=sonarqube-project
-                  -Dsonar.projectName='odsoft-sonarqube-project'
-                  -Dsonar.host.url=http://localhost:9000
-                  -Dsonar.token=sqp_9e852095a9a8f3b5dade08e8c48c03b8d10e4c36"
+                  sh "mvn sonar:sonar -Dsonar.projectKey=sonarqube-project -Dsonar.projectName='odsoft-sonarqube-project' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_9e852095a9a8f3b5dade08e8c48c03b8d10e4c36"
                 }
             }
         }
