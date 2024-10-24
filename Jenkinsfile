@@ -2,10 +2,7 @@ import groovy.json.JsonSlurperClassic
 
 pipeline {
     agent {
-        docker {
-            image 'gradle:6.8.3-jdk11' // Specify the Gradle Docker image
-            args '-v /root/.gradle:/root/.gradle' // Optional: Mount the local Gradle repository to cache dependencies
-        }
+        docker any
     }
 
     environment {
