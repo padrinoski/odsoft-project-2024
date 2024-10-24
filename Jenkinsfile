@@ -45,7 +45,7 @@ node {
     stage('Build') {
         // Assuming a Maven project for example, adjust for Gradle or other build systems
         sh 'mvn clean compile package'
-        echo("Compilation finished")
+        echo "Compilation finished"
     }
 
     /* // Static Code Analysis (e.g., SonarQube)
