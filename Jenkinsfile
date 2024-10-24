@@ -1,12 +1,7 @@
 import groovy.json.JsonSlurperClassic
 
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.9-eclipse-temurin-11-alpine'
-            args '-v /c/Users/guicota/.jenkins/workspace:/workspace' // Mapping Windows path to Unix-style path for Docker
-        }
-    }
+    agent any
     
     options {
         // Change workspace directory inside the container
