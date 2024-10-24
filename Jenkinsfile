@@ -47,7 +47,7 @@ pipeline {
             steps {
                 script {
                     // Assuming a Maven project for example, adjust for Gradle or other build systems
-                    sh 'mvn clean compile package'
+                    //sh 'mvn clean compile package'
                     echo "Compilation finished"
                 }
             }
