@@ -2,7 +2,7 @@ import groovy.json.JsonSlurperClassic
 
 pipeline {
     agent {
-        docker {3.9.9-eclipse-temurin-11}
+        docker {image '3.9.9-eclipse-temurin-11'}
     }
 
     environment {
