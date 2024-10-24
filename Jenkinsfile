@@ -1,7 +1,12 @@
 import groovy.json.JsonSlurperClassic
 
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'gradle:6.8.3-jdk11' // Specify the Gradle Docker image
+            args '-v /root/.gradle:/root/.gradle' // Optional: Mount the local Gradle repository to cache dependencies
+        }
+    }
 
     environment {
         SONAR_HOST_URL = "http://localhost:9000"
@@ -46,74 +51,87 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Assuming a Maven project for example, adjust for Gradle or other build systems
-                    bat 'mvn clean compile package'
+                    sh './gradlew mvnCleanCompilePackage'
                     echo "Compilation finished"
                 }
             }
         }
 
-        /* stage('Static Code Analysis') {
-            steps {
-                withSonarQubeEnv() {
-                    sh "mvn sonar:sonar -Dsonar.projectKey=sonarqube-project -Dsonar.projectName='odsoft-sonarqube-project' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_9e852095a9a8f3b5dade08e8c48c03b8d10e4c36"
-                }
-            }
-        }
+        // stage('Static Code Analysis') {
+        //     steps {
+        //         script {
+        //             sh './gradlew mvnSonar'
+        //         }
+        //     }
+        // }
 
-        stage('Unit Testing') {
-            steps {
-                sh 'mvn test'
-            }
-        }
+        // stage('Unit Testing') {
+        //     steps {
+        //         script {
+        //             sh './gradlew mvnTest'
+        //         }
+        //     }
+        // }
 
-        stage('Test Coverage') {
-            steps {
-                sh 'mvn jacoco:report'
-            }
-        }
+        // stage('Test Coverage') {
+        //     steps {
+        //         script {
+        //             sh './gradlew mvnJacocoReport'
+        //         }
+        //     }
+        // }
 
-        stage('Mutation Testing') {
-            steps {
-                sh 'mvn org.pitest:pitest-maven:mutationCoverage'
-            }
-        }
+        // stage('Mutation Testing') {
+        //     steps {
+        //         script {
+        //             sh './gradlew mvnPitest'
+        //         }
+        //     }
+        // }
 
-        stage('Integration and Service Testing') {
-            steps {
-                sh 'mvn verify'
-            }
-        }
+        // stage('Integration and Service Testing') {
+        //     steps {
+        //         script {
+        //             sh './gradlew mvnVerify'
+        //         }
+        //     }
+        // }
 
-        stage('Database Testing') {
-            steps {
-                sh 'mvn -Dtest=YourDatabaseTest test'
-            }
-        }
+        // stage('Database Testing') {
+        //     steps {
+        //         script {
+        //             sh './gradlew mvnDatabaseTest'
+        //         }
+        //     }
+        // }
 
-        stage('Local Deployment') {
-            steps {
-                echo 'Deploying locally...'
-                sh 'docker-compose up -d'
-            }
-        }
+        // stage('Local Deployment') {
+        //     steps {
+        //         script {
+        //             echo 'Deploying locally...'
+        //             sh 'docker-compose up -d'
+        //         }
+        //     }
+        // }
 
-        stage('Remote Deployment') {
-            steps {
-                echo 'Deploying to remote server...'
-                sshagent(['remote-server-credentials']) {
-                    sh 'scp target/your-artifact.jar user@vs-ctl.dei.isep.ipp.pt:/path/to/deploy'
-                    sh 'ssh user@vs-ctl.dei.isep.ipp.pt "bash /path/to/deploy-script.sh"'
-                }
-            }
-        } */
+        // stage('Remote Deployment') {
+        //     steps {
+        //         script {
+        //             echo 'Deploying to remote server...'
+        //             sshagent(['remote-server-credentials']) {
+        //                 sh 'scp build/libs/your-artifact.jar user@vs-ctl.dei.isep.ipp.pt:/path/to/deploy'
+        //                 sh 'ssh user@vs-ctl.dei.isep.ipp.pt "bash /path/to/deploy-script.sh"'
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     post {
         always {
             echo "Post build action reached"
-            //junit 'target/surefire-reports/**/*.xml' // Collect test reports
-            //archiveArtifacts artifacts: 'target/**/*.jar', fingerprint: true // Archive the built artifacts
+            junit 'build/test-results/test/*.xml' // Collect test reports
+            archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true // Archive the built artifacts
         }
     }
 }

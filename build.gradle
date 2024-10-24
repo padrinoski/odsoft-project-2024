@@ -1,0 +1,41 @@
+apply plugin: 'base'
+
+task mvnCleanCompilePackage(type: Exec) {
+    description = 'Runs Maven clean, compile, and package'
+    commandLine 'mvn', 'clean', 'compile', 'package'
+}
+
+task mvnSonar(type: Exec) {
+    description = 'Runs Maven SonarQube analysis'
+    commandLine 'mvn', 'sonar:sonar', '-Dsonar.projectKey=sonarqube-project', '-Dsonar.projectName=odsoft-sonarqube-project', '-Dsonar.host.url=http://localhost:9000', '-Dsonar.token=sqp_9e852095a9a8f3b5dade08e8c48c03b8d10e4c36'
+}
+
+task mvnTest(type: Exec) {
+    description = 'Runs Maven tests'
+    commandLine 'mvn', 'test'
+}
+
+task mvnJacocoReport(type: Exec) {
+    description = 'Runs Maven JaCoCo report'
+    commandLine 'mvn', 'jacoco:report'
+}
+
+task mvnPitest(type: Exec) {
+    description = 'Runs Maven PIT mutation testing'
+    commandLine 'mvn', 'org.pitest:pitest-maven:mutationCoverage'
+}
+
+task mvnVerify(type: Exec) {
+    description = 'Runs Maven verify'
+    commandLine 'mvn', 'verify'
+}
+
+task mvnDatabaseTest(type: Exec) {
+    description = 'Runs Maven database tests'
+    commandLine 'mvn', '-Dtest=YourDatabaseTest', 'test'
+}
+
+task mvnBuild {
+    description = 'Runs all Maven build tasks'
+    dependsOn mvnCleanCompilePackage, mvnSonar, mvnTest, mvnJacocoReport, mvnPitest, mvnVerify, mvnDatabaseTest
+}
