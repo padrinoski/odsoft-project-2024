@@ -2,7 +2,16 @@ import groovy.json.JsonSlurperClassic
 
 pipeline {
     agent {
-        docker {image 'maven:3.9.9-eclipse-temurin-11'}
+        docker {
+            image 'maven:3.9.9-eclipse-temurin-11-alpine'
+            args '-v /c/Users/guicota/.jenkins/workspace:/workspace' // Mapping Windows path to Unix-style path for Docker
+        }
+    }
+    
+    options {
+        // Change workspace directory inside the container
+        // Make sure the path `/workspace/odsoft_main` is mapped correctly in Docker Desktop
+        skipDefaultCheckout() // Avoids Jenkins using the default (Windows) path
     }
 
     environment {
