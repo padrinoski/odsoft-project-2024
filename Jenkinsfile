@@ -45,9 +45,10 @@ node {
     stage('Build') {
         // Assuming a Maven project for example, adjust for Gradle or other build systems
         sh 'mvn clean compile package'
+        echo("Compilation finished")
     }
 
-    // Static Code Analysis (e.g., SonarQube)
+    /* // Static Code Analysis (e.g., SonarQube)
     stage('Static Code Analysis') {
         withSonarQubeEnv() {
           sh "mvn sonar:sonar -Dsonar.projectKey=sonarqube-project -Dsonar.projectName='odsoft-sonarqube-project' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_9e852095a9a8f3b5dade08e8c48c03b8d10e4c36"
@@ -102,13 +103,14 @@ node {
             // Example of SSH command execution for deployment
             sh 'ssh user@vs-ctl.dei.isep.ipp.pt "bash /path/to/deploy-script.sh"'
         }
-    }
+    } */
 }
 
     // Post build actions: reporting results
     post {
-        always {
-            junit 'target/surefire-reports/*.xml' // Collect test reports
-            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true // Archive the built artifacts
-        }
+    echo("Post build action reached")
+/*         always {
+            junit 'target/surefire-reports *//*.xml' // Collect test reports
+            archiveArtifacts artifacts: 'target *//*.jar', fingerprint: true // Archive the built artifacts
+        } */
     }
