@@ -2,12 +2,6 @@ import groovy.json.JsonSlurperClassic
 
 pipeline {
     agent any
-    
-    options {
-        // Change workspace directory inside the container
-        // Make sure the path `/workspace/odsoft_main` is mapped correctly in Docker Desktop
-        skipDefaultCheckout() // Avoids Jenkins using the default (Windows) path
-    }
 
     environment {
         SONAR_HOST_URL = "http://localhost:9000"
