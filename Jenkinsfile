@@ -1,7 +1,9 @@
 import groovy.json.JsonSlurperClassic
 
 pipeline {
-    agent any
+    agent {
+        docker {3.9.9-eclipse-temurin-11}
+    }
 
     environment {
         SONAR_HOST_URL = "http://localhost:9000"
@@ -47,7 +49,7 @@ pipeline {
             steps {
                 script {
                     // Assuming a Maven project for example, adjust for Gradle or other build systems
-                    //sh 'mvn clean compile package'
+                    sh 'mvn clean compile package'
                     echo "Compilation finished"
                 }
             }
