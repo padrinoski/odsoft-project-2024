@@ -113,7 +113,7 @@ pipeline {
         always {
             echo "Post build action reached"
             //junit 'target/surefire-reports/**/*.xml' // Collect test reports
-            archiveArtifacts artifacts: 'target/**/*.jar', fingerprint: true // Archive the built artifacts
+            //archiveArtifacts artifacts: 'target/**/*.jar', fingerprint: true // Archive the built artifacts
         }
     }
 }
