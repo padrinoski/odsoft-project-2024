@@ -44,7 +44,7 @@ node {
     // Build stage (Compilation, Dependency resolution, Packaging)
     stage('Build') {
         // Assuming a Maven project for example, adjust for Gradle or other build systems
-        sh 'mvn clean compile package'
+        mvn 'clean compile package'
         echo "Compilation finished"
     }
 
