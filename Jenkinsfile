@@ -71,7 +71,12 @@ pipeline {
         stage('Unit Testing') {
             steps{
                 script {
-                    unstash 'test-artifact'
+                    try {
+                        unstash 'test-artifact'
+                    } catch (Exception e) {
+                        echo "No stash found with the name 'test-artifact'. Skipping unstash."
+                    }
+
                     if (isUnix()) {
                         sh "mvn test"
                     } else {
@@ -85,7 +90,12 @@ pipeline {
         stage('Test Coverage') {
             steps{
                 script {
-                    unstash 'jacoco-artifact'
+                    try {
+                        unstash 'jacoco-artifact'
+                    } catch (Exception e) {
+                        echo "No stash found with the name 'jacoco-artifact'. Skipping unstash."
+                    }
+
                     if (isUnix()) {
                         sh "mvn jacoco:report"
                     } else {
@@ -100,7 +110,12 @@ pipeline {
         stage('Mutation Testing') {
             steps {
                 script{
-                    unstash 'mutation-artifact'
+                    try {
+                        unstash 'mutation-artifact'
+                    } catch (Exception e) {
+                        echo "No stash found with the name 'mutation-artifact'. Skipping unstash."
+                    } 
+                                       
                     if(isUnix()){
                         sh 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
                     }else{
