@@ -1,4 +1,4 @@
-# Requirements Documentation
+# Architecturally significant requirements
 
 ## 1. Functional Requirements
 ### 1.1. User Stories
