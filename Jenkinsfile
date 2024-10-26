@@ -25,31 +25,10 @@ pipeline {
         for large projects with dependencies and libraries that do not change frequently.*/
         skipDefaultCheckout()
         cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
-        arbitraryFileCache(path: '~/.m2/repository', cacheValidityDecidingFile: 'pom.xml')])
+        arbitraryFileCache(path: 'cache', cacheValidityDecidingFile: 'pom.xml')])
     }
 
     stages {
-
-        stage('Initialize') {
-            steps {
-                script {
-                    // To allow Caching -> Ensure the Maven repository directory exists
-                    if (isUnix()) {
-                        sh '''
-                            if [ ! -d ~/.m2/repository ]; then
-                                mkdir -p ~/.m2/repository
-                            fi
-                        '''
-                    } else {
-                        bat '''
-                            if not exist "%USERPROFILE%\\.m2\\repository" (
-                                mkdir "%USERPROFILE%\\.m2\\repository"
-                            )
-                        '''
-                    }
-                }
-            }
-        }
 
         stage('Build') {
             steps {
