@@ -5,7 +5,7 @@ pipeline {
 
     environment {
         SONAR_HOST_URL = "http://localhost:9000"
-        SONAR_TOKEN = credentials('sonar-token')
+        token = credentials('sonar-token')
         SONAR_PROJECT_KEY = 'odsoft-sonarqube'
         SONAR_PROJECT_NAME = 'odsoft-sonarqube'
     }
@@ -16,40 +16,6 @@ pipeline {
     }
 
     stages {
-        stage('Check Environment') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'jenkins-creds', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASS')]) {
-                    script {
-                        try {
-                            // Retrieve CSRF crumb
-                            def crumbResponse = httpRequest(
-                                url: "${env.JENKINS_URL}crumbIssuer/api/json",
-                                authentication: 'jenkins-creds'
-                            )
-
-                            // Parse JSON response
-                            def crumbJson = new JsonSlurperClassic().parseText(crumbResponse.content)
-                            def crumb = crumbJson.crumb
-                            def crumbField = crumbJson.crumbRequestField
-
-                            // Trigger Jenkins job with CSRF crumb
-                            /* def response = httpRequest(
-                                url: "${env.JENKINS_URL}job/your_job_name/build", // Specify the job name
-                                httpMode: 'POST',
-                                authentication: 'jenkins-creds',
-                                customHeaders: [[name: crumbField, value: crumb]]
-                            ) */
-
-                            // Log Jenkins user
-                            echo "Using Jenkins user: ${JENKINS_USER}"
-                            echo "Triggered Jenkins job successfully. Response: ${response}"
-                        } catch (Exception e) {
-                            echo "Error occurred while triggering Jenkins job: ${e.message}"
-                        }
-                    }
-                }
-            }
-        }
 
         stage('Build') {
             steps {
@@ -71,12 +37,14 @@ pipeline {
                 script{
                     if(isUnix()){
                         withSonarQubeEnv() {
-                        sh "mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
+                        //sh "mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
+                        sh "mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=odsoft-sonarqube"
                         }
 
                     }else{
                         withSonarQubeEnv() {
-                        bat "mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
+                        //bat "mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
+                        bat "mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY}"
                         }
                     }
                 }
