@@ -153,9 +153,13 @@ pipeline {
 
     post {
         always {
-            echo "Post build action reached"
-            //junit 'target/surefire-reports/**/*.xml' // Collect test reports
-            //archiveArtifacts artifacts: 'target/**/*.jar', fingerprint: true // Archive the built artifacts
+            script {
+                if (isUnix()) {
+                    sh 'docker-compose down'
+                } else {
+                    bat 'docker-compose down'
+                }
+            }
         }
     }
 }
