@@ -125,7 +125,7 @@ pipeline {
                     // Collect test reports
                     junit 'target/surefire-reports/**/*.xml'
                     // Archive the built artifacts
-                    //archiveArtifacts artifacts: 'target/**/*.jar', fingerprint: true
+                    archiveArtifacts artifacts: 'target/**/*.jar', fingerprint: true
                     // Publish JaCoCo coverage report
                     jacoco execPattern: 'target/jacoco.exec', classPattern: 'target/classes', sourcePattern: 'src/main/java', htmlDir: 'target/site/jacoco'
                     // Publish PIT mutation testing report
