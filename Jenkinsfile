@@ -83,13 +83,17 @@ pipeline {
             }
         }
 
-/*
+
         stage('Unit Testing') {
-            steps {
-                sh 'mvn test'
+            script {
+                if (isUnix()) {
+                    sh "mvn test"
+                } else {
+                    bat "mvn test"
+                }            
             }
         }
-
+/*
         stage('Test Coverage') {
             steps {
                 sh 'mvn jacoco:report'
@@ -130,6 +134,19 @@ pipeline {
                 }
             }
         } */
+
+                stage('Report Results') {
+            steps {
+                script {
+                    // Collect test reports
+                    //junit 'target/surefire-reports/**/*.xml'
+                    // Archive the built artifacts
+                    //archiveArtifacts artifacts: 'target/**/*.jar', fingerprint: true
+                    // Publish JaCoCo coverage report
+                    jacoco execPattern: 'target/jacoco.exec', classPattern: 'target/classes', sourcePattern: 'src/main/java', htmlDir: 'target/site/jacoco'
+                }
+            }
+        }
     }
 
 }
