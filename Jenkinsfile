@@ -82,7 +82,7 @@ pipeline {
                     } else {
                         bat "mvn test"
                     }
-                    stash name: 'test-artifact', includes: 'target/surefire-reports'          
+                    stash name: 'test-artifact', includes: 'target/surefire-reports/**/*.xml'         
                 }
             }
         }
@@ -101,7 +101,7 @@ pipeline {
                     } else {
                         bat "mvn jacoco:report"
                     }
-                    stash name: 'jacoco-artifact', includes: 'target/site'
+                    stash name: 'jacoco-artifact', includes: 'target/jacoco.exec'
             
                 }
             }
