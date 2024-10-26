@@ -95,13 +95,19 @@ pipeline {
                 }
             }
         }
-/*
+
         stage('Test Coverage') {
-            steps {
-                sh 'mvn jacoco:report'
+            steps{
+                script {
+                    if (isUnix()) {
+                        sh "mvn jacoco:report"
+                    } else {
+                        bat "mvn jacoco:report"
+                    }            
+                }
             }
         }
-
+/*
         stage('Mutation Testing') {
             steps {
                 sh 'mvn org.pitest:pitest-maven:mutationCoverage'
