@@ -75,9 +75,9 @@ pipeline {
                             if (isUnix()) {
                                 response = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${SONAR_HOST_URL}/api/system/status", returnStdout: true).trim()
                             } else {
-                                response = bat(script: '''
-                                    powershell -Command "$response = Invoke-WebRequest -Uri ${SONAR_HOST_URL}/api/system/status -UseBasicParsing; echo $response.StatusCode"
-                                ''', returnStdout: true).trim()
+                                response = bat(script: """
+                                    powershell -Command "\$response = Invoke-WebRequest -Uri ${SONAR_HOST_URL}/api/system/status -UseBasicParsing; echo \$response.StatusCode"
+                                """, returnStdout: true).trim()
                             }
                             return response == '200'
                         }
