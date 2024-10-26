@@ -85,12 +85,14 @@ pipeline {
 
 
         stage('Unit Testing') {
-            script {
-                if (isUnix()) {
-                    sh "mvn test"
-                } else {
-                    bat "mvn test"
-                }            
+            steps{
+                script {
+                    if (isUnix()) {
+                        sh "mvn test"
+                    } else {
+                        bat "mvn test"
+                    }            
+                }
             }
         }
 /*
