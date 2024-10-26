@@ -68,45 +68,49 @@ pipeline {
             }
         }
 
+    stage('Testing'){
+        parallel{
+            stage('Unit Testing') {
+                steps{
+                    unstash 'build-artifact'
+                    script {
+                        if (isUnix()) {
+                            sh "mvn test"
+                        } else {
+                            bat "mvn test"
+                        }
+                    }
+                }
+            }
 
-        stage('Unit Testing') {
-            steps{
-                unstash 'build-artifact'
-                script {
-                    if (isUnix()) {
-                        sh "mvn test"
-                    } else {
-                        bat "mvn test"
+            stage('Test Coverage') {
+                steps{
+                    unstash 'build-artifact'
+                    script {
+                        if (isUnix()) {
+                            sh "mvn jacoco:report"
+                        } else {
+                            bat "mvn jacoco:report"
+                        }
+                    }
+                }
+            }
+
+            stage('Mutation Testing') {
+                steps {
+                    unstash 'build-artifact'
+                    script{
+                        if(isUnix()){
+                            sh 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
+                        }else{
+                            bat 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
+                        }
                     }
                 }
             }
         }
+    }
 
-        stage('Test Coverage') {
-            steps{
-                unstash 'build-artifact'
-                script {
-                    if (isUnix()) {
-                        sh "mvn jacoco:report"
-                    } else {
-                        bat "mvn jacoco:report"
-                    }
-                }
-            }
-        }
-
-        stage('Mutation Testing') {
-            steps {
-                unstash 'build-artifact'
-                script{
-                    if(isUnix()){
-                        sh 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
-                    }else{
-                        bat 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
-                    }
-                }
-            }
-        }
 /*
         stage('Integration and Service Testing') {
             steps {

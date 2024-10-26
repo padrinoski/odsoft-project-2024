@@ -7,6 +7,7 @@ falar sobre caching & artifact stashing - https://www.aviator.co/blog/how-to-opt
 preserveStashes()
 
 falar sobre paralelismo - https://www.aviator.co/blog/how-to-optimize-jenkins-pipeline-performance/#
+https://www.baeldung.com/ops/running-stages-in-parallel-jenkins-workflow-pipeline
 falar sobre -Dskiptests na stage de build
 
 
