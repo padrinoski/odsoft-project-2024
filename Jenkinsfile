@@ -63,7 +63,7 @@ pipeline {
                     }
                     /* Artifact caching involves caching build artifacts (e.g., compiled binaries, build outputs) so that subsequent builds 
                     can reuse them rather than recompiling or regenerating them. This can save a significant amount of time and resources. */
-                    stash name: 'artifact', includes: 'target/*.jar'
+                    stash name: 'build-artifact', includes: 'target/*.jar'
                     echo "Compilation finished"
                 }
             }
@@ -72,7 +72,6 @@ pipeline {
         stage('Static Code Analysis') {
             steps {
                 script{
-                    unstash 'artifact'
                     if(isUnix()){
                         withSonarQubeEnv() {
                         //sh "mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
@@ -93,12 +92,13 @@ pipeline {
         stage('Unit Testing') {
             steps{
                 script {
-                    unstash 'artifact'
+                    unstash 'test-artifact'
                     if (isUnix()) {
                         sh "mvn test"
                     } else {
                         bat "mvn test"
-                    }            
+                    }
+                    stash name: 'test-artifact', includes: 'target/surefire-reports'          
                 }
             }
         }
@@ -106,12 +106,14 @@ pipeline {
         stage('Test Coverage') {
             steps{
                 script {
-                    unstash 'artifact'
+                    unstash 'jacoco-artifact'
                     if (isUnix()) {
                         sh "mvn jacoco:report"
                     } else {
                         bat "mvn jacoco:report"
-                    }            
+                    }
+                    stash name: 'jacoco-artifact', includes: 'target/site'
+            
                 }
             }
         }
@@ -119,12 +121,13 @@ pipeline {
         stage('Mutation Testing') {
             steps {
                 script{
-                    unstash 'artifact'
+                    unstash 'mutation-artifact'
                     if(isUnix()){
                         sh 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
                     }else{
                         bat 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
                     }
+                    stash name: 'mutation-artifact', includes: 'target/pit-reports'
                 }
             }
         }
