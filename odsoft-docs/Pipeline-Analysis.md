@@ -3,9 +3,12 @@
 rascunho: 
 
 falar sobre sonarcloud vs sonarcube server local
-falar sobre caching & artifact stashing
-falar sobre paralelismo 
+falar sobre caching & artifact stashing - https://www.aviator.co/blog/how-to-optimize-jenkins-pipeline-performance/#
+preserveStashes()
+
+falar sobre paralelismo - https://www.aviator.co/blog/how-to-optimize-jenkins-pipeline-performance/#
 falar sobre -Dskiptests na stage de build
+
 
 https://stackoverflow.com/questions/54866575/jenkins-stash-vs-archiveartifacts - DenCowboy
 stash is used to "save" some files in a pipeline stage and reuse them on a different slave (unstash). Stash is only useful when you have a small set of files. It will become very slow when you want to stash a big amount of data. If you need to stash a lot of files it's recommended to use a shared filesystem between your slaves so the content of your workspace can be used by multiple slaves.
