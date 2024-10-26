@@ -65,11 +65,11 @@ pipeline {
                 script{
                     if(isUnix()){
                         withSonarQubeEnv() {
-                            sh "gradle SonarUnix"
+                            sh "./gradlew SonarUnix"
                         }
                     }else{
                         withSonarQubeEnv() {
-                            bat "gradle SonarWindows"
+                            bat "gradlew.bat SonarWindows"
                         }
                     }
                 }
