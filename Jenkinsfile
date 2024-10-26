@@ -8,11 +8,13 @@ pipeline {
         SONAR_TOKEN = credentials('sonar-token')
         SONAR_PROJECT_KEY = 'odsoft-sonarqube'
         SONAR_PROJECT_NAME = 'odsoft-sonarqube'
+        SONAR_LOGIN = 'admin'
+        SONAR_PASSWORD = 'Admin123456!'
     }
 
     tools {
         gradle "gradle"
-        maven "maven"
+        //maven "mvn"
     }
 
     stages {
@@ -55,8 +57,10 @@ pipeline {
             steps {
                 script {
                     if(isUnix()){
+                        sh 'mvn clean install'
                         sh 'mvn clean compile package'
                     }else{
+                        bat 'mvn clean install'
                         bat 'mvn clean compile package'
                     } 
                     echo "Compilation finished"
@@ -69,12 +73,12 @@ pipeline {
                 script{
                     if(isUnix()){
                         withSonarQubeEnv() {
-                        sh "${maven}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
+                        sh "mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN} -Dsonar.login=${env.SONAR_LOGIN} -Dsonar.password=${env.SONAR_PASSWORD}"
                         }
 
                     }else{
                         withSonarQubeEnv() {
-                        bat "${maven}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
+                        bat "mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN} -Dsonar.login=${env.SONAR_LOGIN} -Dsonar.password=${env.SONAR_PASSWORD}"
                         }
                     }
                 }
@@ -130,15 +134,4 @@ pipeline {
         } */
     }
 
-    post {
-        always {
-            script {
-                if (isUnix()) {
-                    sh 'docker-compose down'
-                } else {
-                    bat 'docker-compose down'
-                }
-            }
-        }
-    }
 }
