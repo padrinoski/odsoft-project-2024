@@ -5,10 +5,14 @@ pipeline {
 
     environment {
         SONAR_HOST_URL = "http://localhost:9000"
+        SONAR_TOKEN = credentials('sonar-token')
+        SONAR_PROJECT_KEY = 'odsoft-sonarqube'
+        SONAR_PROJECT_NAME = 'odsoft-sonarqube'
     }
 
     tools {
         gradle "gradle"
+        maven "maven"
     }
 
     stages {
@@ -65,11 +69,12 @@ pipeline {
                 script{
                     if(isUnix()){
                         withSonarQubeEnv() {
-                            sh "./gradlew SonarUnix"
+                        sh "${maven}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
                         }
+
                     }else{
                         withSonarQubeEnv() {
-                            bat "gradlew.bat SonarWindows"
+                        bat "${maven}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
                         }
                     }
                 }
