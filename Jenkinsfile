@@ -17,6 +17,16 @@ pipeline {
         //maven "mvn"
     }
 
+
+    options {
+        // Configure workspace caching
+        /* Workspace caching allows Jenkins to cache the contents of a workspace so that when a new build is triggered,
+        it can reuse the cached workspace if the source code has not changed significantly. This is particularly useful 
+        for large projects with dependencies and libraries that do not change frequently.*/
+        skipDefaultCheckout()
+        cache(workspace: true, paths: ['~/.m2/repository']))
+    }
+
     stages {
 
         stage('Build') {
@@ -28,7 +38,10 @@ pipeline {
                     }else{
                         //bat 'mvn clean install'
                         bat 'mvn clean compile package -DskipTests'
-                    } 
+                    }
+                    /* Artifact caching involves caching build artifacts (e.g., compiled binaries, build outputs) so that subsequent builds 
+                    can reuse them rather than recompiling or regenerating them. This can save a significant amount of time and resources. */
+                    stash name: 'artifact', includes: 'target/*.jar'
                     echo "Compilation finished"
                 }
             }
@@ -37,6 +50,7 @@ pipeline {
         stage('Static Code Analysis') {
             steps {
                 script{
+                    unstash 'artifact'
                     if(isUnix()){
                         withSonarQubeEnv() {
                         //sh "mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
@@ -57,6 +71,7 @@ pipeline {
         stage('Unit Testing') {
             steps{
                 script {
+                    unstash 'artifact'
                     if (isUnix()) {
                         sh "mvn test"
                     } else {
@@ -69,6 +84,7 @@ pipeline {
         stage('Test Coverage') {
             steps{
                 script {
+                    unstash 'artifact'
                     if (isUnix()) {
                         sh "mvn jacoco:report"
                     } else {
@@ -81,6 +97,7 @@ pipeline {
         stage('Mutation Testing') {
             steps {
                 script{
+                    unstash 'artifact'
                     if(isUnix()){
                         sh 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
                     }else{
