@@ -107,13 +107,19 @@ pipeline {
                 }
             }
         }
-/*
+
         stage('Mutation Testing') {
             steps {
-                sh 'mvn org.pitest:pitest-maven:mutationCoverage'
+                script{
+                    if(isUnix()){
+                        sh 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
+                    }else{
+                        bat 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
+                    }
+                }
             }
         }
-
+/*
         stage('Integration and Service Testing') {
             steps {
                 sh 'mvn verify'
@@ -152,6 +158,14 @@ pipeline {
                     //archiveArtifacts artifacts: 'target/**/*.jar', fingerprint: true
                     // Publish JaCoCo coverage report
                     jacoco execPattern: 'target/jacoco.exec', classPattern: 'target/classes', sourcePattern: 'src/main/java', htmlDir: 'target/site/jacoco'
+                    // Publish PIT mutation testing report
+                    publishHTML(target: [
+                        reportName: 'PIT Mutation Report',
+                        reportDir: 'target/pit-reports',
+                        reportFiles: 'index.html',
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true
+                    ])
                 }
             }
         }
