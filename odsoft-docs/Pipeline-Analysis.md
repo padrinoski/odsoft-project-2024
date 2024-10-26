@@ -7,6 +7,11 @@ falar sobre caching & artifact stashing
 falar sobre paralelismo 
 falar sobre -Dskiptests na stage de build
 
+https://stackoverflow.com/questions/54866575/jenkins-stash-vs-archiveartifacts - DenCowboy
+stash is used to "save" some files in a pipeline stage and reuse them on a different slave (unstash). Stash is only useful when you have a small set of files. It will become very slow when you want to stash a big amount of data. If you need to stash a lot of files it's recommended to use a shared filesystem between your slaves so the content of your workspace can be used by multiple slaves.
+
+Archiving artifacts will save artifacts on the master slave. You can specify if you only want to archive the generated artifacts from the last build or more. This is useful when you have some deploy job on your master to deploy the artifacts after a succesful run or to make them available in your jenkins console.
+
 ## 1. Baseline Performance
 ### 1.1. Initial Metrics
 - **Build Time**: [Initial build time]

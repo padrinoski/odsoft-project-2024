@@ -24,6 +24,7 @@ pipeline {
         it can reuse the cached workspace if the source code has not changed significantly. This is particularly useful 
         for large projects with dependencies and libraries that do not change frequently.*/
         skipDefaultCheckout()
+        preserveStashes()
         cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
         arbitraryFileCache(path: 'cache', cacheValidityDecidingFile: 'pom.xml', cacheName: 'maven-cache')])
     }
@@ -50,7 +51,14 @@ pipeline {
 
         stage('Static Code Analysis') {
             steps {
+                unstash 'build-artifact'
                 script{
+                    try {
+                        unstash 'sonar-artifact'
+                    } catch (Exception e) {
+                        echo "No stash found with the name 'test-artifact'. Skipping unstash."
+                    }
+
                     if(isUnix()){
                         withSonarQubeEnv() {
                         //sh "mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
@@ -63,6 +71,7 @@ pipeline {
                         bat "mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.token=${env.SONAR_TOKEN} -Dsonar.host.url=${SONARCLOUD_URL} -Dsonar.organization=${SONARCLOUD_ORGANIZATION}"
                         }
                     }
+                    stash name: 'sonar-artifact', includes: 'target/sonar/report-task.txt'
                 }
             }
         }
@@ -70,6 +79,7 @@ pipeline {
 
         stage('Unit Testing') {
             steps{
+                unstash 'build-artifact'
                 script {
                     try {
                         unstash 'test-artifact'
@@ -89,6 +99,7 @@ pipeline {
 
         stage('Test Coverage') {
             steps{
+                unstash 'build-artifact'
                 script {
                     try {
                         unstash 'jacoco-artifact'
@@ -109,6 +120,7 @@ pipeline {
 
         stage('Mutation Testing') {
             steps {
+                unstash 'build-artifact'
                 script{
                     try {
                         unstash 'mutation-artifact'
@@ -121,7 +133,7 @@ pipeline {
                     }else{
                         bat 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
                     }
-                    stash name: 'mutation-artifact', includes: 'target/pit-reports'
+                    stash name: 'mutation-artifact', includes: 'target/pit-reports/**/*.html'
                 }
             }
         }
