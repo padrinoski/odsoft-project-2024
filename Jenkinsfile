@@ -30,6 +30,27 @@ pipeline {
 
     stages {
 
+        stage('Initialize') {
+            steps {
+                script {
+                    // To allow Caching -> Ensure the Maven repository directory exists
+                    if (isUnix()) {
+                        sh '''
+                            if [ ! -d ~/.m2/repository ]; then
+                                mkdir -p ~/.m2/repository
+                            fi
+                        '''
+                    } else {
+                        bat '''
+                            if not exist "%USERPROFILE%\\.m2\\repository" (
+                                mkdir "%USERPROFILE%\\.m2\\repository"
+                            )
+                        '''
+                    }
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 script {

@@ -1,5 +1,12 @@
 # Pipeline Performance Analysis
 
+rascunho: 
+
+falar sobre sonarcloud vs sonarcube server local
+falar sobre caching & artifact stashing
+falar sobre paralelismo 
+falar sobre -Dskiptests na stage de build
+
 ## 1. Baseline Performance
 ### 1.1. Initial Metrics
 - **Build Time**: [Initial build time]
