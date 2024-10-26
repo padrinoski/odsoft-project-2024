@@ -123,7 +123,7 @@ pipeline {
             steps {
                 script {
                     // Collect test reports
-                    //junit 'target/surefire-reports/**/*.xml'
+                    junit 'target/surefire-reports/**/*.xml'
                     // Archive the built artifacts
                     //archiveArtifacts artifacts: 'target/**/*.jar', fingerprint: true
                     // Publish JaCoCo coverage report
