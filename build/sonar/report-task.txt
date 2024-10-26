@@ -1,0 +1,6 @@
+projectKey=odsoft-sonarqube
+serverUrl=http://localhost:9000
+serverVersion=10.7.0.96327
+dashboardUrl=http://localhost:9000/dashboard?id=odsoft-sonarqube
+ceTaskId=5d4f1569-0560-4080-934c-809f9656f7c7
+ceTaskUrl=http://localhost:9000/api/ce/task?id=5d4f1569-0560-4080-934c-809f9656f7c7

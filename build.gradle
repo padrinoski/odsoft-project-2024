@@ -1,3 +1,11 @@
+plugins {
+  id "org.sonarqube" version "5.1.0.4882"
+}
+
+repositories{
+    mavenCentral()
+}
+
 apply plugin: 'base'
 
 task mvnCleanCompilePackage(type: Exec) {
@@ -5,9 +13,19 @@ task mvnCleanCompilePackage(type: Exec) {
     commandLine 'mvn', 'clean', 'compile', 'package'
 }
 
-task mvnSonar(type: Exec) {
+task SonarWindows(type: Exec) {
     description = 'Runs Maven SonarQube analysis'
-    commandLine 'mvn', 'sonar:sonar', '-Dsonar.projectKey=sonarqube-project', '-Dsonar.projectName=odsoft-sonarqube-project', '-Dsonar.host.url=http://localhost:9000', '-Dsonar.token=sqp_9e852095a9a8f3b5dade08e8c48c03b8d10e4c36'
+    commandLine './gradlew.bat', 'sonar'
+}
+
+task SonarUnix(type: Exec) {
+    description = 'Runs Maven SonarQube analysis'
+    commandLine './gradlew', 'sonar'
+}
+
+task mvnTSLint(type: Exec) {
+    description = 'Runs Gradle TSLint'
+    commandLine 'gradle', 'tslint'
 }
 
 task mvnTest(type: Exec) {
@@ -37,5 +55,5 @@ task mvnDatabaseTest(type: Exec) {
 
 task mvnBuild {
     description = 'Runs all Maven build tasks'
-    dependsOn mvnCleanCompilePackage, mvnSonar, mvnTest, mvnJacocoReport, mvnPitest, mvnVerify, mvnDatabaseTest
+    dependsOn mvnCleanCompilePackage, SonarWindows,SonarUnix, mvnTest, mvnJacocoReport, mvnPitest, mvnVerify, mvnDatabaseTest
 }

@@ -7,6 +7,10 @@ pipeline {
         SONAR_HOST_URL = "http://localhost:9000"
     }
 
+    tools {
+        gradle "gradle"
+    }
+
     stages {
         stage('Check Environment') {
             steps {
@@ -46,21 +50,60 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Assuming a Maven project for example, adjust for Gradle or other build systems
-                    bat 'mvn clean compile package'
+                    if(isUnix()){
+                        sh 'mvn clean compile package'
+                    }else{
+                        bat 'mvn clean compile package'
+                    } 
                     echo "Compilation finished"
                 }
             }
         }
 
-        /* stage('Static Code Analysis') {
+        stage('Start SonarQube') {
             steps {
-                withSonarQubeEnv() {
-                    sh "mvn sonar:sonar -Dsonar.projectKey=sonarqube-project -Dsonar.projectName='odsoft-sonarqube-project' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_9e852095a9a8f3b5dade08e8c48c03b8d10e4c36"
+                script {
+                    if (isUnix()) {
+                        sh 'docker-compose up -d'
+                    } else {
+                        bat 'docker-compose up -d'
+                    }
+                    // Wait for SonarQube to be ready
+                    waitUntil {
+                        script {
+                            def response
+                            if (isUnix()) {
+                                response = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${SONAR_HOST_URL}/api/system/status", returnStdout: true).trim()
+                            } else {
+                                response = bat(script: '''
+                                    $response = Invoke-WebRequest -Uri ${SONAR_HOST_URL}/api/system/status -UseBasicParsing
+                                    echo $response.StatusCode
+                                ''', returnStdout: true).trim()
+                            }
+                            return response == '200'
+                        }
+                    }
                 }
             }
         }
 
+         stage('Static Code Analysis') {
+            steps {
+                script{
+                    if(isUnix()){
+                        withSonarQubeEnv() {
+                            sh "gradle SonarUnix"
+                        }
+                    }else{
+                        withSonarQubeEnv() {
+                            bat "gradle SonarWindows"
+                        }
+                    }
+                }
+            }
+        }
+
+/*
         stage('Unit Testing') {
             steps {
                 sh 'mvn test'

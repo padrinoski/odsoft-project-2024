@@ -1,4 +1,13 @@
-docker pull sonarqube
-docker run -d --name sonarqube -p 9000:9000 sonarqube
+sonarqube login:
+admin
+Admin123456!
 
-sonarqube token localhost= sqp_9e852095a9a8f3b5dade08e8c48c03b8d10e4c36
+sonarqube project display name: odsoft-sonarqube
+
+sonarqube project key: odsoft-sonarqube
+
+main branch name: main
+
+token name: odsoft-sonarqube-token-name
+
+token: sqp_75331b857cb8fd8e8dfa7acdd8ff26bc4d31c025
