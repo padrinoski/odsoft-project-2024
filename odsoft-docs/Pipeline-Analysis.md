@@ -2,6 +2,8 @@
 
 rascunho: 
 
+criar 2 jenkinsfile (1 sem improvements  + 1 COM improvements)
+
 falar sobre sonarcloud vs sonarcube server local
 falar sobre caching & artifact stashing - https://www.aviator.co/blog/how-to-optimize-jenkins-pipeline-performance/#
 preserveStashes()
