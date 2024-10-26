@@ -60,33 +60,7 @@ pipeline {
             }
         }
 
-        stage('Start SonarQube') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'docker-compose up -d'
-                    } else {
-                        bat 'docker-compose up -d'
-                    }
-                    // Wait for SonarQube to be ready
-                    waitUntil {
-                        script {
-                            def response
-                            if (isUnix()) {
-                                response = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${SONAR_HOST_URL}/api/system/status", returnStdout: true).trim()
-                            } else {
-                                response = bat(script: """
-                                    powershell -Command "\$response = Invoke-WebRequest -Uri ${SONAR_HOST_URL}/api/system/status -UseBasicParsing; echo \$response.StatusCode"
-                                """, returnStdout: true).trim()
-                            }
-                            return response == '200'
-                        }
-                    }
-                }
-            }
-        }
-
-         stage('Static Code Analysis') {
+        stage('Static Code Analysis') {
             steps {
                 script{
                     if(isUnix()){
