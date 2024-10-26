@@ -25,7 +25,7 @@ pipeline {
         for large projects with dependencies and libraries that do not change frequently.*/
         skipDefaultCheckout()
         cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
-        arbitraryFileCache(path: 'cache', cacheValidityDecidingFile: 'pom.xml')])
+        arbitraryFileCache(path: 'cache', cacheValidityDecidingFile: 'pom.xml', cacheName: 'maven-cache')])
     }
 
     stages {
@@ -115,7 +115,7 @@ pipeline {
                     } catch (Exception e) {
                         echo "No stash found with the name 'mutation-artifact'. Skipping unstash."
                     } 
-                                       
+
                     if(isUnix()){
                         sh 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
                     }else{
