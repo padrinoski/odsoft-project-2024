@@ -8,8 +8,8 @@ pipeline {
         SONAR_TOKEN = credentials('sonar-token')
         SONAR_PROJECT_KEY = 'odsoft-sonarqube'
         SONAR_PROJECT_NAME = 'odsoft-sonarqube'
-        SONAR_LOGIN = 'admin'
-        SONAR_PASSWORD = 'Admin123456!'
+        SONAR_LOGIN = credentials('sonar-login')
+        SONAR_PASSWORD = credentials('sonar-password')
     }
 
     tools {
@@ -57,10 +57,10 @@ pipeline {
             steps {
                 script {
                     if(isUnix()){
-                        sh 'mvn clean install'
+                        //sh 'mvn clean install'
                         sh 'mvn clean compile package'
                     }else{
-                        bat 'mvn clean install'
+                        //bat 'mvn clean install'
                         bat 'mvn clean compile package'
                     } 
                     echo "Compilation finished"
