@@ -24,7 +24,8 @@ pipeline {
         it can reuse the cached workspace if the source code has not changed significantly. This is particularly useful 
         for large projects with dependencies and libraries that do not change frequently.*/
         skipDefaultCheckout()
-        cache(workspace: true, paths: ['~/.m2/repository'])
+        cache(maxCacheSize: 250, defaultBranch: 'develop', caches: [
+        arbitraryFileCache(path: '~/.m2/repository', cacheValidityDecidingFile: 'pom.xml')])
     }
 
     stages {
