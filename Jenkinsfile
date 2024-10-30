@@ -88,9 +88,9 @@ pipeline {
                     unstash 'build-artifact'
                     script {
                         if (isUnix()) {
-                            sh "mvn jacoco:report"
+                            sh "mvn clean jacoco:report"
                         } else {
-                            bat "mvn jacoco:report"
+                            bat "mvn clean jacoco:report"
                         }
                     }
                 }
