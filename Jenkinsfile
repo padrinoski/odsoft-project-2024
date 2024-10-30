@@ -108,6 +108,19 @@ pipeline {
                     }
                 }
             }
+
+            stage('Integration and Service Testing') {
+                steps {
+                    unstash 'build-artifact'
+                    script {
+                        if (isUnix()) {
+                            sh "mvn verify"
+                        } else {
+                            bat "mvn verify"
+                        }
+                    }
+                }
+            }
         }
     }
 
