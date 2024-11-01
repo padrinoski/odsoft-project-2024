@@ -128,11 +128,18 @@ pipeline {
                 steps {
                     unstash 'build-artifact'
                     script {
-                        if (isUnix()) {
-                            sh "newman run ${POSTMAN_COLLECTION_PATH} --environment ${POSTMAN_ENVIRONMENT_PATH}"
-                        } else {
-                            bat "newman run ${POSTMAN_COLLECTION_PATH} --environment ${POSTMAN_ENVIRONMENT_PATH}"
+                        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                            if (isUnix()) {
+                                sh "newman run ${POSTMAN_COLLECTION_PATH} --environment ${POSTMAN_ENVIRONMENT_PATH}"
+                            } else {
+                                bat "newman run ${POSTMAN_COLLECTION_PATH} --environment ${POSTMAN_ENVIRONMENT_PATH}"
+                            }
                         }
+                    }
+                }
+                post {
+                    always {
+                        archiveArtifacts artifacts: 'newman/*.json', allowEmptyArchive: true
                     }
                 }
             }
