@@ -10,6 +10,8 @@ pipeline {
         SONAR_TOKEN = credentials('SONAR_TOKEN')
         SONAR_PROJECT_KEY = 'odsoft-sonarqube'
         SONAR_PROJECT_NAME = 'odsoft-sonarqube'
+        POSTMAN_COLLECTION_PATH = "Docs/Psoft-G1.postman_collection.json"
+        POSTMAN_ENVIRONMENT_PATH = "Docs/Psoft-G1.postman_environment.json"
     }
 
     tools {
@@ -88,9 +90,9 @@ pipeline {
                     unstash 'build-artifact'
                     script {
                         if (isUnix()) {
-                            sh "mvn clean jacoco:report"
+                            sh "mvn jacoco:report"
                         } else {
-                            bat "mvn clean jacoco:report"
+                            bat "mvn jacoco:report"
                         }
                     }
                 }
@@ -114,9 +116,9 @@ pipeline {
                     unstash 'build-artifact'
                     script {
                         if (isUnix()) {
-                            sh "mvn verify"
+                            sh "newman run ${POSTMAN_COLLECTION_PATH} --environment ${POSTMAN_ENVIRONMENT_PATH}"
                         } else {
-                            bat "mvn verify"
+                            bat "newman run ${POSTMAN_COLLECTION_PATH} --environment ${POSTMAN_ENVIRONMENT_PATH}"
                         }
                     }
                 }
