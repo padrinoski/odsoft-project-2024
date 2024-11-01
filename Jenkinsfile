@@ -205,11 +205,10 @@ pipeline {
             steps {
                 script {
                     echo "Checking if the application is running..."
-                    def isRunning = false
-                    def retryCount = 3
-                    def retryInterval = 10 // seconds
+                    def retryInterval = 10
 
-                    for (int i = 0; i < retryCount; i++) {
+                    waitUntil {
+                        def isRunning = false
                         if (isUnix()) {
                             isRunning = sh(script: "ps -ef | grep -v grep | grep 'java -jar ${APP_JAR_NAME}'", returnStatus: true) == 0
                         } else {
@@ -218,14 +217,11 @@ pipeline {
 
                         if (isRunning) {
                             echo "Application is running successfully."
-                            break
+                            return true
                         } else {
-                            if (i < retryCount - 1) {
-                                echo "Application not running yet. Retrying in ${retryInterval} seconds..."
-                                sleep retryInterval
-                            } else {
-                                error("Application is not running!")
-                            }
+                            echo "Application not running yet. Retrying in ${retryInterval} seconds..."
+                            sleep retryInterval
+                            return false
                         }
                     }
                 }
