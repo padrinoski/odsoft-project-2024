@@ -144,13 +144,13 @@ pipeline {
                 }
             }
 
-            stage('Start Spring Boot Application') {
+            stage('Stop Spring Boot Application') {
                 steps {
                     script {
                         if (isUnix()) {
-                            sh 'nohup mvn spring-boot:run &'
+                            sh 'pkill -f "mvn spring-boot:run"'
                         } else {
-                            bat 'start /B mvn spring-boot:run'
+                            bat 'taskkill /F /IM java.exe /T'
                         }
                     }
                 }
