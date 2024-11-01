@@ -12,7 +12,7 @@ pipeline {
         SONAR_PROJECT_NAME = 'odsoft-sonarqube'
         POSTMAN_COLLECTION_PATH = "Docs/Psoft-G1.postman_collection.json"
         POSTMAN_ENVIRONMENT_PATH = "Docs/Psoft-G1.postman_environment.json"
-        LOCAL_DEPLOYMENT_PATH = "target/deployment"
+        LOCAL_DEPLOYMENT_PATH = "${WORKSPACE}/deployment"
         REMOTE_DEPLOYMENT_URL = "https://vs-gate.dei.isep.ipp.pt:10518/"
         APP_JAR_NAME = "psoft-g1-0.0.1-SNAPSHOT.jar"
     }
@@ -178,15 +178,15 @@ pipeline {
                     unstash 'build-artifact' // Retrieve the latest build artifact
                     if (isUnix()) {
                         sh '''
-                            mkdir -p ${LOCAL_DEPLOYMENT_PATH}
-                            cp target/*.jar ${WORKSPACE}/${LOCAL_DEPLOYMENT_PATH}/
-                            java -jar ${WORKSPACE}/${LOCAL_DEPLOYMENT_PATH}/${APP_JAR_NAME} &
+                        mkdir -p ${LOCAL_DEPLOYMENT_PATH}
+                        cp target/*.jar ${LOCAL_DEPLOYMENT_PATH}/
+                        java -jar ${LOCAL_DEPLOYMENT_PATH}/${APP_JAR_NAME} &
                         '''
                     } else {
                         bat '''
-                            mkdir -p %LOCAL_DEPLOYMENT_PATH%
-                            copy target\\*.jar %WORKSPACE%\\%LOCAL_DEPLOYMENT_PATH%\\
-                            start "" /B java -jar %WORKSPACE%\\%LOCAL_DEPLOYMENT_PATH%\\%APP_JAR_NAME%
+                        mkdir "%LOCAL_DEPLOYMENT_PATH%"
+                        copy target\\*.jar "%LOCAL_DEPLOYMENT_PATH%\\"
+                        start "" /B java -jar "%LOCAL_DEPLOYMENT_PATH%\\%APP_JAR_NAME%"
                         '''
                     }
                 }
@@ -233,8 +233,6 @@ pipeline {
                 }
             }
         }
-
-
 
 
         stage('Report Results') {
