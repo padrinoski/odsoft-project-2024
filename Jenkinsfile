@@ -17,6 +17,7 @@ pipeline {
     tools {
         gradle "gradle"
         //maven "mvn"
+        nodejs "nodejs"
     }
 
 
