@@ -77,13 +77,14 @@ pipeline {
                     if (isUnix()) {
                         sh 'nohup mvn spring-boot:run &'
                     } else {
-                        bat 'start /B mvn spring-boot:run'
+                        bat 'start "" /B mvn spring-boot:run'
                     }
                 }
             }
         }
 
-    stage('Testing'){
+
+        stage('Testing'){
         parallel{
             stage('Unit Testing') {
                 steps{
