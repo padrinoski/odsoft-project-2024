@@ -206,15 +206,27 @@ pipeline {
                 script {
                     echo "Checking if the application is running..."
                     def isRunning = false
-                    if (isUnix()) {
-                        isRunning = sh(script: "ps -ef | grep -v grep | grep 'java -jar your-app.jar'", returnStatus: true) == 0
-                    } else {
-                        isRunning = bat(script: "tasklist | findstr /C:'java.exe'", returnStatus: true) == 0
-                    }
-                    if (!isRunning) {
-                        error("Application is not running!")
-                    } else {
-                        echo "Application is running successfully."
+                    def retryCount = 3
+                    def retryInterval = 10 // seconds
+
+                    for (int i = 0; i < retryCount; i++) {
+                        if (isUnix()) {
+                            isRunning = sh(script: "ps -ef | grep -v grep | grep 'java -jar ${APP_JAR_NAME}'", returnStatus: true) == 0
+                        } else {
+                            isRunning = bat(script: "tasklist | findstr /C:\"java.exe\"", returnStatus: true) == 0
+                        }
+
+                        if (isRunning) {
+                            echo "Application is running successfully."
+                            break
+                        } else {
+                            if (i < retryCount - 1) {
+                                echo "Application not running yet. Retrying in ${retryInterval} seconds..."
+                                sleep retryInterval
+                            } else {
+                                error("Application is not running!")
+                            }
+                        }
                     }
                 }
             }
