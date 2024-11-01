@@ -149,13 +149,16 @@ pipeline {
                 steps {
                     script {
                         if (isUnix()) {
-                            sh 'pkill -f "mvn spring-boot:run"'
+                            // Using Maven to stop the Spring Boot application
+                            sh 'mvn spring-boot:stop -DpidFile=${WORKSPACE}/target/spring.pid'
                         } else {
-                            bat 'taskkill /F /IM java.exe /T'
+                            // For Windows, you may still use taskkill as a fallback
+                            bat 'mvn spring-boot:stop -DpidFile=${WORKSPACE}\\target\\spring.pid'
                         }
                     }
                 }
             }
+
         }
     }
 
