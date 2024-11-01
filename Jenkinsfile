@@ -184,7 +184,7 @@ pipeline {
                         '''
                     } else {
                         bat '''
-                            mkdir -p ${LOCAL_DEPLOYMENT_PATH}
+                            mkdir -p %LOCAL_DEPLOYMENT_PATH%
                             copy target\\*.jar %WORKSPACE%\\%LOCAL_DEPLOYMENT_PATH%\\
                             start "" /B java -jar %WORKSPACE%\\%LOCAL_DEPLOYMENT_PATH%\\%APP_JAR_NAME%
                         '''
