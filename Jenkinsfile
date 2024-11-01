@@ -71,6 +71,18 @@ pipeline {
             }
         }
 
+        stage('Start Spring Boot Application') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'nohup mvn spring-boot:run &'
+                    } else {
+                        bat 'start /B mvn spring-boot:run'
+                    }
+                }
+            }
+        }
+
     stage('Testing'){
         parallel{
             stage('Unit Testing') {
@@ -107,18 +119,6 @@ pipeline {
                             sh 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
                         }else{
                             bat 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
-                        }
-                    }
-                }
-            }
-
-            stage('Start Spring Boot Application') {
-                steps {
-                    script {
-                        if (isUnix()) {
-                            sh 'nohup mvn spring-boot:run &'
-                        } else {
-                            bat 'start /B mvn spring-boot:run'
                         }
                     }
                 }
