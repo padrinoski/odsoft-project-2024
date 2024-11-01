@@ -12,6 +12,9 @@ pipeline {
         SONAR_PROJECT_NAME = 'odsoft-sonarqube'
         POSTMAN_COLLECTION_PATH = "Docs/Psoft-G1.postman_collection.json"
         POSTMAN_ENVIRONMENT_PATH = "Docs/Psoft-G1.postman_environment.json"
+        LOCAL_DEPLOYMENT_PATH = "target/deployment"
+        REMOTE_DEPLOYMENT_URL = "https://vs-gate.dei.isep.ipp.pt:10518/"
+        APP_JAR_NAME = "psoft-g1-0.0.1-SNAPSHOT.jar"
     }
 
     tools {
@@ -137,7 +140,7 @@ pipeline {
                     }
                 }
 
-                stage('Integration and Service Testing') {
+                stage('Service Testing') {
                     steps {
                         unstash 'build-artifact'
                         script {
@@ -167,6 +170,70 @@ pipeline {
                 }
             }
         }
+
+        stage('Local Deployment') {
+            steps {
+                script {
+                    echo "Deploying to local environment..."
+                    unstash 'build-artifact' // Retrieve the latest build artifact
+                    if (isUnix()) {
+                        sh '''
+                            cp target/*.jar ${WORKSPACE}/${LOCAL_DEPLOYMENT_PATH}/
+                            java -jar ${WORKSPACE}/${LOCAL_DEPLOYMENT_PATH}/${APP_JAR_NAME} &
+                        '''
+                    } else {
+                        bat '''
+                            copy target\\*.jar %WORKSPACE%\\%LOCAL_DEPLOYMENT_PATH%\\
+                            start "" /B java -jar %WORKSPACE%\\%LOCAL_DEPLOYMENT_PATH%\\%APP_JAR_NAME%
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Remote Deployment') {
+            steps {
+                script {
+                    echo "Deploying to remote server..."
+                }
+            }
+        }
+
+        stage('Check Application Status') {
+            steps {
+                script {
+                    echo "Checking if the application is running..."
+                    def isRunning = false
+                    if (isUnix()) {
+                        isRunning = sh(script: "ps -ef | grep -v grep | grep 'java -jar your-app.jar'", returnStatus: true) == 0
+                    } else {
+                        isRunning = bat(script: "tasklist | findstr /C:'java.exe'", returnStatus: true) == 0
+                    }
+                    if (!isRunning) {
+                        error("Application is not running!")
+                    } else {
+                        echo "Application is running successfully."
+                    }
+                }
+            }
+        }
+
+        stage('Stop Application') {
+            steps {
+                script {
+                    echo "Stopping the application..."
+                    if (isUnix()) {
+                        sh 'mvn spring-boot:stop -DpidFile=${WORKSPACE}/target/spring.pid'
+                    } else {
+                        bat 'mvn spring-boot:stop -DpidFile=${WORKSPACE}\\target\\spring.pid'
+                    }
+                    echo "Application stopped."
+                }
+            }
+        }
+
+
+
 
         stage('Report Results') {
             steps {
