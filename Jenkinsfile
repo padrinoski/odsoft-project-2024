@@ -112,6 +112,18 @@ pipeline {
                 }
             }
 
+            stage('Start Spring Boot Application') {
+                steps {
+                    script {
+                        if (isUnix()) {
+                            sh 'nohup mvn spring-boot:run &'
+                        } else {
+                            bat 'start /B mvn spring-boot:run'
+                        }
+                    }
+                }
+            }
+
             stage('Integration and Service Testing') {
                 steps {
                     unstash 'build-artifact'
@@ -120,6 +132,18 @@ pipeline {
                             sh "newman run ${POSTMAN_COLLECTION_PATH} --environment ${POSTMAN_ENVIRONMENT_PATH}"
                         } else {
                             bat "newman run ${POSTMAN_COLLECTION_PATH} --environment ${POSTMAN_ENVIRONMENT_PATH}"
+                        }
+                    }
+                }
+            }
+
+            stage('Start Spring Boot Application') {
+                steps {
+                    script {
+                        if (isUnix()) {
+                            sh 'nohup mvn spring-boot:run &'
+                        } else {
+                            bat 'start /B mvn spring-boot:run'
                         }
                     }
                 }
