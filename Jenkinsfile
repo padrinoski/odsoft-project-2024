@@ -209,19 +209,18 @@ pipeline {
                     echo "Deploying to remote Tomcat server..."
                     unstash 'war-artifact'
 
-                    // Set up the Tomcat credentials and deployment URL
-                    tomcatUser = "${TOMCAT_LOGIN_USR}"
-                    tomcatPassword = "${TOMCAT_LOGIN_PSW}"
-                    deploymentUrl = "${REMOTE_TOMCAT_SERVER_URL}/manager/text/deploy?path=/psoft-g1&update=true"
-
                     if (isUnix()) {
-                        sh """
-                        curl -u ${tomcatUser}:${tomcatPassword} --upload-file target/${APP_WAR_NAME} ${deploymentUrl}
-                        """
+                        withCredentials([usernamePassword(credentialsId: 'TOMCAT_LOGIN', usernameVariable: 'TOMCAT_LOGIN_USR', passwordVariable: 'TOMCAT_LOGIN_PSW')]) {
+                            sh """
+                            curl -u ${tomcatUser}:${tomcatPassword} --upload-file target/${APP_WAR_NAME} ${deploymentUrl}
+                            """
+                        }
                     } else {
-                        bat """
-                        curl -u ${tomcatUser}:${tomcatPassword} --upload-file target\\${APP_WAR_NAME} ${deploymentUrl}
-                        """
+                        withCredentials([usernamePassword(credentialsId: 'TOMCAT_LOGIN', usernameVariable: 'TOMCAT_LOGIN_USR', passwordVariable: 'TOMCAT_LOGIN_PSW')]) {
+                            bat """
+                            curl -u %TOMCAT_LOGIN_USR%:%TOMCAT_LOGIN_PSW% --upload-file target\\\\${APP_WAR_NAME} ${REMOTE_TOMCAT_SERVER_URL}/manager/text/deploy?path=/psoft-g1&update=true
+                            """
+                        }
                     }
                 }
             }
