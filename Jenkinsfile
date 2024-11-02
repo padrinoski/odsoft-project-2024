@@ -13,8 +13,11 @@ pipeline {
         POSTMAN_COLLECTION_PATH = "Docs/Psoft-G1.postman_collection.json"
         POSTMAN_ENVIRONMENT_PATH = "Docs/Psoft-G1.postman_environment.json"
         LOCAL_DEPLOYMENT_PATH = "${WORKSPACE}/deployment"
-        REMOTE_DEPLOYMENT_URL = "https://vs-gate.dei.isep.ipp.pt:10518/"
+        REMOTE_TOMCAT_SERVER_URL = "https://vs-gate.dei.isep.ipp.pt:11340/"
+        TOMCAT_LOGIN = credentials('TOMCAT_LOGIN')
         APP_JAR_NAME = "psoft-g1-0.0.1-SNAPSHOT.jar"
+        APP_WAR_NAME = "psoft-g1-0.0.1-SNAPSHOT.war"
+
     }
 
     tools {
@@ -48,7 +51,7 @@ pipeline {
                     }
                     /* Artifact caching involves caching build artifacts (e.g., compiled binaries, build outputs) so that subsequent builds
                     can reuse them rather than recompiling or regenerating them. This can save a significant amount of time and resources. */
-                    stash name: 'build-artifact', includes: 'target/*.jar'
+                    stash name: 'build-artifact', includes: 'target/*.{jar,war}'
                     echo "Compilation finished"
                 }
             }
@@ -196,10 +199,28 @@ pipeline {
         stage('Remote Deployment') {
             steps {
                 script {
-                    echo "Deploying to remote server..."
+                    echo "Deploying to remote Tomcat server..."
+                    unstash 'build-artifact' // Retrieve the latest build artifact
+
+                    // Set up the Tomcat credentials and deployment URL
+                    tomcatUser = "${TOMCAT_LOGIN_USR}"
+                    tomcatPassword = "${TOMCAT_LOGIN_PSW}"
+                    deploymentUrl = "${REMOTE_TOMCAT_SERVER_URL}/manager/text/deploy?path=/psoft-g1&update=true"
+
+                    // Use curl to deploy the WAR file
+                    if (isUnix()) {
+                        sh """
+                        curl -u ${tomcatUser}:${tomcatPassword} --upload-file target/${APP_WAR_NAME} ${deploymentUrl}
+                        """
+                    } else {
+                        bat """
+                        curl -u ${tomcatUser}:${tomcatPassword} --upload-file target\\${APP_WAR_NAME} ${deploymentUrl}
+                        """
+                    }
                 }
             }
         }
+
 
         stage('Check Application Status') {
             steps {
