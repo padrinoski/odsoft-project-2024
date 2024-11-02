@@ -45,13 +45,20 @@ pipeline {
                     if(isUnix()){
                         //sh 'mvn clean install'
                         sh 'mvn clean compile package -DskipTests'
+                        sh 'ls -la target/'
                     }else{
                         //bat 'mvn clean install'
                         bat 'mvn clean compile package -DskipTests'
+                        bat 'ls -la target/'
                     }
                     /* Artifact caching involves caching build artifacts (e.g., compiled binaries, build outputs) so that subsequent builds
                     can reuse them rather than recompiling or regenerating them. This can save a significant amount of time and resources. */
-                    stash name: 'build-artifact', includes: 'target/*.{jar,war}'
+                    stash name: 'build-artifact', includes: 'target/*.jar'
+                    echo "JAR Artifact stashed"
+
+                    stash name: 'war-artifact', includes: 'target/*.war'
+                    echo "WAR file stashed"
+
                     echo "Compilation finished"
                 }
             }
@@ -200,14 +207,13 @@ pipeline {
             steps {
                 script {
                     echo "Deploying to remote Tomcat server..."
-                    unstash 'build-artifact' // Retrieve the latest build artifact
+                    unstash 'war-artifact'
 
                     // Set up the Tomcat credentials and deployment URL
                     tomcatUser = "${TOMCAT_LOGIN_USR}"
                     tomcatPassword = "${TOMCAT_LOGIN_PSW}"
                     deploymentUrl = "${REMOTE_TOMCAT_SERVER_URL}/manager/text/deploy?path=/psoft-g1&update=true"
 
-                    // Use curl to deploy the WAR file
                     if (isUnix()) {
                         sh """
                         curl -u ${tomcatUser}:${tomcatPassword} --upload-file target/${APP_WAR_NAME} ${deploymentUrl}
