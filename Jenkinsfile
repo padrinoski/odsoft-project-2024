@@ -32,7 +32,7 @@ pipeline {
         /* Workspace caching allows Jenkins to cache the contents of a workspace so that when a new build is triggered,
         it can reuse the cached workspace if the source code has not changed significantly. This is particularly useful
         for large projects with dependencies and libraries that do not change frequently.*/
-        skipDefaultCheckout()
+        //skipDefaultCheckout()
         cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
                 arbitraryFileCache(path: 'cache', cacheValidityDecidingFile: 'pom.xml', cacheName: 'maven-cache')])
     }
