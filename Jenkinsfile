@@ -49,7 +49,7 @@ pipeline {
                     }else{
                         //bat 'mvn clean install'
                         bat 'mvn clean compile package -DskipTests'
-                        bat 'dir target/'
+                        bat 'dir target'
                     }
                     /* Artifact caching involves caching build artifacts (e.g., compiled binaries, build outputs) so that subsequent builds
                     can reuse them rather than recompiling or regenerating them. This can save a significant amount of time and resources. */
