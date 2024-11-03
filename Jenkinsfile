@@ -33,7 +33,7 @@ pipeline {
         /* Workspace caching allows Jenkins to cache the contents of a workspace so that when a new build is triggered,
         it can reuse the cached workspace if the source code has not changed significantly. This is particularly useful
         for large projects with dependencies and libraries that do not change frequently.*/
-        //skipDefaultCheckout()
+        skipDefaultCheckout()
         cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
                 arbitraryFileCache(path: 'cache', cacheValidityDecidingFile: 'pom.xml', cacheName: 'maven-cache')])
     }
@@ -223,12 +223,18 @@ pipeline {
                                 EOF
                             """
                         } else {
+                            // For Windows
+                            // Manually cache the host key using plink
+                            bat """
+                                plink -P ${REMOTE_PORT} -i ${SSH_KEY} -batch ${REMOTE_USERNAME}@${REMOTE_HOST} "echo connected"
+                            """
+                            // Transfer the JAR file to the remote server
                             bat """
                                 pscp -P ${REMOTE_PORT} -i ${SSH_KEY} -batch target/${APP_JAR_NAME} ${REMOTE_USERNAME}@${REMOTE_HOST}:/opt/app/
                             """
                             // Start the application on the remote server
                             bat """
-                                pssh -P ${REMOTE_PORT} ${REMOTE_USERNAME}@${REMOTE_HOST} "pkill -f 'java -jar ${APP_JAR_NAME}' || true && nohup java -jar /opt/app/${APP_JAR_NAME} > /opt/app/app.log 2>&1 &"
+                                plink -P ${REMOTE_PORT} -i ${SSH_KEY} -batch ${REMOTE_USERNAME}@${REMOTE_HOST} "pkill -f 'java -jar ${APP_JAR_NAME}' || true && nohup java -jar /opt/app/${APP_JAR_NAME} > /opt/app/app.log 2>&1 &"
                             """
                         }
                     }
@@ -236,6 +242,7 @@ pipeline {
                 }
             }
         }
+
 
 
 
