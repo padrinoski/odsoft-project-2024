@@ -209,24 +209,34 @@ pipeline {
                 script {
                     unstash 'build-artifact' // Retrieve the JAR file for deployment
 
-                    withCredentials([sshUserPrivateKey(credentialsId: "${REMOTE_CREDENTIALS_ID}", keyFileVariable: 'SSH_KEY',  usernameVariable: 'REMOTE_USERNAME')]) {
-                        //Transfer the JAR file to the remote server
-                        sh """
-                            scp -i ${SSH_KEY} -o StrictHostKeyChecking=no -P ${REMOTE_PORT} target/${APP_JAR_NAME} ${REMOTE_USERNAME}@${REMOTE_HOST}:/opt/app/
-                        """
-
-                        //Start the application on the remote server
-                        sh """
-                            ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no -p ${REMOTE_PORT} ${REMOTE_USERNAME}@${REMOTE_HOST} << EOF
-                                pkill -f 'java -jar ${APP_JAR_NAME}' || true
-                                nohup java -jar /opt/app/${APP_JAR_NAME} > /opt/app/app.log 2>&1 &
-                            EOF
-                        """
+                    withCredentials([sshUserPrivateKey(credentialsId: "${REMOTE_CREDENTIALS_ID}", keyFileVariable: 'SSH_KEY', usernameVariable: 'REMOTE_USERNAME')]) {
+                        // Transfer the JAR file to the remote server
+                        if (isUnix()) {
+                            sh """
+                                scp -i ${SSH_KEY} -o StrictHostKeyChecking=no -P ${REMOTE_PORT} target/${APP_JAR_NAME} ${REMOTE_USERNAME}@${REMOTE_HOST}:/opt/app/
+                            """
+                            // Start the application on the remote server
+                            sh """
+                                ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no -p ${REMOTE_PORT} ${REMOTE_USERNAME}@${REMOTE_HOST} << EOF
+                                    pkill -f 'java -jar ${APP_JAR_NAME}' || true
+                                    nohup java -jar /opt/app/${APP_JAR_NAME} > /opt/app/app.log 2>&1 &
+                                EOF
+                            """
+                        } else {
+                            bat """
+                                pscp -P ${REMOTE_PORT} -i ${SSH_KEY} target/${APP_JAR_NAME} ${REMOTE_USERNAME}@${REMOTE_HOST}:/opt/app/
+                            """
+                            // Start the application on the remote server
+                            bat """
+                                pssh -i ${SSH_KEY} -P ${REMOTE_PORT} ${REMOTE_USERNAME}@${REMOTE_HOST} "pkill -f 'java -jar ${APP_JAR_NAME}' || true && nohup java -jar /opt/app/${APP_JAR_NAME} > /opt/app/app.log 2>&1 &"
+                            """
+                        }
                     }
                     echo "Deployment complete. Spring Boot application is running on the remote server."
                 }
             }
         }
+
 
 
 
