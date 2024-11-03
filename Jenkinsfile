@@ -17,7 +17,7 @@ pipeline {
         APP_WAR_NAME = "psoft-g1-0.0.1-SNAPSHOT.war"
         REMOTE_DEPLOYMENT_HTTPS_URL = "https://vs-gate.dei.isep.ipp.pt:11179/"
         REMOTE_DEPLOYMENT_SSH_URL = "SSH: vsgate-ssh.dei.isep.ipp.pt:11179"
-        REMOTE_CREDENTIALS_ID = "SSH_DEI_VM_ID"
+        REMOTE_CREDENTIALS_ID = "SSH_VMDEI_USER_PASS"
 
     }
 
@@ -209,26 +209,28 @@ pipeline {
                 script {
                     echo "Deploying Spring Boot JAR to remote Ubuntu server via SSH..."
                     unstash 'build-artifact' // Retrieve the JAR file for deployment
+                    echo "Using credentials ID: ${REMOTE_CREDENTIALS_ID}"
 
-                    // Use the SSH credential with sshagent for authentication
-                    sshagent(credentials: ["${REMOTE_CREDENTIALS_ID}"]) {
-                        // Step 1: Transfer the JAR file to the remote server
-                        sh """
-                            scp -o StrictHostKeyChecking=no target/${APP_JAR_NAME} ${REMOTE_USERNAME}@${REMOTE_DEPLOYMENT_SSH_URL}:/opt/app/${APP_JAR_NAME}
-                        """
+                    // Use the credentials to retrieve the username and password
+                    def remoteCredentials = credentials("${REMOTE_CREDENTIALS_ID}")
 
-                        // Step 2: Start the application on the remote server
-                        sh """
-                            ssh -o StrictHostKeyChecking=no ${REMOTE_USERNAME}@${REMOTE_DEPLOYMENT_SSH_URL} << EOF
-                                pkill -f 'java -jar ${APP_JAR_NAME}' || true  // Stop any running instance of the app
-                                nohup java -jar /opt/app/${APP_JAR_NAME} > /opt/app/app.log 2>&1 &
-                            EOF
-                        """
-                        echo "Deployment complete. Spring Boot application is running on remote server."
-                    }
+                    // Use sshpass to handle the password for SSH commands
+                    sh """
+                        sshpass -p '${remoteCredentials.PASSWORD}' scp -o StrictHostKeyChecking=no -P ${REMOTE_PORT} target/${APP_JAR_NAME} ${remoteCredentials.USERNAME}@${REMOTE_DEPLOYMENT_SSH_URL}:/opt/app/${APP_JAR_NAME}
+                    """
+
+                    // Start the application on the remote server
+                    sh """
+                        sshpass -p '${remoteCredentials.PASSWORD}' ssh -o StrictHostKeyChecking=no -p ${REMOTE_PORT} ${remoteCredentials.USERNAME}@${REMOTE_DEPLOYMENT_SSH_URL} << EOF
+                            pkill -f 'java -jar ${APP_JAR_NAME}' || true
+                            nohup java -jar /opt/app/${APP_JAR_NAME} > /opt/app/app.log 2>&1 &
+                        EOF
+                    """
+                    echo "Deployment complete. Spring Boot application is running on remote server."
                 }
             }
         }
+
 
 
         stage('Check Application Status') {
