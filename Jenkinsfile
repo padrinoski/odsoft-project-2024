@@ -224,11 +224,11 @@ pipeline {
                             """
                         } else {
                             bat """
-                                pscp -P ${REMOTE_PORT} -i ${SSH_KEY} target/${APP_JAR_NAME} ${REMOTE_USERNAME}@${REMOTE_HOST}:/opt/app/
+                                pscp -P ${REMOTE_PORT} -o StrictHostKeyChecking=no -i ${SSH_KEY} target/${APP_JAR_NAME} ${REMOTE_USERNAME}@${REMOTE_HOST}:/opt/app/
                             """
                             // Start the application on the remote server
                             bat """
-                                pssh -i ${SSH_KEY} -P ${REMOTE_PORT} ${REMOTE_USERNAME}@${REMOTE_HOST} "pkill -f 'java -jar ${APP_JAR_NAME}' || true && nohup java -jar /opt/app/${APP_JAR_NAME} > /opt/app/app.log 2>&1 &"
+                                pssh -o StrictHostKeyChecking=no -i ${SSH_KEY} -P ${REMOTE_PORT} ${REMOTE_USERNAME}@${REMOTE_HOST} "pkill -f 'java -jar ${APP_JAR_NAME}' || true && nohup java -jar /opt/app/${APP_JAR_NAME} > /opt/app/app.log 2>&1 &"
                             """
                         }
                     }
