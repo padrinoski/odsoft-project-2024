@@ -10,7 +10,7 @@ pipeline {
         SONAR_TOKEN = credentials('SONAR_TOKEN')
         SONAR_PROJECT_KEY = 'odsoft-sonarqube'
         SONAR_PROJECT_NAME = 'odsoft-sonarqube'
-        POSTMAN_COLLECTION_PATH = "Docs/Psoft-G1.postman_collection.json"
+        POSTMAN_COLLECTION_PATH = "Docs/AcceptanceTests.postman_collection.json"
         POSTMAN_ENVIRONMENT_PATH = "Docs/Psoft-G1.postman_environment.json"
         LOCAL_DEPLOYMENT_PATH = "${WORKSPACE}/deployment"
         APP_JAR_NAME = "psoft-g1-0.0.1-SNAPSHOT.jar"
@@ -33,7 +33,7 @@ pipeline {
         /* Workspace caching allows Jenkins to cache the contents of a workspace so that when a new build is triggered,
         it can reuse the cached workspace if the source code has not changed significantly. This is particularly useful
         for large projects with dependencies and libraries that do not change frequently.*/
-        skipDefaultCheckout()
+        //skipDefaultCheckout()
         cache(maxCacheSize: 250, defaultBranch: 'main', caches: [
                 arbitraryFileCache(path: 'cache', cacheValidityDecidingFile: 'pom.xml', cacheName: 'maven-cache')])
     }
