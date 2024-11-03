@@ -15,9 +15,9 @@ pipeline {
         LOCAL_DEPLOYMENT_PATH = "${WORKSPACE}/deployment"
         APP_JAR_NAME = "psoft-g1-0.0.1-SNAPSHOT.jar"
         APP_WAR_NAME = "psoft-g1-0.0.1-SNAPSHOT.war"
-        REMOTE_DEPLOYMENT_HTTPS_URL = "https://vs-gate.dei.isep.ipp.pt:11179/"
-        REMOTE_DEPLOYMENT_SSH_URL = "SSH: vsgate-ssh.dei.isep.ipp.pt:11179"
         REMOTE_CREDENTIALS_ID = "SSH_DEIVM_CREDS"
+        REMOTE_PORT = "11179"
+        REMOTE_HOST = "vsgate-ssh.dei.isep.ipp.pt"
 
     }
 
@@ -209,7 +209,7 @@ pipeline {
                 script {
                     unstash 'build-artifact' // Retrieve the JAR file for deployment
 
-                    withCredentials([sshUserPrivateKey(credentialsId: "${REMOTE_CREDENTIALS_ID}", keyFileVariable: 'SSH_KEY')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: "${REMOTE_CREDENTIALS_ID}", keyFileVariable: 'SSH_KEY',  usernameVariable: 'REMOTE_USERNAME')]) {
                         //Transfer the JAR file to the remote server
                         sh """
                             scp -i ${SSH_KEY} -o StrictHostKeyChecking=no -P ${REMOTE_PORT} target/${APP_JAR_NAME} ${REMOTE_USERNAME}@${REMOTE_HOST}:/opt/app/
