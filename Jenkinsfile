@@ -13,10 +13,11 @@ pipeline {
         POSTMAN_COLLECTION_PATH = "Docs/Psoft-G1.postman_collection.json"
         POSTMAN_ENVIRONMENT_PATH = "Docs/Psoft-G1.postman_environment.json"
         LOCAL_DEPLOYMENT_PATH = "${WORKSPACE}/deployment"
-        REMOTE_TOMCAT_SERVER_URL = "https://vs-gate.dei.isep.ipp.pt:11340/"
-        TOMCAT_LOGIN = credentials('TOMCAT_LOGIN')
         APP_JAR_NAME = "psoft-g1-0.0.1-SNAPSHOT.jar"
         APP_WAR_NAME = "psoft-g1-0.0.1-SNAPSHOT.war"
+        REMOTE_DEPLOYMENT_HTTPS_URL = "https://vs-gate.dei.isep.ipp.pt:11179/"
+        REMOTE_DEPLOYMENT_SSH_URL = "SSH: vsgate-ssh.dei.isep.ipp.pt:11179"
+        REMOTE_CREDENTIALS_ID = "SSH_DEI_VM_ID"
 
     }
 
@@ -42,11 +43,11 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    if(isUnix()){
+                    if (isUnix()) {
                         //sh 'mvn clean install'
                         sh 'mvn clean compile package -DskipTests'
                         sh 'ls -la target/'
-                    }else{
+                    } else {
                         //bat 'mvn clean install'
                         bat 'mvn clean compile package -DskipTests'
                         bat 'dir target'
@@ -67,14 +68,14 @@ pipeline {
         stage('Static Code Analysis') {
             steps {
                 unstash 'build-artifact'
-                script{
-                    if(isUnix()){
+                script {
+                    if (isUnix()) {
                         withSonarQubeEnv() {
                             //sh "mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
                             sh "mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.token=${env.SONAR_TOKEN} -Dsonar.host.url=${SONARCLOUD_URL} -Dsonar.organization=${SONARCLOUD_ORGANIZATION}"
                         }
 
-                    }else{
+                    } else {
                         withSonarQubeEnv() {
                             //bat "mvn clean verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.projectName=${SONAR_PROJECT_NAME} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${env.SONAR_TOKEN}"
                             bat "mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.token=${env.SONAR_TOKEN} -Dsonar.host.url=${SONARCLOUD_URL} -Dsonar.organization=${SONARCLOUD_ORGANIZATION}"
@@ -109,10 +110,10 @@ pipeline {
         }
 
 
-        stage('Testing'){
-            parallel{
+        stage('Testing') {
+            parallel {
                 stage('Unit Testing') {
-                    steps{
+                    steps {
                         unstash 'build-artifact'
                         script {
                             if (isUnix()) {
@@ -125,7 +126,7 @@ pipeline {
                 }
 
                 stage('Test Coverage') {
-                    steps{
+                    steps {
                         unstash 'build-artifact'
                         script {
                             if (isUnix()) {
@@ -140,10 +141,10 @@ pipeline {
                 stage('Mutation Testing') {
                     steps {
                         unstash 'build-artifact'
-                        script{
-                            if(isUnix()){
+                        script {
+                            if (isUnix()) {
                                 sh 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
-                            }else{
+                            } else {
                                 bat 'mvn -DwithHistory test-compile org.pitest:pitest-maven:mutationCoverage'
                             }
                         }
@@ -206,21 +207,24 @@ pipeline {
         stage('Remote Deployment') {
             steps {
                 script {
-                    echo "Deploying to remote Tomcat server..."
-                    unstash 'war-artifact'
+                    echo "Deploying Spring Boot JAR to remote Ubuntu server via SSH..."
+                    unstash 'build-artifact' // Retrieve the JAR file for deployment
 
-                    if (isUnix()) {
-                        withCredentials([usernamePassword(credentialsId: 'TOMCAT_LOGIN', usernameVariable: 'TOMCAT_LOGIN_USR', passwordVariable: 'TOMCAT_LOGIN_PSW')]) {
-                            sh """
-                            curl -u ${tomcatUser}:${tomcatPassword} --upload-file target/${APP_WAR_NAME} ${deploymentUrl}
-                            """
-                        }
-                    } else {
-                        withCredentials([usernamePassword(credentialsId: 'TOMCAT_LOGIN', usernameVariable: 'TOMCAT_LOGIN_USR', passwordVariable: 'TOMCAT_LOGIN_PSW')]) {
-                            bat """
-                            curl -u %TOMCAT_LOGIN_USR%:%TOMCAT_LOGIN_PSW% --upload-file target\\\\${APP_WAR_NAME} ${REMOTE_TOMCAT_SERVER_URL}/manager/text/deploy?path=/psoft-g1&update=true
-                            """
-                        }
+                    // Use the SSH credential with sshagent for authentication
+                    sshagent(credentials: ["${REMOTE_CREDENTIALS_ID}"]) {
+                        // Step 1: Transfer the JAR file to the remote server
+                        sh """
+                            scp -o StrictHostKeyChecking=no target/${APP_JAR_NAME} ${REMOTE_USERNAME}@${REMOTE_DEPLOYMENT_SSH_URL}:/opt/app/${APP_JAR_NAME}
+                        """
+
+                        // Step 2: Start the application on the remote server
+                        sh """
+                            ssh -o StrictHostKeyChecking=no ${REMOTE_USERNAME}@${REMOTE_DEPLOYMENT_SSH_URL} << EOF
+                                pkill -f 'java -jar ${APP_JAR_NAME}' || true  // Stop any running instance of the app
+                                nohup java -jar /opt/app/${APP_JAR_NAME} > /opt/app/app.log 2>&1 &
+                            EOF
+                        """
+                        echo "Deployment complete. Spring Boot application is running on remote server."
                     }
                 }
             }
@@ -280,23 +284,22 @@ pipeline {
                     jacoco execPattern: 'target/jacoco.exec', classPattern: 'target/classes', sourcePattern: 'src/main/java', htmlDir: 'target/site/jacoco'
                     // Publish PIT mutation testing report
                     publishHTML(target: [
-                            reportName: 'PIT Mutation Report',
-                            reportDir: 'target/pit-reports',
-                            reportFiles: 'index.html',
+                            reportName           : 'PIT Mutation Report',
+                            reportDir            : 'target/pit-reports',
+                            reportFiles          : 'index.html',
                             alwaysLinkToLastBuild: true,
-                            keepAll: true
+                            keepAll              : true
                     ])
                     // Publish Newman test results
                     publishHTML(target: [
-                            reportName: 'Postman Test Results',
-                            reportDir: 'target/newman',
-                            reportFiles: 'PostmanResults.html',
+                            reportName           : 'Postman Test Results',
+                            reportDir            : 'target/newman',
+                            reportFiles          : 'PostmanResults.html',
                             alwaysLinkToLastBuild: true,
-                            keepAll: true
+                            keepAll              : true
                     ])
                 }
             }
         }
     }
-
 }
