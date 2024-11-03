@@ -1,28 +1,20 @@
+package pt.psoft.g1.psoftg1;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static pt.psoft.g1.psoftg1.model.user.Librarian.newLibrarian;
-import static pt.psoft.g1.psoftg1.model.user.Reader.newReader;
+
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import java.lang.reflect.Field;
-import java.time.LocalDate;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.model.Bio;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Title;
+import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import org.springframework.security.access.AccessDeniedException;
-import pt.psoft.g1.psoftg1.dto.UpdateReaderRequest;
-import pt.psoft.g1.psoftg1.model.author.Author;
-import pt.psoft.g1.psoftg1.model.author.Bio;
-import pt.psoft.g1.psoftg1.model.book.Book;
-import pt.psoft.g1.psoftg1.model.book.Description;
-import pt.psoft.g1.psoftg1.model.book.Isbn;
-import pt.psoft.g1.psoftg1.model.book.Title;
-import pt.psoft.g1.psoftg1.model.genre.Genre;
-import pt.psoft.g1.psoftg1.model.lending.LendingNumber;
-import pt.psoft.g1.psoftg1.model.reader.*;
-import pt.psoft.g1.psoftg1.model.user.*;
-import pt.psoft.g1.psoftg1.shared.model.Name;
 
 public class Blackbox {
 

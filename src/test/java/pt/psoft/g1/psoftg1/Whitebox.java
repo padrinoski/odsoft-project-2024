@@ -1,6 +1,9 @@
+package pt.psoft.g1.psoftg1;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static pt.psoft.g1.psoftg1.model.user.Librarian.newLibrarian;
-import static pt.psoft.g1.psoftg1.model.user.Reader.newReader;
+import static pt.psoft.g1.psoftg1.usermanagement.model.Librarian.newLibrarian;
+import static pt.psoft.g1.psoftg1.usermanagement.model.Reader.newReader;
+
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,18 +14,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.security.access.AccessDeniedException;
-import pt.psoft.g1.psoftg1.dto.UpdateReaderRequest;
-import pt.psoft.g1.psoftg1.model.author.Author;
-import pt.psoft.g1.psoftg1.model.author.Bio;
-import pt.psoft.g1.psoftg1.model.book.Book;
-import pt.psoft.g1.psoftg1.model.book.Description;
-import pt.psoft.g1.psoftg1.model.book.Isbn;
-import pt.psoft.g1.psoftg1.model.book.Title;
-import pt.psoft.g1.psoftg1.model.genre.Genre;
-import pt.psoft.g1.psoftg1.model.lending.LendingNumber;
-import pt.psoft.g1.psoftg1.model.reader.*;
-import pt.psoft.g1.psoftg1.model.user.*;
+
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.model.Bio;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Description;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Title;
+import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingNumber;
+import pt.psoft.g1.psoftg1.readermanagement.model.*;
 import pt.psoft.g1.psoftg1.shared.model.Name;
+import pt.psoft.g1.psoftg1.usermanagement.model.*;
 
 public class Whitebox {
 
@@ -221,7 +224,7 @@ public class Whitebox {
 
             @Test
             public void testReaderDetailsInternalState() throws NoSuchFieldException, IllegalAccessException {
-                pt.psoft.g1.psoftg1.model.user.Reader reader = new pt.psoft.g1.psoftg1.model.user.Reader("readerUser", "Password123!");
+                pt.psoft.g1.psoftg1.usermanagement.model.Reader reader = new pt.psoft.g1.psoftg1.usermanagement.model.Reader("readerUser", "Password123!");
                 ReaderDetails readerDetails = new ReaderDetails(1, reader, "2000-01-01", "912345678", true, true, true, "photoURI", List.of());
 
                 Field readerField = ReaderDetails.class.getDeclaredField("reader");
@@ -465,8 +468,8 @@ public class Whitebox {
             @Test
             public void testBookInternalState() throws NoSuchFieldException, IllegalAccessException {
                 Genre genre = new Genre("Science Fiction");
-                List<pt.psoft.g1.psoftg1.model.author.Author> authors = new ArrayList<>();
-                authors.add(new pt.psoft.g1.psoftg1.model.author.Author("Author Name", "Author Bio", "photoURI"));
+                List<pt.psoft.g1.psoftg1.authormanagement.model.Author> authors = new ArrayList<>();
+                authors.add(new pt.psoft.g1.psoftg1.authormanagement.model.Author("Author Name", "Author Bio", "photoURI"));
                 Book book = new Book("8175257660", "Book Title", "Book Description", genre, authors, "photoURI");
 
                 Field isbnField = Book.class.getDeclaredField("isbn");
@@ -492,23 +495,23 @@ public class Whitebox {
 
             @Test
             public void testBookConstructorNullGenre() {
-                List<pt.psoft.g1.psoftg1.model.author.Author> authors = new ArrayList<>();
-                authors.add(new pt.psoft.g1.psoftg1.model.author.Author("Author Name", "Author Bio", "photoURI"));
+                List<pt.psoft.g1.psoftg1.authormanagement.model.Author> authors = new ArrayList<>();
+                authors.add(new pt.psoft.g1.psoftg1.authormanagement.model.Author("Author Name", "Author Bio", "photoURI"));
                 assertThrows(IllegalArgumentException.class, () -> new Book("8175257660", "Book Title", "Book Description", null, authors, "photoURI"));
             }
 
             @Test
             public void testBookConstructorEmptyAuthors() {
                 Genre genre = new Genre("Science Fiction");
-                List<pt.psoft.g1.psoftg1.model.author.Author> authors = new ArrayList<>();
+                List<pt.psoft.g1.psoftg1.authormanagement.model.Author> authors = new ArrayList<>();
                 assertThrows(IllegalArgumentException.class, () -> new Book("8175257660", "Book Title", "Book Description", genre, authors, "photoURI"));
             }
 
             @Test
             public void testBookSetTitle() throws NoSuchFieldException, IllegalAccessException {
                 Genre genre = new Genre("Science Fiction");
-                List<pt.psoft.g1.psoftg1.model.author.Author> authors = new ArrayList<>();
-                authors.add(new pt.psoft.g1.psoftg1.model.author.Author("Author Name", "Author Bio", "photoURI"));
+                List<pt.psoft.g1.psoftg1.authormanagement.model.Author> authors = new ArrayList<>();
+                authors.add(new pt.psoft.g1.psoftg1.authormanagement.model.Author("Author Name", "Author Bio", "photoURI"));
                 Book book = new Book("8175257660", "Book Title", "Book Description", genre, authors, "photoURI");
                 book.setTitle("New Title");
 
@@ -520,8 +523,8 @@ public class Whitebox {
             @Test
             public void testBookSetDescription() throws NoSuchFieldException, IllegalAccessException {
                 Genre genre = new Genre("Science Fiction");
-                List<pt.psoft.g1.psoftg1.model.author.Author> authors = new ArrayList<>();
-                authors.add(new pt.psoft.g1.psoftg1.model.author.Author("Author Name", "Author Bio", "photoURI"));
+                List<pt.psoft.g1.psoftg1.authormanagement.model.Author> authors = new ArrayList<>();
+                authors.add(new pt.psoft.g1.psoftg1.authormanagement.model.Author("Author Name", "Author Bio", "photoURI"));
                 Book book = new Book("8175257660", "Book Title", "Book Description", genre, authors, "photoURI");
                 book.setDescription("New Description");
 
@@ -534,8 +537,8 @@ public class Whitebox {
             public void testBookSetGenre() throws NoSuchFieldException, IllegalAccessException {
                 Genre genre = new Genre("Science Fiction");
                 Genre newGenre = new Genre("Fantasy");
-                List<pt.psoft.g1.psoftg1.model.author.Author> authors = new ArrayList<>();
-                authors.add(new pt.psoft.g1.psoftg1.model.author.Author("Author Name", "Author Bio", "photoURI"));
+                List<pt.psoft.g1.psoftg1.authormanagement.model.Author> authors = new ArrayList<>();
+                authors.add(new pt.psoft.g1.psoftg1.authormanagement.model.Author("Author Name", "Author Bio", "photoURI"));
                 Book book = new Book("8175257660", "Book Title", "Book Description", genre, authors, "photoURI");
                 book.setGenre(newGenre);
 
@@ -547,10 +550,10 @@ public class Whitebox {
             @Test
             public void testBookSetAuthors() throws NoSuchFieldException, IllegalAccessException {
                 Genre genre = new Genre("Science Fiction");
-                List<pt.psoft.g1.psoftg1.model.author.Author> authors = new ArrayList<>();
-                authors.add(new pt.psoft.g1.psoftg1.model.author.Author("Author Name", "Author Bio", "photoURI"));
-                List<pt.psoft.g1.psoftg1.model.author.Author> newAuthors = new ArrayList<>();
-                newAuthors.add(new pt.psoft.g1.psoftg1.model.author.Author("New Author", "New Bio", "photoURI"));
+                List<pt.psoft.g1.psoftg1.authormanagement.model.Author> authors = new ArrayList<>();
+                authors.add(new pt.psoft.g1.psoftg1.authormanagement.model.Author("Author Name", "Author Bio", "photoURI"));
+                List<pt.psoft.g1.psoftg1.authormanagement.model.Author> newAuthors = new ArrayList<>();
+                newAuthors.add(new pt.psoft.g1.psoftg1.authormanagement.model.Author("New Author", "New Bio", "photoURI"));
                 Book book = new Book("8175257660", "Book Title", "Book Description", genre, authors, "photoURI");
                 book.setAuthors(newAuthors);
 

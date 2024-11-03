@@ -48,17 +48,17 @@ public class Book extends EntityWithPhoto {
     @Embedded
     Description description;
 
-    private void setTitle(String title) {this.title = new Title(title);}
+    public void setTitle(String title) {this.title = new Title(title);}
 
     private void setIsbn(String isbn) {
         this.isbn = new Isbn(isbn);
     }
 
-    private void setDescription(String description) {this.description = new Description(description); }
+    public void setDescription(String description) {this.description = new Description(description); }
 
-    private void setGenre(Genre genre) {this.genre = genre; }
+    public void setGenre(Genre genre) {this.genre = genre; }
 
-    private void setAuthors(List<Author> authors) {this.authors = authors; }
+    public void setAuthors(List<Author> authors) {this.authors = authors; }
 
     public String getDescription(){ return this.description.toString(); }
 

@@ -1,36 +1,32 @@
-package integration;
+package pt.psoft.g1.psoftg1.integration;
 
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import pt.psoft.g1.psoftg1.PsoftG1Application;
-import pt.psoft.g1.psoftg1.dto.CreateAuthorRequest;
-import pt.psoft.g1.psoftg1.interfaces.AuthorService;
-import pt.psoft.g1.psoftg1.mappers.AuthorViewMapper;
-import pt.psoft.g1.psoftg1.model.author.Author;
+
+import pt.psoft.g1.psoftg1.authormanagement.api.AuthorView;
+import pt.psoft.g1.psoftg1.authormanagement.api.AuthorViewMapper;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.services.AuthorService;
+import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 import pt.psoft.g1.psoftg1.shared.services.ConcurrencyService;
 import pt.psoft.g1.psoftg1.shared.services.FileStorageService;
-import pt.psoft.g1.psoftg1.views.AuthorView;
 
 import java.nio.file.Path;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.MOCK,
         classes = PsoftG1Application.class)
@@ -53,7 +49,6 @@ public class AuthorIntegrationTests {
 
     @Autowired
     private ConcurrencyService concurrencyService;
-
 
     @Test
     public void testCreateAuthor() throws Exception {
@@ -78,7 +73,7 @@ public class AuthorIntegrationTests {
         Author author = new Author();
         author.setName("Author Name");
 
-        when(authorService.findByAuthorNumber(anyString())).thenReturn(Optional.of(author));
+        when(authorService.findByAuthorNumber(anyLong())).thenReturn(Optional.of(author));
         when(authorViewMapper.toAuthorView(any(Author.class))).thenReturn(new AuthorView());
 
         mockMvc.perform(get("/api/authors/{authorNumber}", "1"))
@@ -91,10 +86,9 @@ public class AuthorIntegrationTests {
         author.setName("Author Name");
         author.setPhoto(String.valueOf(new Photo(Path.of("photoURI"))));
 
-        when(authorService.findByAuthorNumber(anyString())).thenReturn(Optional.of(author));
+        when(authorService.findByAuthorNumber(anyLong())).thenReturn(Optional.of(author));
 
         mockMvc.perform(delete("/api/authors/{authorNumber}/photo", "1"))
                 .andExpect(status().isOk());
     }
-
 }

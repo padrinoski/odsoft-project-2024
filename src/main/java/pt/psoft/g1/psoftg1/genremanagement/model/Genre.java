@@ -24,7 +24,7 @@ public class Genre {
         setGenre(genre);
     }
 
-    private void setGenre(String genre) {
+    public void setGenre(String genre) {
         if(genre == null)
             throw new IllegalArgumentException("Genre cannot be null");
         if(genre.isBlank())

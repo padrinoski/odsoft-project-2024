@@ -47,7 +47,7 @@ public class Author extends EntityWithPhoto {
         setPhotoInternal(photoURI);
     }
 
-    protected Author() {
+    public Author() {
         // got ORM only
     }
 
