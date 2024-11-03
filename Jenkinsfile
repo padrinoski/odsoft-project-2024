@@ -208,11 +208,12 @@ pipeline {
             steps {
                 script {
                     unstash 'build-artifact' // Retrieve the JAR file for deployment
+
                     withCredentials([sshUserPrivateKey(credentialsId: "${REMOTE_CREDENTIALS_ID}", keyFileVariable: 'SSH_KEY', usernameVariable: 'REMOTE_USERNAME')]) {
-                        // Check if the host key is cached
                         if (isUnix()) {
                             sh """
                                 ssh-keyscan -H ${REMOTE_HOST} >> ~/.ssh/known_hosts
+                                cat ~/.ssh/known_hosts // Check known_hosts content
                                 scp -i ${SSH_KEY} -P ${REMOTE_PORT} target/${APP_JAR_NAME} ${REMOTE_USERNAME}@${REMOTE_HOST}:/opt/app/
                                 ssh -i ${SSH_KEY} -p ${REMOTE_PORT} ${REMOTE_USERNAME}@${REMOTE_HOST} << EOF
                                     pkill -f 'java -jar ${APP_JAR_NAME}' || true
@@ -222,6 +223,7 @@ pipeline {
                         } else {
                             bat """
                                 ssh-keyscan -H ${REMOTE_HOST} >> %USERPROFILE%\\.ssh\\known_hosts
+                                type %USERPROFILE%\\.ssh\\known_hosts // Check known_hosts content
                                 plink -P ${REMOTE_PORT} -i ${SSH_KEY} -batch ${REMOTE_USERNAME}@${REMOTE_HOST} "echo connected"
                                 pscp -P ${REMOTE_PORT} -i ${SSH_KEY} -batch target/${APP_JAR_NAME} ${REMOTE_USERNAME}@${REMOTE_HOST}:/opt/app/
                                 plink -P ${REMOTE_PORT} -i ${SSH_KEY} -batch ${REMOTE_USERNAME}@${REMOTE_HOST} "pkill -f 'java -jar ${APP_JAR_NAME}' || true && nohup java -jar /opt/app/${APP_JAR_NAME} > /opt/app/app.log 2>&1 &"
@@ -234,11 +236,45 @@ pipeline {
         }
 
 
+        stage('Check Remote Application Status') {
+            steps {
+                script {
+                    echo "Checking if the application is running..."
+                    def retryInterval = 10
+                    def maxRetries = 10
+                    def attempts = 0
+
+                    withCredentials([sshUserPrivateKey(credentialsId: "${REMOTE_CREDENTIALS_ID}", keyFileVariable: 'SSH_KEY', usernameVariable: 'REMOTE_USERNAME')]) {
+                        waitUntil {
+                            attempts++
+                            def isRunning = false
+                            if (isUnix()) {
+                                isRunning = sh(script: "ssh -i ${SSH_KEY} -p ${REMOTE_PORT} ${REMOTE_USERNAME}@${REMOTE_HOST} 'ps aux | grep -v grep | grep java -jar ${APP_JAR_NAME}'", returnStatus: true) == 0
+                            } else {
+                                isRunning = bat(script: "plink -P ${REMOTE_PORT} -i ${SSH_KEY} ${REMOTE_USERNAME}@${REMOTE_HOST} \"tasklist | findstr /C:'java.exe'\"", returnStatus: true) == 0
+                            }
+
+                            if (isRunning) {
+                                echo "Application is running! - REMOTE"
+                            } else {
+                                echo "Application is not running yet - REMOTE. Retrying in ${retryInterval} seconds..."
+                            }
+
+                            sleep retryInterval
+                            return isRunning || attempts >= maxRetries
+                        }
+
+                        if (attempts >= maxRetries) {
+                            error "Application did not start within the expected time. - REMOTE"
+                        }
+                    }
+                }
+            }
+        }
 
 
 
-
-        stage('Check Application Status') {
+        stage('Check Local Application Status') {
             steps {
                 script {
                     echo "Checking if the application is running..."
@@ -265,7 +301,7 @@ pipeline {
             }
         }
 
-        stage('Stop Application') {
+        stage('Stop Local Application') {
             steps {
                 script {
                     echo "Stopping the application..."
