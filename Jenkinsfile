@@ -17,7 +17,7 @@ pipeline {
         APP_WAR_NAME = "psoft-g1-0.0.1-SNAPSHOT.war"
         REMOTE_DEPLOYMENT_HTTPS_URL = "https://vs-gate.dei.isep.ipp.pt:11179/"
         REMOTE_DEPLOYMENT_SSH_URL = "SSH: vsgate-ssh.dei.isep.ipp.pt:11179"
-        REMOTE_CREDENTIALS_ID = "SSH_VMDEI_CREDENTIALS"
+        REMOTE_CREDENTIALS_ID = "SSH_VMDEI_USER_PASS"
 
     }
 
