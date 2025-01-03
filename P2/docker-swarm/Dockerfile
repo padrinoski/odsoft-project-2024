@@ -9,3 +9,10 @@ COPY casc.yml /var/jenkins_conf/casc.yml
 
 # Set environment variable for JCasC
 ENV CASC_JENKINS_CONFIG=/var/jenkins_conf/casc.yml
+
+USER root
+
+# Install Docker CLI
+RUN apt-get update && \
+    apt-get install -y docker.io && \
+    rm -rf /var/lib/apt/lists/*
