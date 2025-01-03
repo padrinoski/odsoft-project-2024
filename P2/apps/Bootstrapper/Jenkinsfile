@@ -12,6 +12,7 @@ node {
 
         stage('Build') {
             echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest"
+            pwd()
             sh 'ls'
             def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest", " .")
         }
