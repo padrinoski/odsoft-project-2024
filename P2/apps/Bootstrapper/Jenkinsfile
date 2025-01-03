@@ -2,7 +2,7 @@ node {
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     def DOCKER_IMAGE = 'populate-dbs-image'
     def DOCKER_REGISTRY = 'docker.io/jazzmattaz'
-    def DOCKERFILE_PATH = 'P2/apps/Bootstrapper/Jenkinsfile'  // Update this path if Dockerfile is not in the root
+    def DOCKERFILE_PATH = 'bootstrapper'  // Update this path if Dockerfile is not in the root
 
     try {
         stage('Print Workspace') {
