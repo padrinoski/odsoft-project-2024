@@ -5,9 +5,9 @@ node {
     def DOCKERFILE_PATH = 'bootstrapper'  // Update this path if Dockerfile is not in the root
 
     try {
-        stage('Print Workspace') {
-            echo "Current workspace directory: ${pwd()}"
-            sh 'ls -la'
+        stage('Checkout') {
+            echo "Checking out source code"
+            checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/padrinoski/odsoft-project-2024.git']]])
         }
 
         stage('Build') {
