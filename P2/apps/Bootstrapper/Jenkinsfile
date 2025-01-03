@@ -2,11 +2,21 @@ node {
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     def DOCKER_IMAGE = 'populate-dbs-image'
     def DOCKER_REGISTRY = 'docker.io/jazzmattaz'
+    def DOCKERFILE_PATH = '../../Dockerfile'  // Update this path if Dockerfile is not in the root
 
     try {
+        stage('Print Workspace') {
+            steps {
+                script {
+                    echo "Current workspace directory: ${pwd()}"
+                    sh 'ls -la'
+                }
+            }
+        }
+
         stage('Build') {
             echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest"
-            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest")
+            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest", "-f ${DOCKERFILE_PATH} .")
         }
 
         stage('Push') {
