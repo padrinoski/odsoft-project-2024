@@ -6,12 +6,8 @@ node {
 
     try {
         stage('Print Workspace') {
-            steps {
-                script {
-                    echo "Current workspace directory: ${pwd()}"
-                    sh 'ls -la'
-                }
-            }
+            echo "Current workspace directory: ${pwd()}"
+            sh 'ls -la'
         }
 
         stage('Build') {
