@@ -1,0 +1,154 @@
+version: '3.8'
+
+services:
+
+  # Instance 1 (Command)
+  booksC-1:
+    container_name: booksC-1
+    build: ../../apps/Books/BooksC
+    image: books-c-image:latest
+    restart: unless-stopped
+    mem_limit: 256m
+    depends_on:
+      - db-booksC-1
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094 
+      SPRING_DATA_DB_HOST: db-booksC-1
+      SPRING_DATA_DATABASE_TYPE: ${BOOKS_COMMAND_DATABASE_TO_USE}
+      ID_GENERATOR: ${ID_GENERATOR}
+      RECOMMENDATION_ALGORITHM: ${RECOMMENDATION_ALGORITHM}
+      RECOMMENDATION_X: ${RECOMMENDATION_X}
+      RECOMMENDATION_Y: ${RECOMMENDATION_Y}
+      MINIMUM_AGE: ${MINIMUM_AGE}
+      MAXIMUM_AGE: ${MAXIMUM_AGE}
+    networks:
+      - network
+  db-booksC-1:
+    image: ${BOOKS_COMMAND_DATABASE_IMAGE}
+    restart: unless-stopped
+    mem_limit: 256m
+    container_name: db-booksC-1
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./mongo-scripts/initdb:/docker-entrypoint-initdb.d/
+    ports:
+      - 6383:${BOOKS_COMMAND_DB_PORT}
+    networks:
+      - network
+
+  mongo-express-books-1:
+    container_name: mongo-express-books-1
+    image: mongo-express:latest
+    mem_limit: 256m
+    ports:
+      - 8087:8081
+    depends_on:
+      - db-booksC-1
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=db-booksC-1
+      - ME_CONFIG_BASICAUTH_USERNAME=user
+      - ME_CONFIG_BASICAUTH_PASSWORD=pass
+    networks:
+      - network
+
+  # Instance 2 (Command)
+  booksC-2:
+    container_name: booksC-2
+    build: ../../apps/Books/BooksC
+    image: books-c-image:latest
+    restart: unless-stopped
+    mem_limit: 256m
+    depends_on:
+      - db-booksC-2
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094 
+      SPRING_DATA_DB_HOST: db-booksC-2
+      SPRING_DATA_DATABASE_TYPE: ${BOOKS_COMMAND_DATABASE_TO_USE}
+      ID_GENERATOR: ${ID_GENERATOR}
+      RECOMMENDATION_ALGORITHM: ${RECOMMENDATION_ALGORITHM}
+      RECOMMENDATION_X: ${RECOMMENDATION_X}
+      RECOMMENDATION_Y: ${RECOMMENDATION_Y}
+      MINIMUM_AGE: ${MINIMUM_AGE}
+      MAXIMUM_AGE: ${MAXIMUM_AGE}
+    networks:
+      - network
+  db-booksC-2:
+    image: ${BOOKS_COMMAND_DATABASE_IMAGE}
+    restart: unless-stopped
+    mem_limit: 256m
+    container_name: db-booksC-2
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./mongo-scripts/initdb:/docker-entrypoint-initdb.d/
+    networks:
+      - network
+
+  mongo-express-books-2:
+    container_name: mongo-express-books-2
+    image: mongo-express:latest
+    mem_limit: 256m
+    ports:
+      - 8088:8081
+    depends_on:
+      - db-booksC-2
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=db-booksC-2
+      - ME_CONFIG_BASICAUTH_USERNAME=user
+      - ME_CONFIG_BASICAUTH_PASSWORD=pass
+    networks:
+      - network
+
+
+  # Instance 3 (Command)
+  booksC-3:
+    container_name: booksC-3
+    build: ../../apps/Books/BooksC
+    image: books-c-image:latest
+    restart: unless-stopped
+    mem_limit: 256m
+    depends_on:
+      - db-booksC-3
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094 
+      SPRING_DATA_DB_HOST: db-booksC-3
+      SPRING_DATA_DATABASE_TYPE: ${BOOKS_COMMAND_DATABASE_TO_USE}
+      ID_GENERATOR: ${ID_GENERATOR}
+      RECOMMENDATION_ALGORITHM: ${RECOMMENDATION_ALGORITHM}
+      RECOMMENDATION_X: ${RECOMMENDATION_X}
+      RECOMMENDATION_Y: ${RECOMMENDATION_Y}
+      MINIMUM_AGE: ${MINIMUM_AGE}
+      MAXIMUM_AGE: ${MAXIMUM_AGE}
+    networks:
+      - network
+  db-booksC-3:
+    image: ${BOOKS_COMMAND_DATABASE_IMAGE}
+    restart: unless-stopped
+    mem_limit: 256m
+    container_name: db-booksC-3
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./mongo-scripts/initdb:/docker-entrypoint-initdb.d/
+    networks:
+      - network
+
+  mongo-express-books-3:
+    container_name: mongo-express-books-3
+    image: mongo-express:latest
+    mem_limit: 256m
+    ports:
+      - 8089:8081
+    depends_on:
+      - db-booksC-3
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=db-booksC-3
+      - ME_CONFIG_BASICAUTH_USERNAME=user
+      - ME_CONFIG_BASICAUTH_PASSWORD=pass
+    networks:
+      - network
+
+networks:
+  network:
+    external: true

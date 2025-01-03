@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      restart_policy:
+        condition: none
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+    ports:
+      - target: 80
+        published: 8082
+        protocol: tcp
+        mode: host
+    networks:
+      - network
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+
+networks:
+  network:
+    external: true

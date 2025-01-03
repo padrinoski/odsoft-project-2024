@@ -1,0 +1,13 @@
+sonarqube login:
+admin
+Admin123456!
+
+sonarqube project display name: odsoft-sonarqube
+
+sonarqube project key: odsoft-sonarqube
+
+main branch name: main
+
+token name: odsoft-sonarqube-token-name
+
+token: sqp_75331b857cb8fd8e8dfa7acdd8ff26bc4d31c025

@@ -1,0 +1,175 @@
+version: '3.8'
+
+services:
+  # Instance 1 (Query)
+  booksQ-1:
+    image: book-q-image:latest
+    build: ../apps/Books/BooksQ
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
+      SPRING_DATASOURCE_URL: bolt://neo4j-booksQ-1:7687
+      SPRING_DATASOURCE_USERNAME: neo4j
+      SPRING_DATASOURCE_PASSWORD: test
+    networks:
+      - network
+
+  neo4j-booksQ-1:
+    image: neo4j:4.4
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "1G"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      NEO4J_apoc_export_file_enabled: "true"
+      NEO4J_apoc_import_file_enabled: "true"
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*,algo.*
+      NEO4J_dbms_memory_heap_initial__size: 256m
+      NEO4J_dbms_memory_heap_max__size: 512M
+      NEO4J_apoc_uuid_enabled: "true"
+      NEO4J_dbms_default__listen__address: 0.0.0.0
+      NEO4J_dbms_allow__upgrade: "true"
+      NEO4J_dbms_default__database: neo4j
+      NEO4J_AUTH: neo4j/test
+    ports:
+      - "7688:7687"
+      - "7477:7474"
+    networks:
+      - network
+
+  # Instance 2 (Query)
+  booksQ-2:
+    image: book-q-image:latest
+    build: ../apps/Books/BooksQ
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
+      SPRING_DATASOURCE_URL: bolt://neo4j-booksQ-2:7687
+      SPRING_DATASOURCE_USERNAME: neo4j
+      SPRING_DATASOURCE_PASSWORD: test
+    networks:
+      - network
+
+  neo4j-booksQ-2:
+    image: neo4j:4.4
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "1G"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      NEO4J_apoc_export_file_enabled: "true"
+      NEO4J_apoc_import_file_enabled: "true"
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*,algo.*
+      NEO4J_dbms_memory_heap_initial__size: 256m
+      NEO4J_dbms_memory_heap_max__size: 512M
+      NEO4J_apoc_uuid_enabled: "true"
+      NEO4J_dbms_default__listen__address: 0.0.0.0
+      NEO4J_dbms_allow__upgrade: "true"
+      NEO4J_dbms_default__database: neo4j
+      NEO4J_AUTH: neo4j/test
+    ports:
+      - "7478:7474"
+    networks:
+      - network
+
+  # Instance 3 (Query)
+  booksQ-3:
+    image: book-q-image:latest
+    build: ../apps/Books/BooksQ
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
+      SPRING_DATASOURCE_URL: bolt://neo4j-booksQ-3:7687
+      SPRING_DATASOURCE_USERNAME: neo4j
+      SPRING_DATASOURCE_PASSWORD: test
+    networks:
+      - network
+
+  neo4j-booksQ-3:
+    image: neo4j:4.4
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "1G"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      NEO4J_apoc_export_file_enabled: "true"
+      NEO4J_apoc_import_file_enabled: "true"
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*,algo.*
+      NEO4J_dbms_memory_heap_initial__size: 256m
+      NEO4J_dbms_memory_heap_max__size: 512M
+      NEO4J_apoc_uuid_enabled: "true"
+      NEO4J_dbms_default__listen__address: 0.0.0.0
+      NEO4J_dbms_allow__upgrade: "true"
+      NEO4J_dbms_default__database: neo4j
+      NEO4J_AUTH: neo4j/test
+    ports:
+      - "7479:7474"
+    networks:
+      - network
+
+networks:
+  network:
+    external: true

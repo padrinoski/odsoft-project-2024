@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  mongoDB-bootstrap:
+    image: mongo:latest
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      restart_policy:
+        condition: none
+    volumes:
+      - ./mongo-scripts/initdb:/docker-entrypoint-initdb.d/
+    networks:
+      - network
+
+  populateDBs:
+    image: populate-dbs-image:latest
+    build: ../../apps/Bootstrapper
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      restart_policy:
+        condition: none
+    depends_on:
+      - mongoDB-bootstrap
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
+      SPRING_DATA_MONGODB_DATABASE: events
+      SPRING_DATA_MONGODB_HOST: mongoDB-bootstrap
+      SPRING_DATA_MONGODB_PORT: 27017
+      SPRING_DATA_MONGODB_USERNAME: user
+      SPRING_DATA_MONGODB_PASSWORD: pass
+    networks:
+      - network
+
+  mongo-express-review-1:
+    image: mongo-express:latest
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      restart_policy:
+        condition: none
+    depends_on:
+      - mongoDB-bootstrap
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongoDB-bootstrap
+      ME_CONFIG_BASICAUTH_USERNAME: user
+      ME_CONFIG_BASICAUTH_PASSWORD: pass
+    ports:
+      - target: 8081
+        published: 8060
+        protocol: tcp
+        mode: host
+    networks:
+      - network
+
+networks:
+  network:
+    external: true

@@ -1,0 +1,41 @@
+# filepath: /c:/Users/guicota/Desktop/MEI/odsoft-project-2024/P2/docker-swarm/jenkins.yml
+version: '3.8'
+
+services:
+  jenkins:
+    image: custom-jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    networks:
+      - network
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - jenkins_conf:/var/jenkins_conf
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager  # Ensure Jenkins runs on manager node
+      restart_policy:
+        condition: none
+
+  jenkins-agent:
+    image: jenkins/agent
+    networks:
+      - network
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: none
+    environment:
+      - JENKINS_URL=http://jenkins:8080
+      - JENKINS_AGENT_NAME=swarm-agent
+
+volumes:
+  jenkins_home:
+  jenkins_conf:
+
+networks:
+  network:
+    external: true

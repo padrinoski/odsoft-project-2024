@@ -1,0 +1,241 @@
+version: '3.8'
+
+services:
+  # Instance 1 (Command)
+  booksC-1:
+    image: books-c-image:latest
+    build: ../../apps/Books/BooksC
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
+      SPRING_DATA_DB_HOST: db-booksC-1
+      SPRING_DATA_DATABASE_TYPE: ${BOOKS_COMMAND_DATABASE_TO_USE}
+      ID_GENERATOR: ${ID_GENERATOR}
+      RECOMMENDATION_ALGORITHM: ${RECOMMENDATION_ALGORITHM}
+      RECOMMENDATION_X: ${RECOMMENDATION_X}
+      RECOMMENDATION_Y: ${RECOMMENDATION_Y}
+      MINIMUM_AGE: ${MINIMUM_AGE}
+      MAXIMUM_AGE: ${MAXIMUM_AGE}
+    networks:
+      - network
+
+  db-booksC-1:
+    image: ${BOOKS_COMMAND_DATABASE_IMAGE}
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./mongo-scripts/initdb:/docker-entrypoint-initdb.d/
+    networks:
+      - network
+
+  mongo-express-books-1:
+    image: mongo-express:latest
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=db-booksC-1
+      - ME_CONFIG_BASICAUTH_USERNAME=user
+      - ME_CONFIG_BASICAUTH_PASSWORD=pass
+    ports:
+      - target: 8081
+        published: 8087
+        protocol: tcp
+        mode: host
+    networks:
+      - network
+
+  # Additional instances follow the same structure
+  booksC-2:
+    image: books-c-image:latest
+    build: ../../apps/Books/BooksC
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
+      SPRING_DATA_DB_HOST: db-booksC-2
+      SPRING_DATA_DATABASE_TYPE: ${BOOKS_COMMAND_DATABASE_TO_USE}
+      ID_GENERATOR: ${ID_GENERATOR}
+      RECOMMENDATION_ALGORITHM: ${RECOMMENDATION_ALGORITHM}
+      RECOMMENDATION_X: ${RECOMMENDATION_X}
+      RECOMMENDATION_Y: ${RECOMMENDATION_Y}
+      MINIMUM_AGE: ${MINIMUM_AGE}
+      MAXIMUM_AGE: ${MAXIMUM_AGE}
+    networks:
+      - network
+
+  db-booksC-2:
+    image: ${BOOKS_COMMAND_DATABASE_IMAGE}
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./mongo-scripts/initdb:/docker-entrypoint-initdb.d/
+    networks:
+      - network
+
+  mongo-express-books-2:
+    image: mongo-express:latest
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=db-booksC-2
+      - ME_CONFIG_BASICAUTH_USERNAME=user
+      - ME_CONFIG_BASICAUTH_PASSWORD=pass
+    ports:
+      - target: 8081
+        published: 8088
+        protocol: tcp
+        mode: host
+    networks:
+      - network
+
+  booksC-3:
+    image: books-c-image:latest
+    build: ../../apps/Books/BooksC
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
+      SPRING_DATA_DB_HOST: db-booksC-3
+      SPRING_DATA_DATABASE_TYPE: ${BOOKS_COMMAND_DATABASE_TO_USE}
+      ID_GENERATOR: ${ID_GENERATOR}
+      RECOMMENDATION_ALGORITHM: ${RECOMMENDATION_ALGORITHM}
+      RECOMMENDATION_X: ${RECOMMENDATION_X}
+      RECOMMENDATION_Y: ${RECOMMENDATION_Y}
+      MINIMUM_AGE: ${MINIMUM_AGE}
+      MAXIMUM_AGE: ${MAXIMUM_AGE}
+    networks:
+      - network
+
+  db-booksC-3:
+    image: ${BOOKS_COMMAND_DATABASE_IMAGE}
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./mongo-scripts/initdb:/docker-entrypoint-initdb.d/
+    networks:
+      - network
+
+  mongo-express-books-3:
+    image: mongo-express:latest
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: none
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=db-booksC-3
+      - ME_CONFIG_BASICAUTH_USERNAME=user
+      - ME_CONFIG_BASICAUTH_PASSWORD=pass
+    ports:
+      - target: 8081
+        published: 8088
+        protocol: tcp
+        mode: host
+    networks:
+      - network
+networks:
+  network:
+    external: true
