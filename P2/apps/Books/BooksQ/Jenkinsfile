@@ -1,10 +1,20 @@
 node {
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
-    def DOCKER_IMAGE = 'books-q-image'
+    def DOCKER_IMAGE = 'book-q-image'
     def DOCKER_REGISTRY = 'jazzmattaz'
     def DOCKERFILE_PATH = 'P2/apps/Books/BooksQ/Dockerfile'
     def STACK_NAME = 'books-query'
     def COMPOSE_FILE = 'P2/docker-swarm/books-query.yml'
+    def CONFIG_FILE = "P2/docker-swarm/config.sh"
+    def BOOKS_COMMAND_DATABASE_IMAGE = ''
+    def BOOKS_COMMAND_DATABASE_TO_USE = ''
+    def BOOKS_COMMAND_DB_PORT = ''
+    def ID_GENERATOR = ''
+    def RECOMMENDATION_ALGORITHM = ''
+    def RECOMMENDATION_X = ''
+    def RECOMMENDATION_Y = ''
+    def MINIMUM_AGE = ''
+    def MAXIMUM_AGE = ''
 
     try {
         stage('Checkout') {
@@ -24,7 +34,27 @@ node {
                 docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest").push()
             }
         }
-
+        stage('Load Config'){
+            // Read and parse the config file
+            def config = sh(script: """#!/bin/bash
+                . ${CONFIG_FILE}
+                echo "BOOKS_COMMAND_DATABASE_IMAGE=\$BOOKS_COMMAND_DATABASE_IMAGE"
+                echo "BOOKS_COMMAND_DATABASE_TO_USE=\$BOOKS_COMMAND_DATABASE_TO_USE"
+                echo "BOOKS_COMMAND_DB_PORT=\$BOOKS_COMMAND_DB_PORT"
+                echo "ID_GENERATOR=\$ID_GENERATOR"
+                echo "RECOMMENDATION_ALGORITHM=\$RECOMMENDATION_ALGORITHM"
+                echo "RECOMMENDATION_X=\$RECOMMENDATION_X"
+                echo "RECOMMENDATION_Y=\$RECOMMENDATION_Y"
+                echo "MINIMUM_AGE=\$MINIMUM_AGE"
+                echo "MAXIMUM_AGE=\$MAXIMUM_AGE"
+            """, returnStdout: true).trim()
+            
+            // Parse the output and set environment variables
+            config.split('\n').each { line ->
+                def (key, value) = line.split('=')
+                env[key] = value
+            }
+        }
         stage('Deploy') {
             echo "Deploying with Docker stack"
             
@@ -34,6 +64,9 @@ node {
             // Optional: Update image tag in compose file if using latest
             // sh "sed -i 's|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest|' ${COMPOSE_FILE}"
             
+            sh ". ${CONFIG_FILE}"
+
+
             // Deploy the stack
             sh """
                 docker stack deploy \
