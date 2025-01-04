@@ -6,6 +6,8 @@ start /B docker-compose -f boot-services.yml -p boot-services build
 start /B docker-compose -f populate-databases.yml -p populate-databases build
 start /B docker-compose -f books-query.yml -p books-query build
 start /B docker-compose -f books-command.yml -p books-command build
+start /B docker-compose -f users-query.yml -p users-query build
+start /B docker-compose -f users-command.yml -p users-command build
 REM todo add more services here
 start /B docker-compose -f after-services.yml -p after-services build
 
