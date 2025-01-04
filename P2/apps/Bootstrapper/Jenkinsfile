@@ -14,7 +14,7 @@ node {
         stage('Build') {
             echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest"
             sh 'ls'
-            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest", "-f ${DOCKERFILE_PATH} .")
+            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest", "-f ${DOCKERFILE_PATH} P2/apps/Bootstrapper")
 
         }
 
