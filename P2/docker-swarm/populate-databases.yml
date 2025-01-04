@@ -1,8 +1,5 @@
 version: '3.8'
 
-volumes:
-  mongo-init-scripts:
-
 services:
   mongoDB-bootstrap:
     image: mongo:latest
@@ -62,6 +59,10 @@ services:
         mode: host
     networks:
       - network
+
+volumes:
+  mongo-init-scripts:
+    external: true
 
 networks:
   network:
