@@ -4,7 +4,7 @@ services:
   # Instance 1 (Command)
   booksC-1:
     image: books-c-image:latest
-    build: ../../apps/Books/BooksC
+    # build: ../../apps/Books/BooksC
     deploy:
       replicas: 1
       resources:
