@@ -57,8 +57,8 @@ services:
       NEO4J_dbms_default__database: neo4j
       NEO4J_AUTH: neo4j/test
     ports:
-      - "7688:7687"
-      - "7477:7474"
+      - "7687:7687"
+      - "7474:7474"
     networks:
       - network
 
@@ -118,7 +118,7 @@ services:
       NEO4J_dbms_default__database: neo4j
       NEO4J_AUTH: neo4j/test
     ports:
-      - "7478:7474"
+      - "7475:7474"
     networks:
       - network
 
@@ -178,7 +178,7 @@ services:
       NEO4J_dbms_default__database: neo4j
       NEO4J_AUTH: neo4j/test
     ports:
-      - "7479:7474"
+      - "7476:7474"
     networks:
       - network
 
