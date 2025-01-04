@@ -7,6 +7,9 @@ if errorlevel 1 (
     docker network create --driver overlay network
 )
 
+REM Build Docker image
+docker build -t custom-jenkins .
+
 REM JENKINS
 docker stack deploy -c jenkins.yml jenkins
 
