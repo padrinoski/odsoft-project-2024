@@ -1,7 +1,7 @@
 node {
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     def DOCKER_IMAGE = 'populate-dbs-image'
-    def DOCKER_REGISTRY = 'docker.io/jazzmattaz'
+    def DOCKER_REGISTRY = 'jazzmattaz'
     def DOCKERFILE_PATH = 'P2/apps/Bootstrapper/Dockerfile'  // Update this path if Dockerfile is not in the root
 
     try {
