@@ -5,7 +5,7 @@ node {
     def DOCKERFILE_PATH = 'P2/apps/Books/BooksC/Dockerfile'
     def STACK_NAME = 'books-command'
     def COMPOSE_FILE = 'P2/docker-swarm/books-command.yml'
-    def CONFIG_FILE = "P2/docker-swarm/config.bat"
+    def CONFIG_FILE = "P2/docker-swarm/config.sh"
 
     try {
         stage('Checkout') {
