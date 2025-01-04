@@ -47,7 +47,7 @@ services:
         parallelism: 1
         delay: 10s
       restart_policy:
-        condition: none
+        condition: any
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
@@ -128,7 +128,7 @@ services:
         parallelism: 1
         delay: 10s
       restart_policy:
-        condition: none
+        condition: any
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
@@ -208,7 +208,7 @@ services:
         parallelism: 1
         delay: 10s
       restart_policy:
-        condition: none
+        condition: any
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
