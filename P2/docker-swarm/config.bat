@@ -17,7 +17,6 @@ REM BOOKS - COMMAND
 set BOOKS_COMMAND_DATABASE_IMAGE=mongo:latest
 set BOOKS_COMMAND_DATABASE_TO_USE=1
 set BOOKS_COMMAND_DB_PORT=27017
-REM BOOKS_COMMAND_SKU_ALGORITHM=1 REM 1, 2 or 3 (Algorithm used from the P1)
 
 REM todo add more services here
 

@@ -2,7 +2,7 @@ REM Load environment variables from config.bat
 call config.bat
 
 REM BOOKS COMMAND
-docker stack deploy -c books-command.yml books-command
+docker stack deploy --with-registry-auth -c books-command.yml books-command
 
 REM Wait for the BOOKS COMMAND service to be healthy
 :wait_loop_books_command
