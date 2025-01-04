@@ -4,7 +4,9 @@ services:
   # Instance 1 (Command)
   booksC-1:
     image: books-c-image:latest
-    build: ../../apps/Books/BooksC
+    build: 
+      context: ../../apps/Books/BooksC
+      dockerfile: Dockerfile
     deploy:
       replicas: 1
       resources:
@@ -85,7 +87,9 @@ services:
   # Additional instances follow the same structure
   booksC-2:
     image: books-c-image:latest
-    build: ../../apps/Books/BooksC
+    build: 
+      context: ../../apps/Books/BooksC
+      dockerfile: Dockerfile
     deploy:
       replicas: 1
       resources:
@@ -165,7 +169,9 @@ services:
 
   booksC-3:
     image: books-c-image:latest
-    build: ../../apps/Books/BooksC
+    build: 
+      context: ../../apps/Books/BooksC
+      dockerfile: Dockerfile
     deploy:
       replicas: 1
       resources:
