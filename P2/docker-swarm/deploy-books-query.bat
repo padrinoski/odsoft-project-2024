@@ -3,7 +3,7 @@ call config.bat
 
 
 REM BOOKS QUERY
-docker stack deploy -c books-query.yml books-query
+docker stack deploy --with-registry-auth -c books-query.yml books-query
 
 REM Wait for the BOOKS QUERY service to be healthy
 :wait_loop_books_query
