@@ -12,12 +12,14 @@ docker stack rm jenkins
 docker stack rm boot-services
 docker stack rm books-query
 docker stack rm books-command
+docker stack rm users-query
+docker stack rm users-command
 docker stack rm after-services
 docker stack rm populate-databases
 
 REM Wait for all stacks to be removed
 :wait_loop_stacks
-docker stack ls | findstr /I "boot-services\|books-query\|books-command\|after-services\|populate-databases" >nul 2>&1
+docker stack ls | findstr /I "boot-services\|books-query\|books-command\|users-query\|users-command\|after-services\|populate-databases" >nul 2>&1
 if not errorlevel 1 (
     timeout /T 5 >nul
     goto wait_loop_stacks
