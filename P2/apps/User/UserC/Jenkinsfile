@@ -1,0 +1,112 @@
+node {
+    def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
+    def DOCKER_IMAGE = 'user-q-image'
+    def DOCKER_REGISTRY = 'hellensantos'
+    def DOCKERFILE_PATH = 'P2/apps/User/UserC/Dockerfile'
+    def STACK_NAME = 'users-query'
+    def COMPOSE_FILE = 'P2/docker-swarm/users-query.yml'
+    def CONFIG_FILE = "P2/docker-swarm/config.sh"
+    def USERS_COMMAND_DATABASE_IMAGE = ''
+    def USERS_COMMAND_DATABASE_TO_USE = ''
+    def USERS_COMMAND_DB_PORT = ''
+    def ID_GENERATOR = ''
+    def RECOMMENDATION_ALGORITHM = ''
+    def RECOMMENDATION_X = ''
+    def RECOMMENDATION_Y = ''
+    def MINIMUM_AGE = ''
+    def MAXIMUM_AGE = ''
+
+    try {
+        stage('Checkout') {
+            echo "Checking out source code"
+            checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/padrinoski/odsoft-project-2024.git']]])
+        }
+
+        stage('Build') {
+            echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest"
+            sh 'ls'
+            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest", "-f ${DOCKERFILE_PATH} P2/apps/User/UserC")
+        }
+
+        stage('Push') {
+            echo "Pushing Docker image to ${DOCKER_REGISTRY}"
+            docker.withRegistry("", DOCKER_CREDENTIALS_ID) {
+                docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest").push()
+            }
+        }
+        stage('Load Config'){
+            // Read and parse the config file
+            def config = sh(script: """#!/bin/bash
+                . ${CONFIG_FILE}
+                echo "USERS_COMMAND_DATABASE_IMAGE=\$USERS_COMMAND_DATABASE_IMAGE"
+                echo "USERS_COMMAND_DATABASE_TO_USE=\$USERS_COMMAND_DATABASE_TO_USE"
+                echo "USERS_COMMAND_DB_PORT=\$USERS_COMMAND_DB_PORT"
+                echo "ID_GENERATOR=\$ID_GENERATOR"
+                echo "RECOMMENDATION_ALGORITHM=\$RECOMMENDATION_ALGORITHM"
+                echo "RECOMMENDATION_X=\$RECOMMENDATION_X"
+                echo "RECOMMENDATION_Y=\$RECOMMENDATION_Y"
+                echo "MINIMUM_AGE=\$MINIMUM_AGE"
+                echo "MAXIMUM_AGE=\$MAXIMUM_AGE"
+            """, returnStdout: true).trim()
+            
+            // Parse the output and set environment variables
+            config.split('\n').each { line ->
+                def (key, value) = line.split('=')
+                env[key] = value
+            }
+        }
+        stage('Deploy') {
+            echo "Deploying with Docker stack"
+            
+            // Ensure the compose file exists
+            sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
+            
+            // Optional: Update image tag in compose file if using latest
+            // sh "sed -i 's|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest|' ${COMPOSE_FILE}"
+            
+            sh ". ${CONFIG_FILE}"
+
+
+            // Deploy the stack
+            sh """
+                docker stack deploy \
+                    --with-registry-auth \
+                    -c ${COMPOSE_FILE} \
+                    ${STACK_NAME}
+            """
+            
+            // Wait for services to be running
+            sh """
+                # Wait for service to be updated
+                ATTEMPTS=0
+                MAX_ATTEMPTS=30
+                until docker stack services ${STACK_NAME} | grep -q '1/1' || [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; do
+                    echo "Waiting for services to be ready..."
+                    sleep 10
+                    ATTEMPTS=\$((ATTEMPTS+1))
+                done
+                
+                if [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; then
+                    echo "Service deployment timed out"
+                    exit 1
+                fi
+            """
+        }
+
+        stage('Test') {
+            echo "Running tests (to be implemented)"
+            // Add your test logic here
+        }
+
+    } catch (Exception e) {
+        currentBuild.result = 'FAILURE'
+        echo "Build failed: ${e.message}"
+        throw e
+    } finally {
+        stage('Cleanup') {
+            echo 'Cleaning up Docker system'
+            deleteDir()
+            sh 'docker system prune -f'
+        }
+    }
+}
