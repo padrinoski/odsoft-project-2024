@@ -3,8 +3,8 @@ node {
     def DOCKER_IMAGE = 'books-c-image'
     def DOCKER_REGISTRY = 'jazzmattaz'
     def DOCKERFILE_PATH = 'P2/apps/Books/BooksC/Dockerfile'
-    def STACK_NAME = 'books-query'
-    def COMPOSE_FILE = 'P2/docker-swarm/books-query.yml'
+    def STACK_NAME = 'books-command'
+    def COMPOSE_FILE = 'P2/docker-swarm/books-command.yml'
 
     try {
         stage('Checkout') {
