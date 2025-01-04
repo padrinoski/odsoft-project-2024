@@ -81,7 +81,7 @@ services:
       - ME_CONFIG_BASICAUTH_PASSWORD=pass
     ports:
       - target: 8081
-        published: 8087
+        published: 8091
         protocol: tcp
         mode: host
     networks:
@@ -164,7 +164,7 @@ services:
       - ME_CONFIG_BASICAUTH_PASSWORD=pass
     ports:
       - target: 8081
-        published: 8088
+        published: 8092
         protocol: tcp
         mode: host
     networks:
@@ -246,7 +246,7 @@ services:
       - ME_CONFIG_BASICAUTH_PASSWORD=pass
     ports:
       - target: 8081
-        published: 8089
+        published: 8093
         protocol: tcp
         mode: host
     networks:
