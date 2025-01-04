@@ -20,7 +20,7 @@ node {
 
         stage('Push') {
             echo "Pushing Docker image to ${DOCKER_REGISTRY}"
-            docker.withRegistry("https://${DOCKER_REGISTRY}", DOCKER_CREDENTIALS_ID) {
+            docker.withRegistry("", DOCKER_CREDENTIALS_ID) {
                 docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest").push()
             }
         }
