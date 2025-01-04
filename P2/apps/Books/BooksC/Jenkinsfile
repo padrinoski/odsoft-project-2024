@@ -35,7 +35,7 @@ node {
             // Optional: Update image tag in compose file if using latest
             // sh "sed -i 's|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest|' ${COMPOSE_FILE}"
             
-            bat "call ${CONFIG_FILE}"
+            sh "source ${CONFIG_FILE}"
 
 
             // Deploy the stack
