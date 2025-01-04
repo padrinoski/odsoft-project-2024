@@ -1,5 +1,8 @@
 version: '3.8'
 
+volumes:
+  mongo-initdb:
+
 services:
   # Instance 1 (Command)
   booksC-1:
@@ -53,8 +56,7 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
-      - ${WORKSPACE}/P2/docker-swarm/mongo-scripts/initdb:/docker-entrypoint-initdb.d/
-
+      - mongo-initdb:/docker-entrypoint-initdb.d/
     networks:
       - network
 
@@ -85,38 +87,6 @@ services:
     networks:
       - network
 
-  # Additional instances follow the same structure
-  booksC-2:
-    image: books-c-image:latest
-    build: 
-      context: ../../apps/Books/BooksC
-      dockerfile: Dockerfile
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: "512M"
-      update_config:
-        parallelism: 1
-        delay: 10s
-      rollback_config:
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: none
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
-      SPRING_DATA_DB_HOST: db-booksC-2
-      SPRING_DATA_DATABASE_TYPE: ${BOOKS_COMMAND_DATABASE_TO_USE}
-      ID_GENERATOR: ${ID_GENERATOR}
-      RECOMMENDATION_ALGORITHM: ${RECOMMENDATION_ALGORITHM}
-      RECOMMENDATION_X: ${RECOMMENDATION_X}
-      RECOMMENDATION_Y: ${RECOMMENDATION_Y}
-      MINIMUM_AGE: ${MINIMUM_AGE}
-      MAXIMUM_AGE: ${MAXIMUM_AGE}
-    networks:
-      - network
 
   db-booksC-2:
     image: ${BOOKS_COMMAND_DATABASE_IMAGE}
@@ -137,7 +107,7 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
-      - ./mongo-scripts/initdb:/docker-entrypoint-initdb.d/
+      - mongo-initdb:/docker-entrypoint-initdb.d/ 
     networks:
       - network
 
@@ -168,38 +138,6 @@ services:
     networks:
       - network
 
-  booksC-3:
-    image: books-c-image:latest
-    build: 
-      context: ../../apps/Books/BooksC
-      dockerfile: Dockerfile
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: "512M"
-      update_config:
-        parallelism: 1
-        delay: 10s
-      rollback_config:
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: none
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
-      SPRING_DATA_DB_HOST: db-booksC-3
-      SPRING_DATA_DATABASE_TYPE: ${BOOKS_COMMAND_DATABASE_TO_USE}
-      ID_GENERATOR: ${ID_GENERATOR}
-      RECOMMENDATION_ALGORITHM: ${RECOMMENDATION_ALGORITHM}
-      RECOMMENDATION_X: ${RECOMMENDATION_X}
-      RECOMMENDATION_Y: ${RECOMMENDATION_Y}
-      MINIMUM_AGE: ${MINIMUM_AGE}
-      MAXIMUM_AGE: ${MAXIMUM_AGE}
-    networks:
-      - network
-
   db-booksC-3:
     image: ${BOOKS_COMMAND_DATABASE_IMAGE}
     deploy:
@@ -219,7 +157,7 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
-      - ./mongo-scripts/initdb:/docker-entrypoint-initdb.d/
+      - mongo-initdb:/docker-entrypoint-initdb.d/ 
     networks:
       - network
 
@@ -249,6 +187,7 @@ services:
         mode: host
     networks:
       - network
+
 networks:
   network:
     external: true
