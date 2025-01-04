@@ -1,7 +1,7 @@
 node {
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     def DOCKER_IMAGE = 'populate-dbs-image'
-    def DOCKER_REGISTRY = 'jazzmatazz'
+    def DOCKER_REGISTRY = 'hellensantos'
     def DOCKERFILE_PATH = 'P2/apps/Bootstrapper/Dockerfile'
     def STACK_NAME = 'populate-databases'
     def COMPOSE_FILE = 'P2/docker-swarm/populate-databases.yml'
