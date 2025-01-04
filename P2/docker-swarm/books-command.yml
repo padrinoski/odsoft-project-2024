@@ -4,12 +4,12 @@ services:
   # Instance 1 (Command)
   booksC-1:
     image: books-c-image:latest
-    # build: ../../apps/Books/BooksC
+    build: ../../apps/Books/BooksC
     deploy:
-      replicas: 1
       resources:
         limits:
-          memory: 256M
+          cpus: "0.5"
+          memory: "512M"
       update_config:
         parallelism: 1
         delay: 10s
@@ -34,10 +34,10 @@ services:
   db-booksC-1:
     image: ${BOOKS_COMMAND_DATABASE_IMAGE}
     deploy:
-      replicas: 1
       resources:
         limits:
-          memory: 256M
+          cpus: "0.5"
+          memory: "1G"
       update_config:
         parallelism: 1
         delay: 10s
@@ -56,7 +56,6 @@ services:
   mongo-express-books-1:
     image: mongo-express:latest
     deploy:
-      replicas: 1
       resources:
         limits:
           memory: 256M
@@ -83,12 +82,12 @@ services:
   # Additional instances follow the same structure
   booksC-2:
     image: books-c-image:latest
-    # build: ../../apps/Books/BooksC
+    build: ../../apps/Books/BooksC
     deploy:
-      replicas: 1
       resources:
         limits:
-          memory: 256M
+          cpus: "0.5"
+          memory: "512M"
       update_config:
         parallelism: 1
         delay: 10s
@@ -113,10 +112,10 @@ services:
   db-booksC-2:
     image: ${BOOKS_COMMAND_DATABASE_IMAGE}
     deploy:
-      replicas: 1
       resources:
         limits:
-          memory: 256M
+          cpus: "0.5"
+          memory: "1G"
       update_config:
         parallelism: 1
         delay: 10s
@@ -135,7 +134,6 @@ services:
   mongo-express-books-2:
     image: mongo-express:latest
     deploy:
-      replicas: 1
       resources:
         limits:
           memory: 256M
@@ -161,12 +159,12 @@ services:
 
   booksC-3:
     image: books-c-image:latest
-    # build: ../../apps/Books/BooksC
+    build: ../../apps/Books/BooksC
     deploy:
-      replicas: 1
       resources:
         limits:
-          memory: 256M
+          cpus: "0.5"
+          memory: "512M"
       update_config:
         parallelism: 1
         delay: 10s
@@ -191,10 +189,10 @@ services:
   db-booksC-3:
     image: ${BOOKS_COMMAND_DATABASE_IMAGE}
     deploy:
-      replicas: 1
       resources:
         limits:
-          memory: 256M
+          cpus: "0.5"
+          memory: "1G"
       update_config:
         parallelism: 1
         delay: 10s
@@ -213,7 +211,6 @@ services:
   mongo-express-books-3:
     image: mongo-express:latest
     deploy:
-      replicas: 1
       resources:
         limits:
           memory: 256M
