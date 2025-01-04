@@ -24,7 +24,7 @@ services:
     networks:
       - network
 
-  kafka:
+  kafka1:
     image: confluentinc/cp-kafka:5.5.0
     deploy:
       resources:
