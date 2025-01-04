@@ -67,15 +67,15 @@ public class UserService {
 			user = new User(user.getUsername(), user.getPassword(), user.getName());
 		}
 
-        if (user.getAuthorities().equals(Role.READER)) {
+        if (user.getAuthority().equals(Role.READER)) {
             user = Reader.newReader(user.getUsername(), user.getPassword(), user.getName());
-        } else if (user.getAuthorities().equals(Role.LIBRARIAN)) {
+        } else if (user.getAuthority().equals(Role.LIBRARIAN)) {
             user = Librarian.newLibrarian(user.getUsername(), user.getPassword(), user.getName());
         } else {
             return null;
         }
 
-		final CreateUserEvent eventMsg = new CreateUserEvent(user.getUsername(), user.getPassword(), user.getName(), user.getAuthorities());
+		final CreateUserEvent eventMsg = new CreateUserEvent(user.getUsername(), user.getPassword(), user.getName(), user.getAuthority());
 		final Event event = new Event(EventType.USER_CREATE, eventMsg);
 		eventServiceProducer.sendEvent(event, ApplicationType.USER);
 		log.info("Create User: " + eventMsg);
@@ -89,7 +89,7 @@ public class UserService {
 			throw new Exception("User with ID " + id + "not found!");
 		}
 
-		final UpdateUserEvent eventMsg = new UpdateUserEvent(user.getUsername(), user.getPassword(), user.getName(), user.getAuthorities());
+		final UpdateUserEvent eventMsg = new UpdateUserEvent(user.getID(),user.getUsername(), user.getPassword(), user.getName(), user.getAuthority());
 		final Event event = new Event(EventType.USER_UPDATE, eventMsg);
 		eventServiceProducer.sendEvent(event, ApplicationType.USER);
 		log.info("Update User: " + eventMsg);

@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import pt.psoft.g1.psoftg1.common.Event;
 import pt.psoft.g1.psoftg1.common.EventType;
 import pt.psoft.g1.psoftg1.common.domain.*;
-import pt.psoft.g1.psoftg1.common.domain.DeleteGenreEvent;
-import pt.psoft.g1.psoftg1.common.domain.DeleteBookEvent;
 
 import java.io.IOException;
 
@@ -22,7 +20,7 @@ public class EventDeserializer extends JsonDeserializer<Event> {
         EventType eventType = EventType.valueOf(node.get("eventType").asText());
         switch (eventType) {
             case BOOT_USERS:
-                BootstrapUserEvent bootstrapUserEvent = jsonParser.getCodec().treeToValue(node.get(eventData), BootstrapUserEvent.class);
+                CreateUserEvent bootstrapUserEvent = jsonParser.getCodec().treeToValue(node.get(eventData), CreateUserEvent.class);
                 return new Event(timestamp, eventType, bootstrapUserEvent);
             case BOOT_BOOKS:
                 BootstrapBookEvent bootstrapBookEvent = jsonParser.getCodec().treeToValue(node.get(eventData), BootstrapBookEvent.class);
@@ -33,6 +31,24 @@ public class EventDeserializer extends JsonDeserializer<Event> {
             case BOOT_GENRES:
                 BootstrapGenreEvent bootstrapGenreEvent = jsonParser.getCodec().treeToValue(node.get(eventData), BootstrapGenreEvent.class);
                 return new Event(timestamp, eventType, bootstrapGenreEvent);
+            case USER_CREATE:
+                CreateUserEvent createUserEvent = jsonParser.getCodec().treeToValue(node.get(eventData), CreateUserEvent.class);
+                return new Event(timestamp, eventType, createUserEvent);
+            case USER_DELETE:
+                DeleteUserEvent deleteUserEvent = jsonParser.getCodec().treeToValue(node.get(eventData), DeleteUserEvent.class);
+                return new Event(timestamp, eventType, deleteUserEvent);
+            case USER_UPDATE:
+                UpdateUserEvent updateUserEvent = jsonParser.getCodec().treeToValue(node.get(eventData), UpdateUserEvent.class);
+                return new Event(timestamp, eventType, updateUserEvent);
+            case READER_CREATE:
+                CreateReaderEvent createReaderEvent = jsonParser.getCodec().treeToValue(node.get(eventData), CreateReaderEvent.class);
+                return new Event(timestamp, eventType, createReaderEvent);
+            case READER_DELETE:
+                DeleteReaderEvent deleteReaderEvent = jsonParser.getCodec().treeToValue(node.get(eventData), DeleteReaderEvent.class);
+                return new Event(timestamp, eventType, deleteReaderEvent);
+            case READER_UPDATE:
+                UpdateReaderEvent updateReaderEvent = jsonParser.getCodec().treeToValue(node.get(eventData), UpdateReaderEvent.class);
+                return new Event(timestamp, eventType, updateReaderEvent);
             case BOOK_CREATE:
                 CreateBookEvent createBookEvent = jsonParser.getCodec().treeToValue(node.get(eventData), CreateBookEvent.class);
                 return new Event(timestamp, eventType, createBookEvent);

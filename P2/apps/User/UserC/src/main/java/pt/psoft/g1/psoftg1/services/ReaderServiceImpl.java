@@ -37,7 +37,7 @@ public class ReaderServiceImpl implements ReaderService {
             throw new Exception("User with ID " + reader.getID() + " already exists!");
         }
 
-        final CreateReaderEvent eventMsg = new CreateReaderEvent(reader.getBirthDate(), reader.getPhoneNumber(), reader.getVersion(), reader.getInterestList());
+        final CreateReaderEvent eventMsg = new CreateReaderEvent(reader.getUsername(), reader.getPassword(), reader.getName(), reader.getAuthorities(),reader.getBirthDate(), reader.getPhoneNumber(), reader.getInterestList());
         final Event event = new Event(EventType.READER_CREATE, eventMsg);
         eventServiceProducer.sendEvent(event, ApplicationType.READER);
         log.info("Create Reader: " + eventMsg);
@@ -50,7 +50,7 @@ public class ReaderServiceImpl implements ReaderService {
             throw new Exception("User with ID " + id + " nto found!");
         }
 
-        final CreateReaderEvent eventMsg = new CreateReaderEvent(request.getBirthDate(), request.getPhoneNumber(), request.getVersion(), request.getInterestList());
+        final CreateReaderEvent eventMsg = new CreateReaderEvent(request.getUsername(), request.getPassword(), request.getName(), request.getAuthorities(),request.getBirthDate(), request.getPhoneNumber(), request.getInterestList());
         final Event event = new Event(EventType.READER_UPDATE, eventMsg);
         eventServiceProducer.sendEvent(event, ApplicationType.READER);
         log.info("Update Reader: " + eventMsg);

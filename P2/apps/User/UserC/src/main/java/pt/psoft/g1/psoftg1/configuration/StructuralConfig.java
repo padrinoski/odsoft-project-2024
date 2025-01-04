@@ -9,32 +9,31 @@ import pt.psoft.g1.psoftg1.repositories.EventRepository;
 import pt.psoft.g1.psoftg1.repositories.EventRepositoryImpl;
 import pt.psoft.g1.psoftg1.shared.IDGenerators.IDGenerator;
 import pt.psoft.g1.psoftg1.shared.IDGenerators.IDGenerator1;
+import pt.psoft.g1.psoftg1.shared.IDGenerators.IDGenerator2;
 
 
 @Configuration
 public class StructuralConfig {
 
-    @Value("${data.model}")
-    private int dataModel;
-
-    @Value("${id.generator}")
-    private int idGenerator;
-
-    private final MongoTemplate mongoTemplate;
-
-    public StructuralConfig(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
-
+    @Value("${data-model}")
+    private String dataModel;
+    @Value("${id-generator}")
+    private String  idGenerator;
     @Bean
-    public IDGenerator getIDGenerator() {
-        return new IDGenerator1();
-    }
-
-
     @Primary
+    public EventRepository getEventRepository(final MongoTemplate mongoTemplate) {
+        return switch (dataModel) {
+            case "2" -> new EventRepositoryImpl(mongoTemplate);
+            default -> new EventRepositoryImpl(mongoTemplate);
+        };
+    }
+
+
     @Bean
-    public EventRepository eventRepository() {
-        return new EventRepositoryImpl(mongoTemplate);
+    public IDGenerator getIdGenerator() {
+        return switch (idGenerator) {
+            case "2" -> new IDGenerator2();
+            default -> new IDGenerator1();
+        };
     }
 }

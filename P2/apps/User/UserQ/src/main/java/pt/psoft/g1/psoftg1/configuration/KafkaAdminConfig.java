@@ -8,10 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaAdmin;
 import pt.psoft.g1.psoftg1.common.ApplicationType;
 
-
 import java.util.HashMap;
 import java.util.Map;
-
 
 @Configuration
 public class KafkaAdminConfig {
@@ -28,6 +26,6 @@ public class KafkaAdminConfig {
 
     @Bean
     public NewTopic topic1() {
-        return new NewTopic(ApplicationType.READER.toString(), 1, (short) 1);
+        return new NewTopic(ApplicationType.USER.toString(), 1, (short) 1);
     }
 }

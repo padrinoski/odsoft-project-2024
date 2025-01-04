@@ -16,5 +16,5 @@ public class UserDTO {
     private String username;
     private String password;
     private String name;
-    private Set<Role> authorities = new HashSet<>();
+    private Role authority;
 }

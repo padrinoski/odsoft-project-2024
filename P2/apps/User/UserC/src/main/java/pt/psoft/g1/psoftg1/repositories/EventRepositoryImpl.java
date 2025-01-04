@@ -2,6 +2,7 @@ package pt.psoft.g1.psoftg1.repositories;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Repository;
 import pt.psoft.g1.psoftg1.common.Event;
 
 import java.util.Optional;
@@ -12,6 +13,7 @@ import static pt.psoft.g1.psoftg1.common.EventType.*;
 
 
 @Log4j2
+@Repository
 public class EventRepositoryImpl extends MongoBaseRepository<Event, String> implements EventRepository {
 
     public EventRepositoryImpl(final MongoTemplate mongoTemplate) {

@@ -22,10 +22,4 @@ public class KafkaAdminConfig {
         Map<String, Object> configs = new HashMap<>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         return new KafkaAdmin(configs);
-    }
-
-    @Bean
-    public NewTopic topic1() {
-        return new NewTopic(ApplicationType.USER.toString(), 1, (short) 1);
-    }
-}
+    }}

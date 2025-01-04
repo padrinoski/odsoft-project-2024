@@ -1,11 +1,11 @@
 package pt.psoft.g1.psoftg1.common;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import pt.psoft.g1.psoftg1.common.domain.EventMsg;
-import pt.psoft.g1.psoftg1.common.utils.EventDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pt.psoft.g1.psoftg1.common.domain.EventMsg;
+import pt.psoft.g1.psoftg1.common.utils.EventDeserializer;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

@@ -5,11 +5,16 @@ public enum EventType {
     BOOT_USERS,
     BOOT_BOOKS,
     BOOT_AUTHORS,
-
     BOOT_GENRES,
+
     USER_CREATE,
     USER_DELETE,
     USER_UPDATE,
+
+    READER_CREATE,
+    READER_DELETE,
+    READER_UPDATE,
+
     BOOK_CREATE,
     BOOK_DELETE,
     BOOK_UPDATE,

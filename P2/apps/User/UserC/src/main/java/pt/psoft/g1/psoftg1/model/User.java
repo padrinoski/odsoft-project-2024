@@ -50,13 +50,10 @@ import lombok.Setter;
  *
  */
 @Entity
-@Table(name = "T_USER")
 @EntityListeners(AuditingEntityListener.class)
 @Document("users")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class User implements UserDetails, GetID<String> {
-
-	private static final long serialVersionUID = 1L;
+public class User implements GetID<String> {
 
 	// database primary key
 	@Id
@@ -64,34 +61,6 @@ public class User implements UserDetails, GetID<String> {
 	@Getter
 	@Column(name="USER_ID")
 	private String id;
-
-	// optimistic lock concurrency control
-	@Version
-	//@org.springframework.data.annotation.Version
-	private Long version;
-
-	// auditing info
-	@CreatedDate
-	@Column(nullable = false, updatable = false)
-	@Getter
-	private LocalDateTime createdAt;
-
-	// auditing info
-	@LastModifiedDate
-	@Column(nullable = false)
-	@Getter
-	private LocalDateTime modifiedAt;
-
-	// auditing info
-	@CreatedBy
-	@Column(nullable = false, updatable = false)
-	@Getter
-	private String createdBy;
-
-	// auditing info
-	@LastModifiedBy
-	@Column(nullable = false)
-	private String modifiedBy;
 
 	@Setter
 	@Getter
@@ -116,9 +85,8 @@ public class User implements UserDetails, GetID<String> {
 	@Embedded
 	private String name;
 
-	@ElementCollection(fetch = FetchType.EAGER)
 	@Getter
-	private Set<Role> authorities = new HashSet<>();
+	private Role authority;
 
 	protected User() {
 		// for ORM only
@@ -174,23 +142,10 @@ public class User implements UserDetails, GetID<String> {
 	}
 
     public void addAuthority(final Role r) {
-		authorities.add(r);
+		this.authority = r;
 	}
 
-	@Override
-	public boolean isAccountNonExpired() {
-		return isEnabled();
-	}
 
-	@Override
-	public boolean isAccountNonLocked() {
-		return isEnabled();
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return isEnabled();
-	}
 
 	@Override
 	public String getID() {
@@ -198,6 +153,6 @@ public class User implements UserDetails, GetID<String> {
 	}
 
 	public UserDTO toDTO() {
-		return new UserDTO(this.id, this.username, this.password, this.name, this.authorities);
+		return new UserDTO(this.id, this.username, this.password, this.name, this.authority);
 	}
 }

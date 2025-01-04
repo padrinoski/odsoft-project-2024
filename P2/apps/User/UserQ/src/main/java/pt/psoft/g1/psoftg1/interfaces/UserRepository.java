@@ -20,36 +20,21 @@
  */
 package pt.psoft.g1.psoftg1.interfaces;
 
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.NoRepositoryBean;
+import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.model.User;
+
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.data.repository.NoRepositoryBean;
-import pt.psoft.g1.psoftg1.dto.SearchUsersQuery;
-import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
-import pt.psoft.g1.psoftg1.model.user.User;
-import pt.psoft.g1.psoftg1.shared.services.Page;
 
 /**
  *
  */
 @NoRepositoryBean
-public interface UserRepository{
-
-
-
-	Optional<User> findById(String objectId);
-
-	default User getById(final String id) {
-		final Optional<User> maybeUser = findById(id);
-		// throws 404 Not Found if the user does not exist or is not enabled
-		return maybeUser.filter(User::isEnabled).orElseThrow(() -> new NotFoundException(User.class, id));
-	}
+public interface UserRepository extends CrudRepository<User, String> {
 
 	Optional<User> findByUsername(String username);
-
-	List<User> searchUsers(Page page, SearchUsersQuery query);
-
 	List<User> findByName(String name);
-	List<User> findByNameContains(String name);
 
 }

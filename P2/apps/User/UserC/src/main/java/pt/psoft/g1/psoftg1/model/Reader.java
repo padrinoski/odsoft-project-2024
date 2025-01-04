@@ -32,10 +32,6 @@ public class Reader extends User {
     @Getter
     private boolean thirdPartySharingConsent;*/
 
-    @org.springframework.data.annotation.Version
-    @Getter
-    private Long version;
-
     @Getter
     @Setter
     @ElementCollection
@@ -85,6 +81,6 @@ public class Reader extends User {
 
 
     public ReaderDTO toReaderDTO() {
-        return new ReaderDTO( this.birthDate, this.phoneNumber, this.version, this.interestList);
+        return new ReaderDTO( this.birthDate, this.phoneNumber, this.interestList);
     }
 }

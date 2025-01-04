@@ -7,10 +7,8 @@ import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.common.ApplicationType;
 import pt.psoft.g1.psoftg1.common.Event;
 import pt.psoft.g1.psoftg1.common.EventType;
-import pt.psoft.g1.psoftg1.common.domain.CreateAuthorEvent;
-import pt.psoft.g1.psoftg1.common.domain.CreateBookEvent;
-import pt.psoft.g1.psoftg1.common.domain.CreateGenreEvent;
-import pt.psoft.g1.psoftg1.common.domain.BootstrapUserEvent;
+import pt.psoft.g1.psoftg1.common.domain.*;
+import pt.psoft.g1.psoftg1.model.Role;
 import pt.psoft.g1.psoftg1.service.EventService;
 
 import java.util.Arrays;
@@ -32,23 +30,39 @@ public class DatabaseBootstrapper implements CommandLineRunner {
     }
 
     public void bootstrapUsers() {
-        final List<BootstrapUserEvent> users = Arrays.asList(
-                new BootstrapUserEvent((long) -1, "server", "server", "server", Set.of("Server"),"server", "server"),
-                new BootstrapUserEvent((long) 1, "admin1@mail.com", "AdminPW1", "Jose Antonio", Set.of("ADMIN"),"355489123", "Rua Um"),
-                new BootstrapUserEvent((long) 2, "admin2@mail.com", "AdminPW2", "Antonio Jose", Set.of("ADMIN"),"321984553", "Rua dois"),
-                new BootstrapUserEvent((long) 3, "librarian1@mail.com", "librarian1", "Nuno Miguel",Set.of("LIBRARIAN"), "253647883", "Rua tres"),
-                new BootstrapUserEvent((long) 4, "librarian2@mail.com", "librarian2", "Miguel Nuno",Set.of("LIBRARIAN"), "253698854", "Rua quatro"),
-                new BootstrapUserEvent((long) 5, "librarian3@mail.com", "librarian3", "Antonio Pedro",Set.of("LIBRARIAN"), "254148863", "Rua vinte"),
-                new BootstrapUserEvent((long) 6, "reader1@mail.com", "reader1", "Pedro Antonio",Set.of("READER"), "452369871", "Rua cinco"),
-                new BootstrapUserEvent((long) 7, "reader2@mail.com", "reader2", "Ricardo Joao",Set.of("READER"), "452858596", "Rua seis"),
-                new BootstrapUserEvent((long) 8, "reader3@mail.com", "reader3", "Joao Ricardo",Set.of("READER"), "425364781", "Rua sete"),
-                new BootstrapUserEvent((long) 9, "reader4@mail.com", "reader4", "Luis Pedro",Set.of("READER"), "526397747", "Rua oito"),
-                new BootstrapUserEvent((long) 10, "reader5@mail.com", "reader5", "Pedro Luis",Set.of("READER"), "523689471", "Rua nove "),
-                new BootstrapUserEvent((long) 11, "reader6@mail.com", "reader6", "Marco Antonio",Set.of("READER"), "253148965", "Rua dez"),
-                new BootstrapUserEvent((long) 12, "reader7@mail.com", "reader7", "Antonio Marco",Set.of("READER"), "201023056", "Rua onze"),
-                new BootstrapUserEvent((long) 13, "reader8@mail.com", "reader8", "Rui Ricardo",Set.of("READER"), "748526326", "Rua doze"),
-                new BootstrapUserEvent((long) 14, "reader9@mail.com", "reader9", "Rui Ribeiro", Set.of("READER"),"748526327", "Rua catorze"),
-                new BootstrapUserEvent((long) 15, "reader10@mail.com", "reader10", "Luis camoes", Set.of("READER"),"748526328", "Rua quinze")
+        final List<CreateUserEvent> users = Arrays.asList(
+                new CreateUserEvent( "server", "server", "Andreventura!123",
+                        Set.of(new Role(Role.ADMIN))),
+                new CreateUserEvent( "admin1@mail.com", "Jose Antonio","Andreventura!123",
+                        Set.of(new Role(Role.ADMIN))),
+                new CreateUserEvent( "admin2@mail.com", "Antonio Jose", "Andreventura!123",
+                        Set.of(new Role(Role.ADMIN))),
+                new CreateUserEvent( "librarian1@mail.com",  "Nuno Miguel","Andreventura!123",
+                        Set.of(new Role(Role.LIBRARIAN))),
+                new CreateUserEvent( "librarian2@mail.com", "Miguel Nuno","Andreventura!123",
+                        Set.of(new Role(Role.LIBRARIAN))),
+                new CreateUserEvent( "librarian3@mail.com", "Antonio Pedro","Andreventura!123",
+                        Set.of(new Role(Role.LIBRARIAN))),
+                new CreateUserEvent( "reader1@mail.com","Pedro Antonio","Andreventura!123",
+                        Set.of(new Role(Role.READER))),
+                new CreateUserEvent( "reader2@mail.com", "Ricardo Joao","Andreventura!123",
+                        Set.of(new Role(Role.READER))),
+                new CreateUserEvent( "reader3@mail.com",  "Joao Ricardo","Andreventura!123",
+                        Set.of(new Role(Role.READER))),
+                new CreateUserEvent( "reader4@mail.com", "Luis Pedro","Andreventura!123",
+                        Set.of(new Role(Role.READER))),
+                new CreateUserEvent( "reader5@mail.com", "Pedro Luis", "Andreventura!123",
+                        Set.of(new Role(Role.READER))),
+                new CreateUserEvent( "reader6@mail.com", "Marco Antonio","Andreventura!123",
+                        Set.of(new Role(Role.READER))),
+                new CreateUserEvent( "reader7@mail.com", "Antonio Marco","Andreventura!123",
+                        Set.of(new Role(Role.READER))),
+                new CreateUserEvent( "reader8@mail.com", "Rui Ricardo", "Andreventura!123",
+                        Set.of(new Role(Role.READER))),
+                new CreateUserEvent( "reader9@mail.com",  "Rui Ribeiro","Andreventura!123",
+                        Set.of(new Role(Role.READER))),
+                new CreateUserEvent( "reader10@mail.com", "Luis camoes", "Andreventura!123",
+                        Set.of(new Role(Role.READER)))
         );
         users.forEach(user -> eventService.send(new Event(EventType.BOOT_USERS, user), ApplicationType.USER, ApplicationType.BOOK, ApplicationType.LENDING, ApplicationType.RECOMMENDATION));
     }

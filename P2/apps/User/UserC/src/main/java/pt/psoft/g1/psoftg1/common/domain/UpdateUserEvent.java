@@ -10,8 +10,9 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateUserEvent implements EventMsg{
+    private String userId;
     private String username;
     private String password;
     private String name;
-    private Set<Role> authorities;
+    private Role authority;
 }
