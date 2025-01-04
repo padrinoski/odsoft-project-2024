@@ -1,5 +1,6 @@
 version: '3.8'
-
+volumes:
+    mongo-initdb:
 services:
   mongoDB-bootstrap:
     image: mongo:latest
@@ -11,7 +12,7 @@ services:
       restart_policy:
         condition: none
     volumes:
-      - ./mongo-scripts/initdb:/docker-entrypoint-initdb.d/
+      - mongo-initdb:/docker-entrypoint-initdb.d/
     networks:
       - network
 
