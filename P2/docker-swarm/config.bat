@@ -18,6 +18,12 @@ set BOOKS_COMMAND_DATABASE_IMAGE=mongo:latest
 set BOOKS_COMMAND_DATABASE_TO_USE=1
 set BOOKS_COMMAND_DB_PORT=27017
 
+set USERS_COMMAND_DATABASE_IMAGE=mongo:latest
+set USERS_COMMAND_DATABASE_TO_USE=1
+set USERS_COMMAND_DB_PORT=27017
+
+
+
 REM todo add more services here
 
 REM ########################################################################################################################
