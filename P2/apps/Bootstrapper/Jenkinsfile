@@ -6,10 +6,10 @@ node {
 
     try {
 
-        // stage('Checkout') {
-        //     echo "Checking out source code"
-        //     checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/padrinoski/odsoft-project-2024.git']]])
-        // }
+        stage('Checkout') {
+            echo "Checking out source code"
+            checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/padrinoski/odsoft-project-2024.git']]])
+        }
 
         stage('Build') {
             echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest"
