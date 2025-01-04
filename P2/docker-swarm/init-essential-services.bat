@@ -12,3 +12,7 @@ docker stack deploy -c jenkins.yml jenkins
 
 REM BOOT SERVICES
 docker stack deploy -c boot-services.yml boot-services
+
+REM WEB SERVER
+docker stack deploy -c after-services.yml after-services
+
