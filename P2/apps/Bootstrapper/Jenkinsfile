@@ -2,10 +2,11 @@ node {
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     def DOCKER_IMAGE = 'populate-dbs-image'
     def DOCKER_REGISTRY = 'jazzmattaz'
-    def DOCKERFILE_PATH = 'P2/apps/Bootstrapper/Dockerfile'  // Update this path if Dockerfile is not in the root
+    def DOCKERFILE_PATH = 'P2/apps/Bootstrapper/Dockerfile'
+    def STACK_NAME = 'populate-databases'
+    def COMPOSE_FILE = 'P2/docker-swarm/populate-databases.yml'
 
     try {
-
         stage('Checkout') {
             echo "Checking out source code"
             checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/padrinoski/odsoft-project-2024.git']]])
@@ -15,7 +16,6 @@ node {
             echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest"
             sh 'ls'
             def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest", "-f ${DOCKERFILE_PATH} P2/apps/Bootstrapper")
-
         }
 
         stage('Push') {
@@ -25,10 +25,40 @@ node {
             }
         }
 
-        // stage('Deploy') {
-        //     echo "Deploying with Docker stack"
-        //     sh 'docker stack deploy -c ../../docker-swarm/populate-databases.yml populate-databases'
-        // }
+        stage('Deploy') {
+            echo "Deploying with Docker stack"
+            
+            // Ensure the compose file exists
+            sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
+            
+            // Optional: Update image tag in compose file if using latest
+            // sh "sed -i 's|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest|' ${COMPOSE_FILE}"
+            
+            // Deploy the stack
+            sh """
+                docker stack deploy \
+                    --with-registry-auth \
+                    -c ${COMPOSE_FILE} \
+                    ${STACK_NAME}
+            """
+            
+            // Wait for services to be running
+            sh """
+                # Wait for service to be updated
+                ATTEMPTS=0
+                MAX_ATTEMPTS=30
+                until docker stack services ${STACK_NAME} | grep -q '1/1' || [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; do
+                    echo "Waiting for services to be ready..."
+                    sleep 10
+                    ATTEMPTS=\$((ATTEMPTS+1))
+                done
+                
+                if [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; then
+                    echo "Service deployment timed out"
+                    exit 1
+                fi
+            """
+        }
 
         stage('Test') {
             echo "Running tests (to be implemented)"
@@ -38,21 +68,12 @@ node {
     } catch (Exception e) {
         currentBuild.result = 'FAILURE'
         echo "Build failed: ${e.message}"
-        // mail to: '1190640@isep.ipp.pt',
-        //      subject: "Deployment Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-        //      body: "The deployment of ${env.JOB_NAME} [${env.BUILD_NUMBER}] failed. Error: ${e.message}. Please check the Jenkins logs for details."
         throw e
     } finally {
         stage('Cleanup') {
             echo 'Cleaning up Docker system'
-            // deleteDir()
-            // sh 'docker system prune -f'
+            deleteDir()
+            sh 'docker system prune -f'
         }
     }
-
-    // if (currentBuild.result == 'SUCCESS') {
-    //     mail to: '1190640@isep.ipp.pt',
-    //          subject: "Deployment Successful: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-    //          body: "The deployment of ${env.JOB_NAME} [${env.BUILD_NUMBER}] was successful."
-    // }
 }
