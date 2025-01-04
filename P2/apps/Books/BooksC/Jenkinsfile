@@ -36,8 +36,8 @@ node {
         }
         stage('Load Config'){
             // Read and parse the config file
-            def config = sh(script: """
-                source ${CONFIG_FILE}
+            def config = sh(script: """#!/bin/bash
+                . ${CONFIG_FILE}
                 echo "BOOKS_COMMAND_DATABASE_IMAGE=\$BOOKS_COMMAND_DATABASE_IMAGE"
                 echo "BOOKS_COMMAND_DATABASE_TO_USE=\$BOOKS_COMMAND_DATABASE_TO_USE"
                 echo "BOOKS_COMMAND_DB_PORT=\$BOOKS_COMMAND_DB_PORT"
