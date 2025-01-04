@@ -83,7 +83,7 @@ services:
   # Additional instances follow the same structure
   booksC-2:
     image: books-c-image:latest
-    build: ../../apps/Books/BooksC
+    # build: ../../apps/Books/BooksC
     deploy:
       replicas: 1
       resources:
@@ -161,7 +161,7 @@ services:
 
   booksC-3:
     image: books-c-image:latest
-    build: ../../apps/Books/BooksC
+    # build: ../../apps/Books/BooksC
     deploy:
       replicas: 1
       resources:
