@@ -13,7 +13,7 @@ node {
 
         stage('Build') {
             echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest"
-            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest", "-f ${DOCKERFILE_PATH} .")
+            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest", "-f ${DOCKERFILE_PATH}/Dockerfile .")
 
         }
 
