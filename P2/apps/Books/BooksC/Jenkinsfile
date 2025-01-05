@@ -78,12 +78,9 @@ node {
             // sh "sed -i 's|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}|' ${COMPOSE_FILE}"
             
             sh ". ${CONFIG_FILE}"
-
-            // Ensure the correct .env file is loaded for the chosen environment
-            def envFile = "${params.ENV}.env"
     
             // Check if the .env file exists
-            sh "test -f ${envFile} || (echo '.env file not found' && exit 1)"
+            sh "test -f P2/docker-swarm/${envFile} || (echo '.env file not found' && exit 1)"
             
             // Source the .env file to load environment variables
             sh """
