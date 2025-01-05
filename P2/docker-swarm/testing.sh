@@ -1,4 +1,4 @@
-export BOOKS_COMMAND_IMAGE=books-c-image:testing
+export BOOKS_COMMAND_IMAGE=books-c-image
 export BOOKS_COMMAND_BUILD_CONTEXT=../apps/Books/BooksC
 export BOOKS_COMMAND_CPU_LIMIT=0.5
 export BOOKS_COMMAND_MEMORY_LIMIT=512M
