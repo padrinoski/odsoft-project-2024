@@ -75,6 +75,12 @@ node {
                 env[key] = value
             }
         }
+
+        stage('Debug') {
+            echo "BOOKS_COMMAND_UPDATE_PARALLELISM: ${env.BOOKS_COMMAND_UPDATE_PARALLELISM}"
+            echo "BOOKS_COMMAND_UPDATE_DELAY: ${env.BOOKS_COMMAND_UPDATE_DELAY}"
+        }
+
         stage('Deploy') {
             echo "Deploying with Docker stack"
             
