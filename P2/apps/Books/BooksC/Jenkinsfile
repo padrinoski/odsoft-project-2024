@@ -17,6 +17,7 @@ node {
     def STACK_NAME = "books-command-${params.ENV}"
     def COMPOSE_FILE = 'P2/docker-swarm/books-command.yml'
     def CONFIG_FILE = "P2/docker-swarm/config.sh"
+    def ENVIRONMENT_FILE = "P2/docker-swarm/${params.ENV}.sh"
     def BOOKS_COMMAND_DATABASE_IMAGE = ''
     def BOOKS_COMMAND_DATABASE_TO_USE = ''
     def BOOKS_COMMAND_DB_PORT = ''
@@ -58,6 +59,7 @@ node {
             // Read and parse the config file
             def config = sh(script: """#!/bin/bash
                 . ${CONFIG_FILE}
+                . ${ENVIRONMENT_FILE}
                 echo "BOOKS_COMMAND_DATABASE_IMAGE=\$BOOKS_COMMAND_DATABASE_IMAGE"
                 echo "BOOKS_COMMAND_DATABASE_TO_USE=\$BOOKS_COMMAND_DATABASE_TO_USE"
                 echo "BOOKS_COMMAND_DB_PORT=\$BOOKS_COMMAND_DB_PORT"
@@ -77,60 +79,36 @@ node {
         }
 
         stage('Deploy') {
-            echo "Loading environment variables from ${params.ENV}.env"
-            // Read environment file
-            def envFile = 'P2/docker-swarm/development.env'
-            def envVars = []
-
-            // Load the environment variables, ignoring comments
-            if (fileExists(envFile)) {
-                def lines = readFile(envFile).split('\n')
-                lines.each { line ->
-                    if (!line.trim().startsWith('#') && line.trim()) {
-                        envVars.add(line.trim())
-                    }
-                }
-            }
-
-            // Use withEnv to set the environment variables
-            withEnv(envVars) {
-                // Your steps that require these env variables
-                echo "Environment variables loaded."
-                deployApp();
-            }
-        }
-
-        // stage('Deploy') {
-        //     echo "Deploying with Docker stack"
+            echo "Deploying with Docker stack"
             
-        //     // Ensure the compose file exists
-        //     sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
+            // Ensure the compose file exists
+            sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
             
-        //     // Deploy the stack
-        //     sh """
-        //         docker stack deploy \
-        //             --with-registry-auth \
-        //             -c ${COMPOSE_FILE} \
-        //             ${STACK_NAME}
-        //     """
+            // Deploy the stack
+            sh """
+                docker stack deploy \
+                    --with-registry-auth \
+                    -c ${COMPOSE_FILE} \
+                    ${STACK_NAME}
+            """
             
-        //     // Wait for services to be running
-        //     sh """
-        //         # Wait for service to be updated
-        //         ATTEMPTS=0
-        //         MAX_ATTEMPTS=30
-        //         until docker stack services ${STACK_NAME} | grep -q '1/1' || [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; do
-        //             echo "Waiting for services to be ready..."
-        //             sleep 10
-        //             ATTEMPTS=\$((ATTEMPTS+1))
-        //         done
+            // Wait for services to be running
+            sh """
+                # Wait for service to be updated
+                ATTEMPTS=0
+                MAX_ATTEMPTS=30
+                until docker stack services ${STACK_NAME} | grep -q '1/1' || [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; do
+                    echo "Waiting for services to be ready..."
+                    sleep 10
+                    ATTEMPTS=\$((ATTEMPTS+1))
+                done
                 
-        //         if [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; then
-        //             echo "Service deployment timed out"
-        //             exit 1
-        //         fi
-        //     """
-        // }
+                if [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; then
+                    echo "Service deployment timed out"
+                    exit 1
+                fi
+            """
+        }
 
         stage('Test') {
             echo "Running tests (to be implemented)"
@@ -148,37 +126,4 @@ node {
             sh 'docker system prune -f'
         }
     }
-}
-
-def deployApp() {
-    // Example deploy step
-    echo "Deploying with Docker stack"
-    
-    // Ensure the compose file exists
-    sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
-    
-    // Deploy the stack
-    sh """
-        docker stack deploy \
-            --with-registry-auth \
-            -c ${COMPOSE_FILE} \
-            ${STACK_NAME}
-    """
-    
-    // Wait for services to be running
-    sh """
-        # Wait for service to be updated
-        ATTEMPTS=0
-        MAX_ATTEMPTS=30
-        until docker stack services ${STACK_NAME} | grep -q '1/1' || [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; do
-            echo "Waiting for services to be ready..."
-            sleep 10
-            ATTEMPTS=\$((ATTEMPTS+1))
-        done
-        
-        if [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; then
-            echo "Service deployment timed out"
-            exit 1
-        fi
-    """
 }
