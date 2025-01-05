@@ -87,13 +87,15 @@ node {
         stage('Load Environment Variables') {
             echo "Loading environment variables from ${params.ENV}.env"
             sh '''
+                # Use bash to ensure support for the 'source' command
                 set -o allexport
-                source P2/docker-swarm/$ENV.env
+                bash -c "source P2/docker-swarm/$ENV.env"
                 set +o allexport
                 echo "Environment variables loaded:"
                 printenv
             '''
         }
+
 
         stage('Deploy') {
             echo "Deploying with Docker stack"
