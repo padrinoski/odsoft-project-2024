@@ -58,20 +58,23 @@ node {
         stage('Load Config') {
             def config = sh(script: """#!/bin/bash
                 # Source both config files
-                . ${CONFIG_FILE}
-                . ${ENVIRONMENT_FILE}
-                
-                # Export all variables and their values
-                declare -p | grep -E 'declare -x' | sed 's/declare -x //'
+                . ${primaryConfigFile}
+                . ${secondaryConfigFile}
+
+                # Output all exported variables
+                declare -px | sed 's/declare -x //' | grep -E '^[A-Za-z_][A-Za-z0-9_]*='
             """, returnStdout: true).trim()
-            
+
             // Parse the output and set environment variables in Jenkins
             config.split('\n').each { line ->
-                def (key, value) = line.split('=', 2)
-                env[key] = value.replaceFirst(/^"|"$/, '') // Remove surrounding quotes
+                if (line.contains('=')) { // Check if the line contains '='
+                    def (key, value) = line.split('=', 2)
+                    env[key] = value.replaceFirst(/^"|"$/, '') // Remove surrounding quotes
+                } else {
+                    echo "Skipping malformed line: ${line}" // Optional: log malformed lines for debugging
+                }
             }
         }
-
 
         stage('Deploy') {
             echo "Deploying with Docker stack"
