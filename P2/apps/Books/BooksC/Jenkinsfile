@@ -58,8 +58,8 @@ node {
         stage('Load Config') {
             def config = sh(script: """#!/bin/bash
                 # Source both config files
-                . ${primaryConfigFile}
-                . ${secondaryConfigFile}
+                . ${CONFIG_FILE}
+                . ${ENVIRONMENT_FILE}
 
                 # Output all exported variables
                 declare -px | sed 's/declare -x //' | grep -E '^[A-Za-z_][A-Za-z0-9_]*='
