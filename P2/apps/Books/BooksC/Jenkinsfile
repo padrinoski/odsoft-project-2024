@@ -80,7 +80,19 @@ node {
             echo "BOOKS_COMMAND_UPDATE_PARALLELISM: ${env.BOOKS_COMMAND_UPDATE_PARALLELISM}"
             echo "BOOKS_COMMAND_UPDATE_DELAY: ${env.BOOKS_COMMAND_UPDATE_DELAY}"
             
-            sh 'printenv'
+            echo "Checking if the .env file exists"
+            sh 'if [ -f P2/docker-swarm/development.env ]; then echo "File exists"; else echo "File not found"; fi'
+        }
+
+        stage('Load Environment Variables') {
+            echo "Loading environment variables from ${params.ENV}.env"
+            sh '''
+                set -o allexport
+                source P2/docker-swarm/$ENV.env
+                set +o allexport
+                echo "Environment variables loaded:"
+                printenv
+            '''
         }
 
         stage('Deploy') {
@@ -89,21 +101,6 @@ node {
             // Ensure the compose file exists
             sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
             
-            // Optional: Update image tag in compose file if using ${params.ENV}
-            // sh "sed -i 's|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}|' ${COMPOSE_FILE}"
-            
-            sh ". ${CONFIG_FILE}"
-    
-            // Check if the .env file exists
-            sh "test -f P2/docker-swarm/${env.ENV_FILE} || (echo '.env file not found' && exit 1)"
-            
-            // Source the .env file to load environment variables
-            sh """
-                set -o allexport
-                . P2/docker-swarm/${env.ENV_FILE}
-                set +o allexport
-            """
-
             // Deploy the stack
             sh """
                 docker stack deploy \
