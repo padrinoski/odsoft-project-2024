@@ -69,7 +69,7 @@ node {
             config.split('\n').each { line ->
                 if (line.contains('=')) { // Check if the line contains '='
                     def (key, value) = line.split('=', 2)
-                    env[key] = value.replaceFirst(/^"|"$/, '') // Remove surrounding quotes
+                    env[key] = value.replaceAll(/^"|"$/, '') // Remove surrounding quotes
                 } else {
                     echo "Skipping malformed line: ${line}" // Optional: log malformed lines for debugging
                 }
