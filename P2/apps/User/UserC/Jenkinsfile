@@ -2,7 +2,7 @@ properties([
     parameters([
         choice(
             name: 'ENV',
-            choices: ['development', 'testing', 'production','latest'],
+            choices: ['development', 'testing', 'production'],
             description: 'Select the environment for deployment'
         )
     ])
@@ -38,7 +38,7 @@ node {
 
             // Build the Docker image with the appropriate environment file
             def image = docker.build(
-                "${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}",
+                "${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest",
                 "-f ${DOCKERFILE_PATH} P2/apps/User/UserC"
             )
         }
