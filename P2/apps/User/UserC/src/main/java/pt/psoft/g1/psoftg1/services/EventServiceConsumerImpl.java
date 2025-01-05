@@ -20,10 +20,13 @@ public class EventServiceConsumerImpl implements EventServiceConsumer {
         switch (event.getEventType()) {
             case USER_CREATE, BOOT_USERS:
                 this.eventServiceProducer.insertEvent(event);
+                break;
             case USER_DELETE:
                 this.eventServiceProducer.insertEvent(event);
+                break;
             case USER_UPDATE:
                 this.eventServiceProducer.insertEvent(event);
+                break;
         }
     }
 }

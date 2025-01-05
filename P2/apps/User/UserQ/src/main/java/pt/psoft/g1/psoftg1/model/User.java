@@ -30,6 +30,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import lombok.Data;
+import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.security.core.userdetails.UserDetails;
 
 

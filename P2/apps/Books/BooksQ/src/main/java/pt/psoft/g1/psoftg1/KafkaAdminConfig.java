@@ -25,6 +25,8 @@ public class KafkaAdminConfig {
 
     @Bean
     public NewTopic topic1() {
-        return new NewTopic(ApplicationType.BOOK.toString(), 1, (short) 1);
+        Map<String, String> configs = new HashMap<>();
+        configs.put("min.insync.replicas", "2");
+        return new NewTopic(ApplicationType.BOOK.toString(), 1, (short) 2).configs(configs);
     }
 }

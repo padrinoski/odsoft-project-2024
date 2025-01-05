@@ -1,0 +1,2325 @@
+{
+	"info": {
+		"_postman_id": "3ba2577a-f920-41af-99f9-0617193aa1ba",
+		"name": "AcceptanceTests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21248811"
+	},
+	"item": [
+		{
+			"name": "Author",
+			"item": [
+				{
+					"name": "Autenticaçao Como librarian",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('Response time is less than 500ms', () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has required fields\", () => {\r",
+									"    jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property('username').to.equal('maria@gmail.com');\r",
+									"    pm.expect(jsonData).to.have.property('fullName').to.equal('Maria Roberta');\r",
+									"})\r",
+									"authHeader = pm.response.headers.get(\"Authorization\");\r",
+									"pm.environment.set('authToken', authHeader);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"maria@gmail.com\",\n    \"password\": \"Mariaroberta!123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/public/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Author",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should be valid and match expected structure\", function () {\r",
+									"    // Check if the response status is 200\r",
+									"    pm.response.to.have.status(201);\r",
+									"    \r",
+									"    // Parse the response body\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    // Validate the structure of the response\r",
+									"    pm.expect(response).to.have.all.keys('authorNumber', 'name', 'bio', 'photo', '_links');\r",
+									"    \r",
+									"    // Validate individual fields\r",
+									"    pm.expect(response.name).to.eql(\"Irineu José\");\r",
+									"    pm.expect(response.bio).to.eql(\"Bio do ireneu José \");\r",
+									"    pm.expect(response.photo).to.be.null;\r",
+									"\r",
+									"    // Validate the _links structure\r",
+									"    pm.expect(response._links).to.have.all.keys('author', 'booksByAuthor', 'photo');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Irineu José\",\n    \"bio\": \"Bio do ireneu José \"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/authors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"authors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Author by authorNumber",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should be valid and match expected structure\", function () {\r",
+									"    // Check if the response status is 200\r",
+									"    pm.response.to.have.status(200);\r",
+									"    \r",
+									"    // Parse the response body\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    // Validate the structure of the response\r",
+									"    pm.expect(response).to.have.all.keys('authorNumber', 'name', 'bio', 'photo', '_links');\r",
+									"    \r",
+									"    // Validate individual fields\r",
+									"    pm.expect(response.authorNumber).to.eql(\"1\");\r",
+									"    pm.expect(response.name).to.eql(\"Manuel Antonio Pina\");\r",
+									"    pm.expect(response.bio).to.eql(\"Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões\");\r",
+									"    pm.expect(response.photo).to.be.null;\r",
+									"\r",
+									"    // Validate the _links structure\r",
+									"    pm.expect(response._links).to.have.all.keys('author', 'booksByAuthor', 'photo');\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/authors/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"authors",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Author by authorNumber - Author doesnt exist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Not found\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(404);    \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/authors/10",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"authors",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Authors By name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should be valid and match expected structure\", function () {\r",
+									"    // Check if the response status is 200\r",
+									"    pm.response.to.have.status(200);\r",
+									"    \r",
+									"    // Parse the response body\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    // Validate the structure of the response\r",
+									"    pm.expect(response).to.have.all.keys('items');\r",
+									"    pm.expect(response.items).to.be.an('array').that.is.not.empty;\r",
+									"\r",
+									"    // Validate the first item in the array\r",
+									"    const item = response.items[0];\r",
+									"    pm.expect(item).to.have.all.keys('authorNumber', 'name', 'bio', 'photo', '_links');\r",
+									"    \r",
+									"    // Validate individual fields of the first item\r",
+									"    pm.expect(item.authorNumber).to.eql(\"1\");\r",
+									"    pm.expect(item.name).to.eql(\"Manuel Antonio Pina\");\r",
+									"    pm.expect(item.bio).to.eql(\"Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões\");\r",
+									"    pm.expect(item.photo).to.be.null;\r",
+									"\r",
+									"    // Validate the _links structure of the first item\r",
+									"    pm.expect(item._links).to.have.all.keys('author', 'booksByAuthor', 'photo');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/authors?name=Manuel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"authors"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Manuel"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Author",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should be valid and match expected structure\", function () {\r",
+									"    // Check if the response status is 200\r",
+									"    pm.response.to.have.status(200);\r",
+									"    \r",
+									"    // Parse the response body\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    // Validate the structure of the response\r",
+									"    pm.expect(response).to.have.all.keys('authorNumber', 'name', 'bio', 'photo', '_links');\r",
+									"    \r",
+									"    // Validate individual fields\r",
+									"    pm.expect(response.authorNumber).to.eql(\"9\");\r",
+									"    pm.expect(response.name).to.eql(\"author4\");\r",
+									"    pm.expect(response.bio).to.eql(\"bio authorrr v3\");\r",
+									"    pm.expect(response.photo).to.be.null;\r",
+									"\r",
+									"    // Validate the _links structure\r",
+									"    pm.expect(response._links).to.have.all.keys('author', 'booksByAuthor', 'photo');\r",
+									"    pm.expect(response._links.author).to.eql(\"http://localhost:8080/api/authors/9\");\r",
+									"    pm.expect(response._links.booksByAuthor).to.eql(\"http://localhost:8080/api/authors/9/books\");\r",
+									"    pm.expect(response._links.photo).to.eql(\"http://localhost:8080/api/authors/9/photo\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "If-Match",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"author4\",\n    \"bio\":\"bio authorrr v3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/authors/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"authors",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindBooksByAuthorNumber",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200); \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains items array\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"items\").that.is.an(\"array\").with.lengthOf(2);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"First item has correct title\", function () {\r",
+									"    const firstItem = pm.response.json().items[0];\r",
+									"    pm.expect(firstItem.title).to.eql(\"O País das Pessoas de Pernas Para o Ar\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"First item has correct authors\", function () {\r",
+									"    const firstItem = pm.response.json().items[0];\r",
+									"    pm.expect(firstItem.authors).to.eql([\"Manuel Antonio Pina\"]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"First item has correct genre\", function () {\r",
+									"    const firstItem = pm.response.json().items[0];\r",
+									"    pm.expect(firstItem.genre).to.eql(\"Infantil\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"First item has correct description\", function () {\r",
+									"    const firstItem = pm.response.json().items[0];\r",
+									"    pm.expect(firstItem.description).to.eql(\"Fazendo uso do humor e do nonsense, o livro reúne quatro histórias divertidas e com múltiplos significados: um país onde as pessoas vivem de pernas para o ar, que nos é apresentado por um passarinho chamado Fausto; a vida de um peixinho vermelho que escrevia um livro que a Sara não sabia ler; um Menino Jesus que não queria ser Deus, pois só queria brincar como as outras crianças; um bolo que queria ser comido, mas que não foi, por causa do pecado da gula. \");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Second item has correct title\", function () {\r",
+									"    const secondItem = pm.response.json().items[1];\r",
+									"    pm.expect(secondItem.title).to.eql(\"Como se Desenha Uma Casa\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Second item has correct authors\", function () {\r",
+									"    const secondItem = pm.response.json().items[1];\r",
+									"    pm.expect(secondItem.authors).to.eql([\"Manuel Antonio Pina\"]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Second item has correct genre\", function () {\r",
+									"    const secondItem = pm.response.json().items[1];\r",
+									"    pm.expect(secondItem.genre).to.eql(\"Infantil\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Second item has correct description\", function () {\r",
+									"    const secondItem = pm.response.json().items[1];\r",
+									"    pm.expect(secondItem.description).to.eql(\"Como quem, vindo de países distantes fora de / si, chega finalmente aonde sempre esteve / e encontra tudo no seu lugar, / o passado no passado, o presente no presente, / assim chega o viajante à tardia idade / em que se confundem ele e o caminho. [...]\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Second item has correct isbn\", function () {\r",
+									"    const secondItem = pm.response.json().items[1];\r",
+									"    pm.expect(secondItem.isbn).to.eql(\"9789723716160\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/authors/1/books",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"authors",
+								"1",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Top5Authors",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response contains items array\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"items\").that.is.an(\"array\").with.lengthOf(5);\r",
+									"});\r",
+									"\r",
+									"// Check each author and their lending count\r",
+									"const expectedAuthors = [\r",
+									"    { authorName: \"Manuel Antonio Pina\", lendingCount: 16 },\r",
+									"    { authorName: \"Alexandre Pereira\", lendingCount: 8 },\r",
+									"    { authorName: \"Ricardo Queirós\", lendingCount: 8 },\r",
+									"    { authorName: \"Filipe Portela\", lendingCount: 8 },\r",
+									"    { authorName: \"Antoine de Saint Exupéry\", lendingCount: 5 }\r",
+									"];\r",
+									"\r",
+									"expectedAuthors.forEach((expected, index) => {\r",
+									"    pm.test(`Item ${index + 1} has correct authorName`, function () {\r",
+									"        const item = pm.response.json().items[index];\r",
+									"        pm.expect(item.authorName).to.eql(expected.authorName);\r",
+									"    });\r",
+									"\r",
+									"    pm.test(`Item ${index + 1} has correct lendingCount`, function () {\r",
+									"        const item = pm.response.json().items[index];\r",
+									"        pm.expect(item.lendingCount).to.eql(expected.lendingCount);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/authors/top5",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"authors",
+								"top5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Book",
+			"item": [
+				{
+					"name": "Auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should be valid and match expected structure\", function () {\r",
+									"    // Check if the response status is 200\r",
+									"    pm.response.to.have.status(200);\r",
+									"    \r",
+									"    // Parse the response body\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    // Validate the structure of the response\r",
+									"    pm.expect(response).to.have.all.keys('id', 'username', 'fullName');\r",
+									"    \r",
+									"    // Validate individual fields\r",
+									"    pm.expect(response.id).to.be.null; // Check if id is null\r",
+									"    pm.expect(response.username).to.eql(\"maria@gmail.com\");\r",
+									"    pm.expect(response.fullName).to.eql(\"Maria Roberta\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"maria@gmail.com\",\n    \"password\": \"Mariaroberta!123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/public/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Book",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has correct title\", function () {\r",
+									"    pm.expect(pm.response.json().title).to.eql(\"Senhor Dos Aneis\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct authors\", function () {\r",
+									"    pm.expect(pm.response.json().authors).to.eql([\"J R R Tolkien\"]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct genre\", function () {\r",
+									"    pm.expect(pm.response.json().genre).to.eql(\"Fantasia\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct description\", function () {\r",
+									"    pm.expect(pm.response.json().description).to.eql(\"Pobre frodo\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Pobre frodo\",\n  \"title\": \"Senhor Dos Aneis\",\n  \"genre\": \"Fantasia\",\n  \"authors\": [\n    \"7\"\n  ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/books/9789895612868",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"books",
+								"9789895612868"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Book",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "If-Match",
+								"value": "0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Frodo cansado\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/books/9789895612868",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"books",
+								"9789895612868"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Book",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/books/9789895612868",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"books",
+								"9789895612868"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Book by ISBN",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has correct title\", function () {\r",
+									"    pm.expect(pm.response.json().title).to.eql(\"C e Algoritmos\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct authors\", function () {\r",
+									"    pm.expect(pm.response.json().authors).to.eql([\"Alexandre Pereira\"]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct genre\", function () {\r",
+									"    pm.expect(pm.response.json().genre).to.eql(\"Informação\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct description\", function () {\r",
+									"    pm.expect(pm.response.json().description).to.eql(\"O C é uma linguagem de programação incontornável no estudo e aprendizagem das linguagens de programação. É um precursor das linguagens de programação estruturadas e a sua sintaxe foi reutilizada em muitas linguagens posteriores, mesmo de paradigmas diferentes, entre as quais se contam o Java, o Javascript, o Actionscript, o PHP, o Perl, o C# e o C&#43;&#43;.\\n\\nEste livro apresenta a sintaxe da linguagem C tal como especificada pelas normas C89, C99, C11 e C17, da responsabilidade do grupo de trabalho ISO/IEC JTC1/SC22/WG14.\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct ISBN\", function () {\r",
+									"    pm.expect(pm.response.json().isbn).to.eql(\"9789895612864\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/books/9789895612864",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"books",
+								"9789895612864"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Books By genre",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains items\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property('items');\r",
+									"    pm.expect(jsonData.items).to.be.an('array').that.is.not.empty;\r",
+									"});\r",
+									"\r",
+									"// Validate each book entry\r",
+									"const expectedBooks = [\r",
+									"    {\r",
+									"        title: \"Histórias de Aventureiros e Patifes\",\r",
+									"        isbn: \"9789896378905\"\r",
+									"    },\r",
+									"    {\r",
+									"        title: \"Histórias de Vigaristas e Canalhas\",\r",
+									"        isbn: \"9789896379636\"\r",
+									"    },\r",
+									"    {\r",
+									"        title: \"O Hobbit\",\r",
+									"        isbn: \"9789897776090\"\r",
+									"    },\r",
+									"    {\r",
+									"        title: \"Windhaven\",\r",
+									"        isbn: \"9789896375225\"\r",
+									"    }\r",
+									"];\r",
+									"\r",
+									"pm.test(\"Each book has the correct properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    jsonData.items.forEach((book, index) => {\r",
+									"        pm.expect(book).to.have.property('title', expectedBooks[index].title);\r",
+									"        pm.expect(book).to.have.property('isbn', expectedBooks[index].isbn);\r",
+									"        pm.expect(book).to.have.property('authors').that.is.an('array').and.is.not.empty;\r",
+									"        pm.expect(book).to.have.property('genre').that.is.a('string').and.is.not.empty;\r",
+									"        pm.expect(book).to.have.property('description').that.is.a('string').and.is.not.empty;\r",
+									"        pm.expect(book).to.have.property('_links').that.is.an('object');\r",
+									"        pm.expect(book._links).to.have.property('self').that.is.a('string').and.includes('/api/books/');\r",
+									"        pm.expect(book._links).to.have.property('photo').that.is.a('string').and.includes('/api/books/');\r",
+									"        pm.expect(book._links).to.have.property('authors').that.is.an('array').and.is.not.empty;\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/books?genre=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"books"
+							],
+							"query": [
+								{
+									"key": "genre",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindBooksByTitle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200); \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct items array\", function () {\r",
+									"    const items = pm.response.json().items;\r",
+									"\r",
+									"    pm.expect(items).to.be.an('array').that.has.lengthOf(1); // Check that there's one item\r",
+									"\r",
+									"    const book = items[0];\r",
+									"\r",
+									"    pm.expect(book.title).to.eql(\"C e Algoritmos\");\r",
+									"    pm.expect(book.authors).to.eql([\"Alexandre Pereira\"]);\r",
+									"    pm.expect(book.genre).to.eql(\"Informação\");\r",
+									"    pm.expect(book.description).to.eql(\"O C é uma linguagem de programação incontornável no estudo e aprendizagem das linguagens de programação. É um precursor das linguagens de programação estruturadas e a sua sintaxe foi reutilizada em muitas linguagens posteriores, mesmo de paradigmas diferentes, entre as quais se contam o Java, o Javascript, o Actionscript, o PHP, o Perl, o C# e o C&#43;&#43;.\\n\\nEste livro apresenta a sintaxe da linguagem C tal como especificada pelas normas C89, C99, C11 e C17, da responsabilidade do grupo de trabalho ISO/IEC JTC1/SC22/WG14.\");\r",
+									"    pm.expect(book.isbn).to.eql(\"9789895612864\");\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/books?title=C e Algoritmos",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "C e Algoritmos"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lending",
+			"item": [
+				{
+					"name": "Login As Librarian",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has correct id\", function () {\r",
+									"    pm.expect(pm.response.json().id).to.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct username\", function () {\r",
+									"    pm.expect(pm.response.json().username).to.eql(\"maria@gmail.com\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct fullName\", function () {\r",
+									"    pm.expect(pm.response.json().fullName).to.eql(\"Maria Roberta\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"maria@gmail.com\",\n    \"password\": \"Mariaroberta!123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/public/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a reader",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Reader data is returned correctly\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.readerNumber).to.eql(\"2024/9\");\r",
+									"    pm.expect(jsonData.email).to.eql(\"jackblack1@gmail.com\");\r",
+									"    pm.expect(jsonData.fullName).to.eql(\"Jack Black\");\r",
+									"    pm.expect(jsonData.birthDate).to.eql(\"2004-03-17\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"jackblack1@gmail.com\",\n    \"password\": \"Qwerty1!\",\n    \"fullName\": \"Jack Black\",\n    \"birthDate\": \"2004-03-17\",\n    \"phoneNumber\": \"919293949\",\n    \"gdpr\": true,\n    \"marketing\": true,\n    \"thirdParty\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/readers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"readers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create lending",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Response has correct bookTitle\", function () {\r",
+									"    pm.expect(pm.response.json().bookTitle).to.eql(\"O País das Pessoas de Pernas Para o Ar\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct returnedDate\", function () {\r",
+									"    pm.expect(pm.response.json().returnedDate).to.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct daysUntilReturn\", function () {\r",
+									"    pm.expect(pm.response.json().daysUntilReturn).to.eql(15);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct daysOverdue\", function () {\r",
+									"    pm.expect(pm.response.json().daysOverdue).to.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct fineValueInCents\", function () {\r",
+									"    pm.expect(pm.response.json().fineValueInCents).to.be.null;\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"isbn\": \"9789720706386\",\n    \"readerNumber\": \"2024/9\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/lendings",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"lendings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Data of lending",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has correct lendingNumber\", function () {\r",
+									"    pm.expect(pm.response.json().lendingNumber).to.eql(\"2024/1\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct bookTitle\", function () {\r",
+									"    pm.expect(pm.response.json().bookTitle).to.eql(\"O País das Pessoas de Pernas Para o Ar\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct startDate\", function () {\r",
+									"    pm.expect(pm.response.json().startDate).to.eql(\"2024-01-31\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct limitDate\", function () {\r",
+									"    pm.expect(pm.response.json().limitDate).to.eql(\"2024-02-15\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct returnedDate\", function () {\r",
+									"    pm.expect(pm.response.json().returnedDate).to.eql(\"2024-02-15\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct daysUntilReturn\", function () {\r",
+									"    pm.expect(pm.response.json().daysUntilReturn).to.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct daysOverdue\", function () {\r",
+									"    pm.expect(pm.response.json().daysOverdue).to.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct fineValueInCents\", function () {\r",
+									"    pm.expect(pm.response.json().fineValueInCents).to.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct links structure\", function () {\r",
+									"    const links = pm.response.json()._links;\r",
+									"    pm.expect(links.self.href).to.eql(\"http://localhost:8080/api/lendings/2024/1\");\r",
+									"    pm.expect(links.book.href).to.eql(\"http://localhost:8080/api/books/9789720706386\");\r",
+									"    pm.expect(links.reader.href).to.eql(\"http://localhost:8080/api/readers/2024/1\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/lendings/2024/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"lendings",
+								"2024",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set Lending Returned",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Response has correct bookTitle\", function () {\r",
+									"    pm.expect(pm.response.json().bookTitle).to.eql(\"O País das Pessoas de Pernas Para o Ar\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has correct daysUntilReturn\", function () {\r",
+									"    pm.expect(pm.response.json().daysUntilReturn).to.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct daysOverdue\", function () {\r",
+									"    pm.expect(pm.response.json().daysOverdue).to.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct fineValueInCents\", function () {\r",
+									"    pm.expect(pm.response.json().fineValueInCents).to.be.null;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"commentary\": \"Great\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/lendings/2024/47/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"lendings",
+								"2024",
+								"47",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Reader",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/readers?readerNumber=2024/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"readers"
+							],
+							"query": [
+								{
+									"key": "readerNumber",
+									"value": "2024/9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LendBook - Reader has overdue lendings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Bad Request\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(403); \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isbn\": \"9782722203402\",\r\n    \"readerNumber\": \"2024/3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetLending - not returned, not over limit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200); \r",
+									"    \r",
+									"    let lending = postman.getResponseHeader(\"ETag\");\r",
+									"    pm.environment.set(\"lendingEtag\", lending); \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/2024/6",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"2024",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetLending - returned, not over limit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200); \r",
+									"    \r",
+									"    let lending = postman.getResponseHeader(\"ETag\");\r",
+									"    pm.environment.set(\"lendingEtag\", lending); \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/2024/1",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"2024",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAverageDuration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is a valid average duration object\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    // Validate the response is an object\r",
+									"    pm.expect(response).to.be.an('object');\r",
+									"\r",
+									"    // Validate the presence of lendingsAverageDuration key\r",
+									"    pm.expect(response).to.have.property('lendingsAverageDuration');\r",
+									"\r",
+									"    // Validate that lendingsAverageDuration is a number\r",
+									"    pm.expect(response.lendingsAverageDuration).to.be.a('number');\r",
+									"\r",
+									"    // Validate the value of lendingsAverageDuration\r",
+									"    pm.expect(response.lendingsAverageDuration).to.be.above(0);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/avgDuration",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"avgDuration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetLending - not returned, overdue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200); \r",
+									"    \r",
+									"    let lending = postman.getResponseHeader(\"ETag\");\r",
+									"    pm.environment.set(\"lendingEtag\", lending); \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/2024/8",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"2024",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOverdueLendings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200); \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"page\":{\r\n        \"number\":\"1\",\r\n        \"limit\":\"5\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/overdue",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"overdue"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reader",
+			"item": [
+				{
+					"name": "Login as Reader",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"User is logged in successfully\", function () {\r",
+									"    pm.response.to.have.status(200); // Assuming 201 is the success status code for creation\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains user data\", function () {\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson).to.have.property(\"username\", \"manuel@gmail.com\");\r",
+									"    pm.expect(responseJson).to.have.property(\"fullName\", \"Manuel Sarapinto das Coives\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"manuel@gmail.com\",\n    \"password\": \"Manuelino123!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/public/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "As librarian get reader data by number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Get succesfull\", function () {\r",
+									"    pm.response.to.have.status(200); // Adjust if using PUT, e.g., to 200\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains correct reader data\", function () {\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson).to.have.property(\"email\", \"manuel@gmail.com\");\r",
+									"    pm.expect(responseJson).to.have.property(\"fullName\", \"Manuel Sarapinto das Coives\");\r",
+									"    pm.expect(responseJson).to.have.property(\"readerNumber\", \"2024/1\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/readers/2024/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"readers",
+								"2024",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "As librarian get reader data by name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Reader is updated successfully\", function () {\r",
+									"    pm.response.to.have.status(200); // or 201, depending on your API\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/readers?name=Manuel Sarapinto das Coives",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"readers"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Manuel Sarapinto das Coives"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getTop5ReaderByGenre",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has correct items array\", function () {\r",
+									"    const items = pm.response.json().items;\r",
+									"\r",
+									"    pm.expect(items).to.be.an('array').that.has.lengthOf(5); // Check that there are five items\r",
+									"\r",
+									"    items.forEach(reader => {\r",
+									"        pm.expect(reader).to.have.property('readerView');\r",
+									"        pm.expect(reader.readerView).to.have.all.keys(\r",
+									"            'readerNumber',\r",
+									"            'email',\r",
+									"            'fullName',\r",
+									"            'birthDate',\r",
+									"            'phoneNumber',\r",
+									"            'photo',\r",
+									"            'gdprConsent',\r",
+									"            'marketingConsent',\r",
+									"            'thirdPartySharingConsent',\r",
+									"            'interestList'\r",
+									"        );\r",
+									"\r",
+									"        // Check lending count for each reader\r",
+									"        pm.expect(reader).to.have.property('lendingCount');\r",
+									"\r",
+									"        // Validate reader numbers and lending counts\r",
+									"        switch (reader.readerView.readerNumber) {\r",
+									"            case \"2024/5\":\r",
+									"                pm.expect(reader.lendingCount).to.eql(3);\r",
+									"                break;\r",
+									"            case \"2024/3\":\r",
+									"                pm.expect(reader.lendingCount).to.eql(3);\r",
+									"                break;\r",
+									"            case \"2024/4\":\r",
+									"                pm.expect(reader.lendingCount).to.eql(6);\r",
+									"                break;\r",
+									"            case \"2024/2\":\r",
+									"                pm.expect(reader.lendingCount).to.eql(2);\r",
+									"                break;\r",
+									"            case \"2024/1\":\r",
+									"                pm.expect(reader.lendingCount).to.eql(1);\r",
+									"                break;\r",
+									"            default:\r",
+									"                pm.fail(\"Unexpected reader number: \" + reader.readerView.readerNumber);\r",
+									"        }\r",
+									"\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/readers/top5ByGenre?genre=2&startDate=2024-01-01&endDate=2024-12-30",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"readers",
+								"top5ByGenre"
+							],
+							"query": [
+								{
+									"key": "genre",
+									"value": "2"
+								},
+								{
+									"key": "startDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-12-30"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "As Reader, update data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Reader data is returned correctly\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.readerNumber).to.eql(\"2024/1\");\r",
+									"    pm.expect(jsonData.email).to.eql(\"manuel@gmail.com\");\r",
+									"    pm.expect(jsonData.fullName).to.eql(\"Manuel Sarapinto das Coives\");\r",
+									"    pm.expect(jsonData.birthDate).to.eql(\"2000-01-01\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"number\": \"2024/1\",\n    \"phoneNumber\": \"919293949\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/readers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"readers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Genre",
+			"item": [
+				{
+					"name": "GetAverageLendings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200); \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct items array\", function () {\r",
+									"    const items = pm.response.json().items;\r",
+									"\r",
+									"    pm.expect(items).to.be.an('array').that.has.lengthOf(1); // Check that there is one item\r",
+									"\r",
+									"    const item = items[0];\r",
+									"    pm.expect(item.year).to.eql(2024);\r",
+									"    pm.expect(item.month).to.eql(5);\r",
+									"\r",
+									"    pm.expect(item.durationAverages).to.be.an('array').that.has.lengthOf(3); // Check that there are three genre averages\r",
+									"\r",
+									"    // Test for \"Infantil\"\r",
+									"    pm.test(\"Infantil genre average\", function () {\r",
+									"        const infantil = item.durationAverages.find(avg => avg.genre === \"Infantil\");\r",
+									"        pm.expect(infantil).to.exist; // Ensure the genre exists\r",
+									"        pm.expect(infantil.value).to.eql(1.7);\r",
+									"    });\r",
+									"\r",
+									"    // Test for \"Informação\"\r",
+									"    pm.test(\"Informação genre average\", function () {\r",
+									"        const informacao = item.durationAverages.find(avg => avg.genre === \"Informação\");\r",
+									"        pm.expect(informacao).to.exist; // Ensure the genre exists\r",
+									"        pm.expect(informacao.value).to.eql(2.0);\r",
+									"    });\r",
+									"\r",
+									"    // Test for \"Thriller\"\r",
+									"    pm.test(\"Thriller genre average\", function () {\r",
+									"        const thriller = item.durationAverages.find(avg => avg.genre === \"Thriller\");\r",
+									"        pm.expect(thriller).to.exist; // Ensure the genre exists\r",
+									"        pm.expect(thriller.value).to.eql(4.0);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/genres/lendingsAverageDurationPerMonth?startDate=2024-05-01&endDate=2024-05-31",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"genres",
+								"lendingsAverageDurationPerMonth"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-05-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-05-31"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAverageLendings - invalid dates",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Bad Request\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(400); \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/genres/lendingsAverageDurationPerMonth?startDate=2024-06-01&endDate=2024-05-31",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"genres",
+								"lendingsAverageDurationPerMonth"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-06-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-05-31"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAverageLendings - invalid date format",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Bad Request\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(400); \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/genres/lendingsAverageDurationPerMonth?startDate=2024-35-01&endDate=2024-05-31",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"genres",
+								"lendingsAverageDurationPerMonth"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2024-35-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2024-05-31"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Author Test ID Generator 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should be valid and match expected structure\", function () {\r",
+							"    // Check if the response status is 200\r",
+							"    pm.response.to.have.status(201);\r",
+							"    \r",
+							"    // Parse the response body\r",
+							"    const response = pm.response.json();\r",
+							"\r",
+							"    // Validate the structure of the response\r",
+							"    pm.expect(response).to.have.all.keys('authorNumber', 'name', 'bio', 'photo', '_links');\r",
+							"    \r",
+							"    // Validate individual fields\r",
+							"    pm.expect(response.name).to.eql(\"Irineu José\");\r",
+							"    pm.expect(response.bio).to.eql(\"Bio do ireneu José \");\r",
+							"    pm.expect(response.photo).to.be.null;\r",
+							"\r",
+							"    // Validate the _links structure\r",
+							"    pm.expect(response._links).to.have.all.keys('author', 'booksByAuthor', 'photo');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"authorNumber is a valid 24-character hexadecimal\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    const authorNumber = jsonData.authorNumber;\r",
+							"    const hexRegex = /^[A-Fa-f0-9]{24}$/;\r",
+							"\r",
+							"    pm.expect(authorNumber).to.match(hexRegex);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Irineu José\",\n    \"bio\": \"Bio do ireneu José \"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/authors",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Author Test ID Generator 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should be valid and match expected structure\", function () {\r",
+							"    // Check if the response status is 200\r",
+							"    pm.response.to.have.status(201);\r",
+							"    \r",
+							"    // Parse the response body\r",
+							"    const response = pm.response.json();\r",
+							"\r",
+							"    // Validate the structure of the response\r",
+							"    pm.expect(response).to.have.all.keys('authorNumber', 'name', 'bio', 'photo', '_links');\r",
+							"    \r",
+							"    // Validate individual fields\r",
+							"    pm.expect(response.name).to.eql(\"John Joao\");\r",
+							"    pm.expect(response.bio).to.eql(\"Bio do JOHN JOAO \");\r",
+							"    pm.expect(response.photo).to.be.null;\r",
+							"\r",
+							"    // Validate the _links structure\r",
+							"    pm.expect(response._links).to.have.all.keys('author', 'booksByAuthor', 'photo');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"authorNumber is a valid 20-character hash\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    const authorNumber = jsonData.authorNumber;\r",
+							"    const alphanumericRegex = /^[a-zA-Z0-9]{20}$/;\r",
+							"\r",
+							"    pm.expect(authorNumber).to.match(alphanumericRegex);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"John Joao\",\r\n    \"bio\": \"Bio do JOHN JOAO \"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/authors",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Recommendation Algorithm 1, X=2, Y=2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array').that.is.not.empty;\r",
+							"});\r",
+							"\r",
+							"// Validate each book entry\r",
+							"jsonData = pm.response.json();\r",
+							"jsonData.forEach((book) => {\r",
+							"    pm.test(`Book with ISBN ${book.isbn} has the correct structure`, function () {\r",
+							"        pm.expect(book).to.have.property('photo');\r",
+							"        pm.expect(book).to.have.property('version').that.is.a('number');\r",
+							"        pm.expect(book).to.have.property('isbn').that.is.a('string').and.is.not.empty;\r",
+							"        pm.expect(book).to.have.property('title').that.is.an('object').and.has.property('title').that.is.a('string').and.is.not.empty;\r",
+							"        pm.expect(book).to.have.property('genre').that.is.an('object').and.has.property('pk').that.is.a('string');\r",
+							"        pm.expect(book).to.have.property('authors').that.is.an('array').and.is.not.empty;\r",
+							"        pm.expect(book).to.have.property('description').that.is.a('string').and.is.not.empty;\r",
+							"        pm.expect(book).to.have.property('id').that.is.a('string').and.is.not.empty;\r",
+							"\r",
+							"        // Validate each author\r",
+							"        book.authors.forEach((author) => {\r",
+							"            pm.expect(author).to.have.property('photo');\r",
+							"            pm.expect(author).to.have.property('id').that.is.a('string').and.is.not.empty;\r",
+							"            pm.expect(author).to.have.property('authorNumber').that.is.a('string');\r",
+							"            pm.expect(author).to.have.property('version').that.is.a('number');\r",
+							"            pm.expect(author).to.have.property('name').that.is.a('string').and.is.not.empty;\r",
+							"            pm.expect(author).to.have.property('bio').that.is.a('string').and.is.not.empty;\r",
+							"        });\r",
+							"\r",
+							"        // Validate genre properties\r",
+							"        pm.expect(book.genre).to.have.property('genre').that.is.a('string').and.is.not.empty;\r",
+							"        pm.expect(book.genre).to.have.property('id').that.is.a('string').and.is.not.empty;\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"readerNumber\":\"2024/1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/recommendations",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"recommendations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Recommendation Algorithm 2, X=2, MinAge = 10, MaxAge = 18",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is an array\", function () {\r",
+							"    pm.response.to.have.status(200); // Check if response status is 200\r",
+							"    pm.expect(pm.response.json()).to.be.an('array'); // Check if the response is an array\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains expected properties\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"\r",
+							"    jsonData.forEach(item => {\r",
+							"        pm.expect(item).to.have.all.keys(\r",
+							"            \"photo\", \"version\", \"isbn\", \"title\", \"genre\", \"authors\", \"description\", \"id\"\r",
+							"        );\r",
+							"\r",
+							"        pm.expect(item.title).to.have.all.keys(\"title\");\r",
+							"        pm.expect(item.genre).to.have.all.keys(\"genre\", \"id\");\r",
+							"        \r",
+							"        item.authors.forEach(author => {\r",
+							"            pm.expect(author).to.have.all.keys(\r",
+							"                \"photo\", \"authorNumber\", \"version\", \"name\", \"bio\", \"id\"\r",
+							"            );\r",
+							"        });\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Additional tests to check specific values\r",
+							"pm.test(\"First item has expected values\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    const firstItem = jsonData[0];\r",
+							"\r",
+							"    pm.expect(firstItem.isbn).to.equal(\"9789720706386\");\r",
+							"    pm.expect(firstItem.title.title).to.equal(\"O País das Pessoas de Pernas Para o Ar\");\r",
+							"    pm.expect(firstItem.genre.genre).to.equal(\"Infantil\");\r",
+							"    pm.expect(firstItem.authors[0].name).to.equal(\"Manuel Antonio Pina\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"readerNumber\":\"2024/1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/recommendations",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"recommendations"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

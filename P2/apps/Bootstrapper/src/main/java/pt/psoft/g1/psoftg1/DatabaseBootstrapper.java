@@ -11,6 +11,7 @@ import pt.psoft.g1.psoftg1.common.domain.*;
 import pt.psoft.g1.psoftg1.model.Role;
 import pt.psoft.g1.psoftg1.service.EventService;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +28,8 @@ public class DatabaseBootstrapper implements CommandLineRunner {
         bootstrapGenre();
         bootstrapAuthor();
         bootstrapBook();
+        bootstrapLendings();
+        bootstrapFines();
     }
 
     public void bootstrapUsers() {
@@ -64,7 +67,7 @@ public class DatabaseBootstrapper implements CommandLineRunner {
                 new CreateUserEvent( "reader10@mail.com", "Luis camoes", "Andreventura!123",
                         (new Role(Role.READER)))
         );
-        users.forEach(user -> eventService.send(new Event(EventType.BOOT_USERS, user), ApplicationType.USER, ApplicationType.BOOK, ApplicationType.LENDING, ApplicationType.RECOMMENDATION));
+        users.forEach(user -> eventService.send(new Event(EventType.BOOT_USERS, user), ApplicationType.USER));
     }
 
     public void bootstrapGenre() {
@@ -80,7 +83,7 @@ public class DatabaseBootstrapper implements CommandLineRunner {
                 new CreateGenreEvent( "GEN009", "Biography"),
                 new CreateGenreEvent( "GEN010", "Self-Help")
         );
-        genres.forEach(genre -> eventService.send(new Event(EventType.BOOT_GENRES, genre), ApplicationType.USER,ApplicationType.BOOK, ApplicationType.LENDING, ApplicationType.RECOMMENDATION));
+        genres.forEach(genre -> eventService.send(new Event(EventType.BOOT_GENRES, genre),ApplicationType.BOOK));
     }
 
     public void bootstrapAuthor() {
@@ -91,7 +94,7 @@ public class DatabaseBootstrapper implements CommandLineRunner {
                 new CreateAuthorEvent( "AUTH004", "Author Four", "Bio of Author Four", "photoURI4"),
                 new CreateAuthorEvent( "AUTH005", "Author Five", "Bio of Author Five", "photoURI5")
         );
-        authors.forEach(author -> eventService.send(new Event(EventType.BOOT_AUTHORS, author), ApplicationType.USER,ApplicationType.BOOK, ApplicationType.LENDING, ApplicationType.RECOMMENDATION));
+        authors.forEach(author -> eventService.send(new Event(EventType.BOOT_AUTHORS, author),ApplicationType.BOOK));
     }
 
     public void bootstrapBook() {
@@ -112,7 +115,25 @@ public class DatabaseBootstrapper implements CommandLineRunner {
                 new CreateBookEvent( "ISBN014", "The History of Chocolate", "A deep dive into the history of chocolate.", "GEN004", Arrays.asList("AUTH004"), "photoURI14"),
                 new CreateBookEvent( "ISBN015", "The Joy of Painting", "A guide to joyful painting.", "GEN005", Arrays.asList("AUTH005"), "photoURI15")
         );
-        books.forEach(book -> eventService.send(new Event(EventType.BOOT_BOOKS, book), ApplicationType.USER,ApplicationType.BOOK, ApplicationType.LENDING, ApplicationType.RECOMMENDATION));
+        books.forEach(book -> eventService.send(new Event(EventType.BOOT_BOOKS, book),ApplicationType.BOOK));
+    }
+
+    public void bootstrapFines() {
+        final List<CreateFineEvent> fines = Arrays.asList(
+                new CreateFineEvent("FINE001", 100, 500, "LEND001"),
+                new CreateFineEvent("FINE002", 150, 750, "LEND002"),
+                new CreateFineEvent("FINE003", 200, 1000, "LEND003")
+        );
+        fines.forEach(fine -> eventService.send(new Event(EventType.FINE_CREATE, fine), ApplicationType.LENDING));
+    }
+
+    public void bootstrapLendings() {
+        final List<CreateLendingEvent> lendings = Arrays.asList(
+                new CreateLendingEvent("ISBN001", null,"reader1@mail.com", "LEND001", LocalDate.now(), LocalDate.now().plusDays(14), null, 100, 1, 14),
+                new CreateLendingEvent("ISBN002",null, "reader2@mail.com", "LEND002", LocalDate.now(), LocalDate.now().plusDays(14), null, 150, 2, 14),
+                new CreateLendingEvent("ISBN003", null,"reader3@mail.com", "LEND003", LocalDate.now(), LocalDate.now().plusDays(14), null, 200, 3, 14)
+        );
+        lendings.forEach(lending -> eventService.send(new Event(EventType.LENDING_CREATE, lending), ApplicationType.LENDING));
     }
 
 }

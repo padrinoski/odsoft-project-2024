@@ -30,6 +30,15 @@ public enum EventType {
     BOOK_RECOMMEND,
     BOOK_RETURN,
 
+    LENDING_CREATE,
+    LENDING_DELETE,
+    LENDING_UPDATE,
+    LENDING_RECOMMEND,
+
+    FINE_CREATE,
+    FINE_DELETE,
+    FINE_UPDATE,
+
     ERROR
 
 }
