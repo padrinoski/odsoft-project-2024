@@ -19,6 +19,8 @@ services:
       - mongo-data:/data/db
     networks:
       - network
+    env_file:
+      - ${ENV_FILE}
 
   populateDBs:
     image: populate-dbs-image:latest
@@ -42,6 +44,8 @@ services:
       SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE: admin
     networks:
       - network
+    env_file:
+      - ${ENV_FILE}
 
   mongo-express-review-1:
     image: mongo-express:latest
@@ -68,6 +72,8 @@ services:
         mode: host
     networks:
       - network
+    env_file:
+      - ${ENV_FILE}
 
 volumes:
   mongo-init-scripts:

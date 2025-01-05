@@ -15,7 +15,7 @@ node {
     def DOCKERFILE_PATH = 'P2/apps/Bootstrapper/Dockerfile'
     def STACK_NAME = 'populate-databases'
     def COMPOSE_FILE = 'P2/docker-swarm/populate-databases.yml'
-    def ENV_FILE = "${params.ENV}.env"
+    env.ENV_FILE = "P2/docker-swarm/${params.ENV}.env"
 
     try {
         stage('Checkout') {
@@ -46,7 +46,6 @@ node {
                 docker stack deploy \
                     --with-registry-auth \
                     --compose-file ${COMPOSE_FILE} \
-                    --env-file ${ENV_FILE} \
                     ${STACK_NAME}
             """
             
