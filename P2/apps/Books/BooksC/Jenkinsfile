@@ -57,13 +57,14 @@ node {
         }
         stage('Load Config') {
             // Load variables from both config files
-            def config = sh(script: """#!/bin/bash
+            def config = sh(script: '''#!/bin/bash
                 # Source both files
                 . ${CONFIG_FILE}
                 . ${ENVIRONMENT_FILE}
                 # Print all exported variables
                 declare -p | grep -E '^declare -x ' | sed 's/declare -x //' | sed 's/"$//;s/^"//'
-            """, returnStdout: true).trim()
+            ''', returnStdout: true).trim()
+
 
             // Parse and set environment variables in Jenkins
             config.split('\n').each { line ->
