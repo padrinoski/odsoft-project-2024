@@ -38,9 +38,6 @@ node {
 
         stage('Build') {
             echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}"
-            // Specify the environment file if needed (e.g., for development or production)
-            def envFile = "P2/docker-swarm/${params.ENV}.env"
-            sh "echo Using environment file: ${envFile}"
 
             // Build the Docker image with the appropriate environment file
             def image = docker.build(
