@@ -55,21 +55,23 @@ node {
                 docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}").push()
             }
         }
-        stage('Load Config'){
-            // Read and parse the config file
+        stage('Load Config') {
             def config = sh(script: """#!/bin/bash
-                . ${CONFIG_FILE}
-                . ${ENVIRONMENT_FILE}
+                # Source both config files
+                . ${primaryConfigFile}
+                . ${secondaryConfigFile}
                 
+                # Export all variables and their values
                 declare -p | grep -E 'declare -x' | sed 's/declare -x //'
-                """, returnStdout: true).trim()
+            """, returnStdout: true).trim()
             
-            // Parse the output and set environment variables
+            // Parse the output and set environment variables in Jenkins
             config.split('\n').each { line ->
-                def (key, value) = line.split('=')
-                env[key] = value
+                def (key, value) = line.split('=', 2)
+                env[key] = value.replaceFirst(/^"|"$/, '') // Remove surrounding quotes
             }
         }
+
 
         stage('Deploy') {
             echo "Deploying with Docker stack"
