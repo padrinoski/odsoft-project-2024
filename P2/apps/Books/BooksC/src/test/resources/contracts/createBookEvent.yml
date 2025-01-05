@@ -1,0 +1,20 @@
+description: "Should produce BookCreate event when a book is created"
+label: "triggerBookCreateEvent"
+input:
+  triggeredBy: "createOrderTest()"
+outputMessage:
+  sentTo: "BOOK"
+  body:
+    timestamp:
+      regex: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$"
+    eventType:
+      value: "BOOK_CREATE"
+    eventData:
+      bookId:
+        regex: "^[0-9a-fA-F-]{36}$"
+      authorId:
+        regex: "^[0-9a-fA-F-]{36}$"
+      title:
+        regex: "^.{1,255}$"
+      price:
+        regex: "^(\\d+\\.\\d+)$"
