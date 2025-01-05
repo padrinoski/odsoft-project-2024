@@ -79,6 +79,8 @@ node {
         stage('Debug') {
             echo "BOOKS_COMMAND_UPDATE_PARALLELISM: ${env.BOOKS_COMMAND_UPDATE_PARALLELISM}"
             echo "BOOKS_COMMAND_UPDATE_DELAY: ${env.BOOKS_COMMAND_UPDATE_DELAY}"
+            
+            sh 'printenv'
         }
 
         stage('Deploy') {
