@@ -8,7 +8,7 @@ properties([
     ])
 ])
 
-
+node {
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     def DOCKER_IMAGE = 'populate-dbs-image'
     def DOCKER_REGISTRY = 'hellensantos'
@@ -83,3 +83,4 @@ properties([
             sh 'docker system prune -f'
         }
     }
+}
