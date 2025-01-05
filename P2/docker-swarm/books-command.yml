@@ -17,10 +17,10 @@ services:
           cpus: ${BOOKS_COMMAND_CPU_LIMIT}
           memory: ${BOOKS_COMMAND_MEMORY_LIMIT}
       update_config:
-        parallelism: ${BOOKS_COMMAND_UPDATE_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_UPDATE_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_UPDATE_DELAY}
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_ROLLBACK_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_ROLLBACK_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_ROLLBACK_DELAY}
       restart_policy:
         condition: ${BOOKS_COMMAND_RESTART_POLICY}
@@ -48,10 +48,10 @@ services:
           cpus: ${BOOKS_COMMAND_DB_CPU_LIMIT}
           memory: ${BOOKS_COMMAND_DB_MEMORY_LIMIT}
       update_config:
-        parallelism: ${BOOKS_COMMAND_DB_UPDATE_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_DB_UPDATE_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_DB_UPDATE_DELAY}
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_DB_ROLLBACK_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_DB_ROLLBACK_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_DB_ROLLBACK_DELAY}
       restart_policy:
         condition: ${BOOKS_COMMAND_DB_RESTART_POLICY}
@@ -72,10 +72,10 @@ services:
         limits:
           memory: ${BOOKS_COMMAND_MONGO_EXPRESS_MEMORY_LIMIT}
       update_config:
-        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_DELAY}
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_DELAY}
       restart_policy:
         condition: ${BOOKS_COMMAND_MONGO_EXPRESS_RESTART_POLICY}
@@ -106,10 +106,10 @@ services:
           cpus: ${BOOKS_COMMAND_CPU_LIMIT}
           memory: ${BOOKS_COMMAND_MEMORY_LIMIT}
       update_config:
-        parallelism: ${BOOKS_COMMAND_UPDATE_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_UPDATE_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_UPDATE_DELAY}
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_ROLLBACK_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_ROLLBACK_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_ROLLBACK_DELAY}
       restart_policy:
         condition: ${BOOKS_COMMAND_RESTART_POLICY}
@@ -137,10 +137,10 @@ services:
           cpus: ${BOOKS_COMMAND_DB_CPU_LIMIT}
           memory: ${BOOKS_COMMAND_DB_MEMORY_LIMIT}
       update_config:
-        parallelism: ${BOOKS_COMMAND_DB_UPDATE_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_DB_UPDATE_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_DB_UPDATE_DELAY}
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_DB_ROLLBACK_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_DB_ROLLBACK_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_DB_ROLLBACK_DELAY}
       restart_policy:
         condition: ${BOOKS_COMMAND_DB_RESTART_POLICY}
@@ -161,10 +161,10 @@ services:
         limits:
           memory: ${BOOKS_COMMAND_MONGO_EXPRESS_MEMORY_LIMIT}
       update_config:
-        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_DELAY}
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_DELAY}
       restart_policy:
         condition: ${BOOKS_COMMAND_MONGO_EXPRESS_RESTART_POLICY}
@@ -194,10 +194,10 @@ services:
           cpus: ${BOOKS_COMMAND_CPU_LIMIT}
           memory: ${BOOKS_COMMAND_MEMORY_LIMIT}
       update_config:
-        parallelism: ${BOOKS_COMMAND_UPDATE_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_UPDATE_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_UPDATE_DELAY}
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_ROLLBACK_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_ROLLBACK_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_ROLLBACK_DELAY}
       restart_policy:
         condition: ${BOOKS_COMMAND_RESTART_POLICY}
@@ -225,10 +225,10 @@ services:
           cpus: ${BOOKS_COMMAND_DB_CPU_LIMIT}
           memory: ${BOOKS_COMMAND_DB_MEMORY_LIMIT}
       update_config:
-        parallelism: ${BOOKS_COMMAND_DB_UPDATE_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_DB_UPDATE_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_DB_UPDATE_DELAY}
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_DB_ROLLBACK_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_DB_ROLLBACK_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_DB_ROLLBACK_DELAY}
       restart_policy:
         condition: ${BOOKS_COMMAND_DB_RESTART_POLICY}
@@ -249,10 +249,10 @@ services:
         limits:
           memory: ${BOOKS_COMMAND_MONGO_EXPRESS_MEMORY_LIMIT}
       update_config:
-        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_DELAY}
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_PARALLELISM}
+        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_PARALLELISM:-1}
         delay: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_DELAY}
       restart_policy:
         condition: ${BOOKS_COMMAND_MONGO_EXPRESS_RESTART_POLICY}
