@@ -1,9 +1,20 @@
+properties([
+    parameters([
+        choice(
+            name: 'ENV',
+            choices: ['development', 'testing', 'production'],
+            description: 'Select the environment for deployment'
+        )
+    ])
+])
+
+
 node {
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     def DOCKER_IMAGE = 'books-c-image'
     def DOCKER_REGISTRY = 'jazzmattaz'
     def DOCKERFILE_PATH = 'P2/apps/Books/BooksC/Dockerfile'
-    def STACK_NAME = 'books-command'
+    def STACK_NAME = "books-command-${params.ENV}"
     def COMPOSE_FILE = 'P2/docker-swarm/books-command.yml'
     def CONFIG_FILE = "P2/docker-swarm/config.sh"
     def BOOKS_COMMAND_DATABASE_IMAGE = ''
@@ -15,6 +26,8 @@ node {
     def RECOMMENDATION_Y = ''
     def MINIMUM_AGE = ''
     def MAXIMUM_AGE = ''
+    env.ENV_FILE = "${params.ENV}.env"
+
 
     try {
         stage('Checkout') {
@@ -23,15 +36,15 @@ node {
         }
 
         stage('Build') {
-            echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest"
+            echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}"
             sh 'ls'
-            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest", "-f ${DOCKERFILE_PATH} P2/apps/Books/BooksC")
+            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}", "-f ${DOCKERFILE_PATH} P2/apps/Books/BooksC")
         }
 
         stage('Push') {
             echo "Pushing Docker image to ${DOCKER_REGISTRY}"
             docker.withRegistry("", DOCKER_CREDENTIALS_ID) {
-                docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest").push()
+                docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}").push()
             }
         }
         stage('Load Config'){
@@ -61,8 +74,8 @@ node {
             // Ensure the compose file exists
             sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
             
-            // Optional: Update image tag in compose file if using latest
-            // sh "sed -i 's|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest|' ${COMPOSE_FILE}"
+            // Optional: Update image tag in compose file if using ${params.ENV}
+            // sh "sed -i 's|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}|' ${COMPOSE_FILE}"
             
             sh ". ${CONFIG_FILE}"
 
