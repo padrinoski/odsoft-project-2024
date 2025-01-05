@@ -35,7 +35,7 @@ services:
       MINIMUM_AGE: ${MINIMUM_AGE}
       MAXIMUM_AGE: ${MAXIMUM_AGE}
     networks:
-      - ${NETWORK_NAME}
+      - network
     env_file:
       - ${ENV_FILE}
 
@@ -60,7 +60,7 @@ services:
     volumes:
       - mongo-initdb:/docker-entrypoint-initdb.d/
     networks:
-      - ${NETWORK_NAME}
+      - network
     env_file:
       - ${ENV_FILE}
 
@@ -124,7 +124,7 @@ services:
       MINIMUM_AGE: ${MINIMUM_AGE}
       MAXIMUM_AGE: ${MAXIMUM_AGE}
     networks:
-      - ${NETWORK_NAME}
+      - network
     env_file:
       - ${ENV_FILE}
 
@@ -149,7 +149,7 @@ services:
     volumes:
       - mongo-initdb:/docker-entrypoint-initdb.d/
     networks:
-      - ${NETWORK_NAME}
+      - network
     env_file:
       - ${ENV_FILE}
 
@@ -178,7 +178,7 @@ services:
         protocol: tcp
         mode: host
     networks:
-      - ${NETWORK_NAME}
+      - network
     env_file:
       - ${ENV_FILE}
 
@@ -212,7 +212,7 @@ services:
       MINIMUM_AGE: ${MINIMUM_AGE}
       MAXIMUM_AGE: ${MAXIMUM_AGE}
     networks:
-      - ${NETWORK_NAME}
+      - network
     env_file:
       - ${ENV_FILE}
 
@@ -237,7 +237,7 @@ services:
     volumes:
       - mongo-initdb:/docker-entrypoint-initdb.d/
     networks:
-      - ${NETWORK_NAME}
+      - network
     env_file:
       - ${ENV_FILE}
 
@@ -266,9 +266,9 @@ services:
         protocol: tcp
         mode: host
     networks:
-      - ${NETWORK_NAME}
+      - network
     env_file:
       - ${ENV_FILE}
 networks:
-  ${NETWORK_NAME}:
+  network:
     external: true
