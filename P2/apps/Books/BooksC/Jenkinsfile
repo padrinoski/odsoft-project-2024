@@ -87,19 +87,15 @@ node {
         stage('Load Environment Variables') {
             echo "Loading environment variables from ${params.ENV}.env"
             sh '''
+                #!/bin/sh
                 # Check if the file exists
-                if [ -f P2/docker-swarm/$ENV.env ]; then
+                # Check if the file exists
+                if [ -f P2/docker-swarm/development.env ]; then
                     echo "File exists, loading environment variables..."
-                    # Export variables from the file, ignore lines starting with #
-                    while IFS= read -r line; do
-                        # Skip empty lines and comments
-                        if [[ ! "$line" =~ ^# && -n "$line" ]]; then
-                            export "$line"
-                        fi
-                    done < P2/docker-swarm/$ENV.env
-                else
-                    echo "File P2/docker-swarm/$ENV.env not found!"
-                    exit 1
+                    cat P2/docker-swarm/development.env | while IFS= read -r line; do
+                        # Skip lines that are comments (lines starting with #)
+                        echo "$line" | grep -q '^#' || export "$line"
+                    done
                 fi
                 
                 # Print environment variables
