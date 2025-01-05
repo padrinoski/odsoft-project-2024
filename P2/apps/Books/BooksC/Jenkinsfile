@@ -58,8 +58,8 @@ node {
         stage('Load Config') {
             def config = sh(script: """#!/bin/bash
                 # Source both config files
-                . ${primaryConfigFile}
-                . ${secondaryConfigFile}
+                . ${CONFIG_FILE}
+                . ${ENVIRONMENT_FILE}
                 
                 # Export all variables and their values
                 declare -p | grep -E 'declare -x' | sed 's/declare -x //'
