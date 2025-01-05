@@ -76,66 +76,61 @@ node {
             }
         }
 
-        stage('Debug') {
-            echo "BOOKS_COMMAND_UPDATE_PARALLELISM: ${env.BOOKS_COMMAND_UPDATE_PARALLELISM}"
-            echo "BOOKS_COMMAND_UPDATE_DELAY: ${env.BOOKS_COMMAND_UPDATE_DELAY}"
-            
-            echo "Checking if the .env file exists"
-            sh 'if [ -f P2/docker-swarm/development.env ]; then echo "File exists"; else echo "File not found"; fi'
-        }
-
-        stage('Load Environment Variables') {
-            echo "Loading environment variables from ${params.ENV}.env"
-            sh '''
-                #!/bin/sh
-                # Check if the file exists
-                # Check if the file exists
-                if [ -f P2/docker-swarm/development.env ]; then
-                    echo "File exists, loading environment variables..."
-                    cat P2/docker-swarm/development.env | while IFS= read -r line; do
-                        # Skip lines that are comments (lines starting with #)
-                        echo "$line" | grep -q '^#' || export "$line"
-                    done
-                fi
-                
-                # Print environment variables
-                echo "Environment variables loaded:"
-                printenv
-            '''
-        }
-
-
         stage('Deploy') {
-            echo "Deploying with Docker stack"
-            
-            // Ensure the compose file exists
-            sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
-            
-            // Deploy the stack
-            sh """
-                docker stack deploy \
-                    --with-registry-auth \
-                    -c ${COMPOSE_FILE} \
-                    ${STACK_NAME}
-            """
-            
-            // Wait for services to be running
-            sh """
-                # Wait for service to be updated
-                ATTEMPTS=0
-                MAX_ATTEMPTS=30
-                until docker stack services ${STACK_NAME} | grep -q '1/1' || [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; do
-                    echo "Waiting for services to be ready..."
-                    sleep 10
-                    ATTEMPTS=\$((ATTEMPTS+1))
-                done
-                
-                if [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; then
-                    echo "Service deployment timed out"
-                    exit 1
-                fi
-            """
+            echo "Loading environment variables from ${params.ENV}.env"
+            // Read environment file
+            def envFile = 'P2/docker-swarm/development.env'
+            def envVars = []
+
+            // Load the environment variables, ignoring comments
+            if (fileExists(envFile)) {
+                def lines = readFile(envFile).split('\n')
+                lines.each { line ->
+                    if (!line.trim().startsWith('#') && line.trim()) {
+                        envVars.add(line.trim())
+                    }
+                }
+            }
+
+            // Use withEnv to set the environment variables
+            withEnv(envVars) {
+                // Your steps that require these env variables
+                echo "Environment variables loaded."
+                deployApp();
+            }
         }
+
+        // stage('Deploy') {
+        //     echo "Deploying with Docker stack"
+            
+        //     // Ensure the compose file exists
+        //     sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
+            
+        //     // Deploy the stack
+        //     sh """
+        //         docker stack deploy \
+        //             --with-registry-auth \
+        //             -c ${COMPOSE_FILE} \
+        //             ${STACK_NAME}
+        //     """
+            
+        //     // Wait for services to be running
+        //     sh """
+        //         # Wait for service to be updated
+        //         ATTEMPTS=0
+        //         MAX_ATTEMPTS=30
+        //         until docker stack services ${STACK_NAME} | grep -q '1/1' || [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; do
+        //             echo "Waiting for services to be ready..."
+        //             sleep 10
+        //             ATTEMPTS=\$((ATTEMPTS+1))
+        //         done
+                
+        //         if [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; then
+        //             echo "Service deployment timed out"
+        //             exit 1
+        //         fi
+        //     """
+        // }
 
         stage('Test') {
             echo "Running tests (to be implemented)"
@@ -153,4 +148,37 @@ node {
             sh 'docker system prune -f'
         }
     }
+}
+
+def deployApp() {
+    // Example deploy step
+    echo "Deploying with Docker stack"
+    
+    // Ensure the compose file exists
+    sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
+    
+    // Deploy the stack
+    sh """
+        docker stack deploy \
+            --with-registry-auth \
+            -c ${COMPOSE_FILE} \
+            ${STACK_NAME}
+    """
+    
+    // Wait for services to be running
+    sh """
+        # Wait for service to be updated
+        ATTEMPTS=0
+        MAX_ATTEMPTS=30
+        until docker stack services ${STACK_NAME} | grep -q '1/1' || [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; do
+            echo "Waiting for services to be ready..."
+            sleep 10
+            ATTEMPTS=\$((ATTEMPTS+1))
+        done
+        
+        if [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; then
+            echo "Service deployment timed out"
+            exit 1
+        fi
+    """
 }
