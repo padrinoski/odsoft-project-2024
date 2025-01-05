@@ -125,6 +125,35 @@ node {
             // Add your test logic here
         }
 
+//        stage('Install Maven Plugin') {
+//           echo "Installing Maven Plugin"
+//            // Install Maven if it's not already installed
+//            sh '''
+//                if ! command -v mvn &> /dev/null; then
+//                    echo "Maven not found, installing Maven..."
+//                    pt-get update -y
+//                    apt-get install -y maven
+//                else
+//                    echo "Maven is already installed"
+//                fi
+//            '''
+//        }
+
+//        stage('Copy Stubs from Producer') {
+//            echo "Copying stubs from Producer pipeline (Book-Command)"
+//            copyArtifacts(
+//                projectName: 'Book-Command',
+//               filter: 'target/*.jar',
+//                selector: lastSuccessful()
+//            )
+//        }
+
+//        stage('Run Consumer Contract Tests') {
+//            echo "Running Consumer Contract Tests"
+//            sh './mvnw test -Dtest=BaseContractTests'
+//        }
+
+
     } catch (Exception e) {
         currentBuild.result = 'FAILURE'
         echo "Build failed: ${e.message}"
