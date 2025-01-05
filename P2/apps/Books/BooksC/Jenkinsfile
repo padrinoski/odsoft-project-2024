@@ -112,6 +112,30 @@ node {
             // Add your test logic here
         }
 
+//        stage('Install Maven Plugin') {
+//           echo "Installing Maven Plugin"
+//            // Install Maven if it's not already installed
+//            sh '''
+//                if ! command -v mvn &> /dev/null; then
+//                    echo "Maven not found, installing Maven..."
+//                    pt-get update -y
+//                    apt-get install -y maven
+//                else
+//                    echo "Maven is already installed"
+//                fi
+//            '''
+//        }
+
+//        stage('Consumer Driven Contract tests') {
+//            echo "Generating Consumer Driven Contract Stubs"
+//            sh """
+//                ./mvnw clean generateTestStubs
+//            """
+//            // Archive the generated stubs so the Consumer can use them
+//            archiveArtifacts artifacts: 'target/stubs/**/*.jar', allowEmptyArchive: true
+//            echo "Stubs generated and archived successfully."
+//        }
+
     } catch (Exception e) {
         currentBuild.result = 'FAILURE'
         echo "Build failed: ${e.message}"
