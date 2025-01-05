@@ -2,7 +2,7 @@ properties([
     parameters([
         choice(
             name: 'ENV',
-            choices: ['development', 'testing', 'production', 'latest'],
+            choices: ['development', 'testing', 'production'],
             description: 'Select the environment for deployment'
         )
     ])
@@ -10,7 +10,7 @@ properties([
 
 node {
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
-    def DOCKER_IMAGE = 'user-q-image'
+    def DOCKER_IMAGE = 'users-c-image'
     def DOCKER_REGISTRY = 'hellensantos'
     def DOCKERFILE_PATH = 'P2/apps/User/UserC/Dockerfile'
     def STACK_NAME = "users-command-${params.ENV}"
