@@ -5,7 +5,7 @@ services:
   lendingsQ-1:
     image: ${LENDINGS_QUERY_IMAGE}
     build:
-      context: ../../apps/Lendings/LendingsQ
+      context: ../apps/Lendings/LendingsQ
       dockerfile: Dockerfile
     deploy:
       replicas: 1
@@ -66,7 +66,7 @@ services:
   lendingsQ-2:
     image: ${LENDINGS_QUERY_IMAGE}
     build:
-      context: ../../apps/Lendings/LendingsQ
+      context: ../apps/Lendings/LendingsQ
       dockerfile: Dockerfile
     deploy:
       replicas: 1
@@ -126,7 +126,7 @@ services:
   lendingsQ-3:
     image: ${LENDINGS_QUERY_IMAGE}
     build:
-      context: ../../apps/Lendings/LendingsQ
+      context: ../apps/Lendings/LendingsQ
       dockerfile: Dockerfile
     deploy:
       replicas: 1

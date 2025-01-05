@@ -5,7 +5,7 @@ services:
   usersQ-1:
     image: ${USERS_QUERY_IMAGE}
     build:
-      context: ../../apps/User/UserQ
+      context: ../apps/User/UserQ
       dockerfile: Dockerfile
     deploy:
       replicas: 1
@@ -66,7 +66,7 @@ services:
   usersQ-2:
     image: ${USERS_QUERY_IMAGE}
     build:
-      context: ../../apps/User/UserQ
+      context: ../apps/User/UserQ
       dockerfile: Dockerfile
     deploy:
       replicas: 1
@@ -126,7 +126,7 @@ services:
   usersQ-3:
     image: ${USERS_QUERY_IMAGE}
     build:
-      context: ../../apps/User/UserQ
+      context: ../apps/User/UserQ
       dockerfile: Dockerfile
     deploy:
       replicas: 1

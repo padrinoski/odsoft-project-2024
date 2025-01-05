@@ -8,22 +8,22 @@ services:
   booksC-1:
     image: ${BOOKS_COMMAND_IMAGE}
     build: 
-      context: ${BOOKS_COMMAND_BUILD_CONTEXT}
+      context: ../apps/Books/BooksC
       dockerfile: Dockerfile
     deploy:
       replicas: 1
       resources:
         limits:
-          cpus: ${BOOKS_COMMAND_CPU_LIMIT}
-          memory: ${BOOKS_COMMAND_MEMORY_LIMIT}
+          cpus: "0.5"
+          memory: 512M
       update_config:
-        parallelism: ${BOOKS_COMMAND_UPDATE_PARALLELISM}
-        delay: ${BOOKS_COMMAND_UPDATE_DELAY}
+        parallelism: 1
+        delay: 10s
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_ROLLBACK_PARALLELISM}
-        delay: ${BOOKS_COMMAND_ROLLBACK_DELAY}
+        parallelism: 1
+        delay: 10s
       restart_policy:
-        condition: ${BOOKS_COMMAND_RESTART_POLICY}
+        condition: none
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       SPRING_DATA_DB_HOST: ${BOOKS_COMMAND_SPRING_DATA_DB_HOST_1}
@@ -36,8 +36,6 @@ services:
       MAXIMUM_AGE: ${MAXIMUM_AGE}
     networks:
       - network
-    env_file:
-      - ${ENV_FILE}
 
   db-booksC-1:
     image: ${BOOKS_COMMAND_DATABASE_IMAGE}
@@ -45,24 +43,22 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: ${BOOKS_COMMAND_DB_CPU_LIMIT}
-          memory: ${BOOKS_COMMAND_DB_MEMORY_LIMIT}
+          cpus: "0.5"
+          memory: 1G
       update_config:
-        parallelism: ${BOOKS_COMMAND_DB_UPDATE_PARALLELISM}
-        delay: ${BOOKS_COMMAND_DB_UPDATE_DELAY}
+        parallelism: 1
+        delay: 10s
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_DB_ROLLBACK_PARALLELISM}
-        delay: ${BOOKS_COMMAND_DB_ROLLBACK_DELAY}
+        parallelism: 1
+        delay: 10s
       restart_policy:
-        condition: ${BOOKS_COMMAND_DB_RESTART_POLICY}
+        condition: none
     environment:
-      - ALLOW_EMPTY_PASSWORD=${ALLOW_EMPTY_PASSWORD}
+      - ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - mongo-initdb:/docker-entrypoint-initdb.d/
     networks:
       - network
-    env_file:
-      - ${ENV_FILE}
 
   mongo-express-books-1:
     image: ${BOOKS_COMMAND_MONGO_EXPRESS_IMAGE}
@@ -70,15 +66,15 @@ services:
       replicas: 1
       resources:
         limits:
-          memory: ${BOOKS_COMMAND_MONGO_EXPRESS_MEMORY_LIMIT}
+          memory: 256M
       update_config:
-        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_PARALLELISM}
-        delay: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_DELAY}
+        parallelism: 1
+        delay: 10s
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_PARALLELISM}
-        delay: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_DELAY}
+        parallelism: 1
+        delay: 10s
       restart_policy:
-        condition: ${BOOKS_COMMAND_MONGO_EXPRESS_RESTART_POLICY}
+        condition: none
     environment:
       - ME_CONFIG_MONGODB_SERVER=${BOOKS_COMMAND_ME_CONFIG_MONGODB_SERVER_1}
       - ME_CONFIG_BASICAUTH_USERNAME=${BOOKS_COMMAND_ME_CONFIG_BASICAUTH_USERNAME}
@@ -90,29 +86,28 @@ services:
         mode: host
     networks:
       - network
-    env_file:
-      - ${ENV_FILE}
+
 
   # Additional instances follow the same structure
   booksC-2:
     image: ${BOOKS_COMMAND_IMAGE}
     build: 
-      context: ${BOOKS_COMMAND_BUILD_CONTEXT}
+      context: ../apps/Books/BooksC
       dockerfile: Dockerfile
     deploy:
       replicas: 1
       resources:
         limits:
-          cpus: ${BOOKS_COMMAND_CPU_LIMIT}
-          memory: ${BOOKS_COMMAND_MEMORY_LIMIT}
+          cpus: "0.5"
+          memory: 512M
       update_config:
-        parallelism: ${BOOKS_COMMAND_UPDATE_PARALLELISM}
-        delay: ${BOOKS_COMMAND_UPDATE_DELAY}
+        parallelism: 1
+        delay: 10s
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_ROLLBACK_PARALLELISM}
-        delay: ${BOOKS_COMMAND_ROLLBACK_DELAY}
+        parallelism: 1
+        delay: 10s
       restart_policy:
-        condition: ${BOOKS_COMMAND_RESTART_POLICY}
+        condition: none
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       SPRING_DATA_DB_HOST: ${BOOKS_COMMAND_SPRING_DATA_DB_HOST_2}
@@ -125,8 +120,6 @@ services:
       MAXIMUM_AGE: ${MAXIMUM_AGE}
     networks:
       - network
-    env_file:
-      - ${ENV_FILE}
 
   db-booksC-2:
     image: ${BOOKS_COMMAND_DATABASE_IMAGE}
@@ -134,24 +127,22 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: ${BOOKS_COMMAND_DB_CPU_LIMIT}
-          memory: ${BOOKS_COMMAND_DB_MEMORY_LIMIT}
+          cpus: "0.5"
+          memory: 1G
       update_config:
-        parallelism: ${BOOKS_COMMAND_DB_UPDATE_PARALLELISM}
-        delay: ${BOOKS_COMMAND_DB_UPDATE_DELAY}
+        parallelism: 1
+        delay: 10s
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_DB_ROLLBACK_PARALLELISM}
-        delay: ${BOOKS_COMMAND_DB_ROLLBACK_DELAY}
+        parallelism: 1
+        delay: 10s
       restart_policy:
-        condition: ${BOOKS_COMMAND_DB_RESTART_POLICY}
+        condition: none
     environment:
-      - ALLOW_EMPTY_PASSWORD=${ALLOW_EMPTY_PASSWORD}
+      - ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - mongo-initdb:/docker-entrypoint-initdb.d/
     networks:
       - network
-    env_file:
-      - ${ENV_FILE}
 
   mongo-express-books-2:
     image: ${BOOKS_COMMAND_MONGO_EXPRESS_IMAGE}
@@ -159,15 +150,15 @@ services:
       replicas: 1
       resources:
         limits:
-          memory: ${BOOKS_COMMAND_MONGO_EXPRESS_MEMORY_LIMIT}
+          memory: 256M
       update_config:
-        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_PARALLELISM}
-        delay: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_DELAY}
+        parallelism: 1
+        delay: 10s
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_PARALLELISM}
-        delay: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_DELAY}
+        parallelism: 1
+        delay: 10s
       restart_policy:
-        condition: ${BOOKS_COMMAND_MONGO_EXPRESS_RESTART_POLICY}
+        condition: none
     environment:
       - ME_CONFIG_MONGODB_SERVER=${BOOKS_COMMAND_ME_CONFIG_MONGODB_SERVER_2}
       - ME_CONFIG_BASICAUTH_USERNAME=${BOOKS_COMMAND_ME_CONFIG_BASICAUTH_USERNAME}
@@ -179,28 +170,26 @@ services:
         mode: host
     networks:
       - network
-    env_file:
-      - ${ENV_FILE}
 
   booksC-3:
     image: ${BOOKS_COMMAND_IMAGE}
     build: 
-      context: ${BOOKS_COMMAND_BUILD_CONTEXT}
+      context: ../apps/Books/BooksC
       dockerfile: Dockerfile
     deploy:
       replicas: 1
       resources:
         limits:
-          cpus: ${BOOKS_COMMAND_CPU_LIMIT}
-          memory: ${BOOKS_COMMAND_MEMORY_LIMIT}
+          cpus: "0.5"
+          memory: 512M
       update_config:
-        parallelism: ${BOOKS_COMMAND_UPDATE_PARALLELISM}
-        delay: ${BOOKS_COMMAND_UPDATE_DELAY}
+        parallelism: 1
+        delay: 10s
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_ROLLBACK_PARALLELISM}
-        delay: ${BOOKS_COMMAND_ROLLBACK_DELAY}
+        parallelism: 1
+        delay: 10s
       restart_policy:
-        condition: ${BOOKS_COMMAND_RESTART_POLICY}
+        condition: none
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       SPRING_DATA_DB_HOST: ${BOOKS_COMMAND_SPRING_DATA_DB_HOST_3}
@@ -213,8 +202,6 @@ services:
       MAXIMUM_AGE: ${MAXIMUM_AGE}
     networks:
       - network
-    env_file:
-      - ${ENV_FILE}
 
   db-booksC-3:
     image: ${BOOKS_COMMAND_DATABASE_IMAGE}
@@ -222,24 +209,22 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: ${BOOKS_COMMAND_DB_CPU_LIMIT}
-          memory: ${BOOKS_COMMAND_DB_MEMORY_LIMIT}
+          cpus: "0.5"
+          memory: 1G
       update_config:
-        parallelism: ${BOOKS_COMMAND_DB_UPDATE_PARALLELISM}
-        delay: ${BOOKS_COMMAND_DB_UPDATE_DELAY}
+        parallelism: 1
+        delay: 10s
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_DB_ROLLBACK_PARALLELISM}
-        delay: ${BOOKS_COMMAND_DB_ROLLBACK_DELAY}
+        parallelism: 1
+        delay: 10s
       restart_policy:
-        condition: ${BOOKS_COMMAND_DB_RESTART_POLICY}
+        condition: none
     environment:
-      - ALLOW_EMPTY_PASSWORD=${ALLOW_EMPTY_PASSWORD}
+      - ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - mongo-initdb:/docker-entrypoint-initdb.d/
     networks:
       - network
-    env_file:
-      - ${ENV_FILE}
 
   mongo-express-books-3:
     image: ${BOOKS_COMMAND_MONGO_EXPRESS_IMAGE}
@@ -247,15 +232,15 @@ services:
       replicas: 1
       resources:
         limits:
-          memory: ${BOOKS_COMMAND_MONGO_EXPRESS_MEMORY_LIMIT}
+          memory: 256M
       update_config:
-        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_PARALLELISM}
-        delay: ${BOOKS_COMMAND_MONGO_EXPRESS_UPDATE_DELAY}
+        parallelism: 1
+        delay: 10s
       rollback_config:
-        parallelism: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_PARALLELISM}
-        delay: ${BOOKS_COMMAND_MONGO_EXPRESS_ROLLBACK_DELAY}
+        parallelism: 1
+        delay: 10s
       restart_policy:
-        condition: ${BOOKS_COMMAND_MONGO_EXPRESS_RESTART_POLICY}
+        condition: none
     environment:
       - ME_CONFIG_MONGODB_SERVER=${BOOKS_COMMAND_ME_CONFIG_MONGODB_SERVER_3}
       - ME_CONFIG_BASICAUTH_USERNAME=${BOOKS_COMMAND_ME_CONFIG_BASICAUTH_USERNAME}
@@ -267,8 +252,7 @@ services:
         mode: host
     networks:
       - network
-    env_file:
-      - ${ENV_FILE}
+
 networks:
   network:
     external: true

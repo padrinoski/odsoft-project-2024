@@ -3,9 +3,9 @@ version: '3.8'
 services:
   # Instance 1 (Query)
   booksQ-1:
-    image: book-q-image:latest
+    image: ${BOOKS_QUERY_IMAGE}
     build:
-      context: ../../apps/Books/BooksQ
+      context: ../apps/Books/BooksQ
       dockerfile: Dockerfile
     deploy:
       replicas: 1
@@ -64,9 +64,9 @@ services:
 
   # Instance 2 (Query)
   booksQ-2:
-    image: book-q-image:latest
+    image: ${BOOKS_QUERY_IMAGE}
     build:
-      context: ../../apps/Books/BooksQ
+      context: ../apps/Books/BooksQ
       dockerfile: Dockerfile
     deploy:
       replicas: 1
@@ -124,9 +124,9 @@ services:
 
   # Instance 3 (Query)
   booksQ-3:
-    image: book-q-image:latest
+    image: ${BOOKS_QUERY_IMAGE}
     build:
-      context: ../../apps/Books/BooksQ
+      context: ../apps/Books/BooksQ
       dockerfile: Dockerfile
     deploy:
       replicas: 1    
