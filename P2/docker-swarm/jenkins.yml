@@ -23,7 +23,7 @@ services:
   jenkins-agent:
     image: jenkins/agent
     networks:
-      - ${NETWORK_NAME}
+      - network
     deploy:
       replicas: 2
       restart_policy:
@@ -37,5 +37,5 @@ volumes:
   jenkins_conf:
 
 networks:
-  ${NETWORK_NAME}:
+  network:
     external: true

@@ -79,6 +79,18 @@ node {
             
             sh ". ${CONFIG_FILE}"
 
+            // Ensure the correct .env file is loaded for the chosen environment
+            def envFile = "${params.ENV}.env"
+    
+            // Check if the .env file exists
+            sh "test -f ${envFile} || (echo '.env file not found' && exit 1)"
+            
+            // Source the .env file to load environment variables
+            sh """
+                set -o allexport
+                . ${envFile}
+                set +o allexport
+            """
 
             // Deploy the stack
             sh """
