@@ -2,10 +2,10 @@ version: '3.8'
 
 services:
   # Instance 1 (Query)
-  usersQ-1:
-    image: ${USERS_QUERY_IMAGE}
+  lendingsQ-1:
+    image: ${LENDINGS_QUERY_IMAGE}
     build:
-      context: ../../apps/User/UserQ
+      context: ../../apps/Lendings/LendingsQ
       dockerfile: Dockerfile
     deploy:
       replicas: 1
@@ -23,13 +23,13 @@ services:
         condition: none
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
-      SPRING_DATASOURCE_URL: bolt://neo4j-usersQ-1:7687
+      SPRING_DATASOURCE_URL: bolt://neo4j-lendingsQ-1:7687
       SPRING_DATASOURCE_USERNAME: neo4j
       SPRING_DATASOURCE_PASSWORD: test
     networks:
       - network
 
-  neo4j-usersQ-1:
+  neo4j-lendingsQ-1:
     image: neo4j:4.4
     deploy:
       replicas: 1
@@ -57,16 +57,16 @@ services:
       NEO4J_dbms_default__database: neo4j
       NEO4J_AUTH: neo4j/test
     ports:
-      - "7687:7687"
-      - "7474:7474"
+      - "7670:7687"
+      - "7480:7474"
     networks:
       - network
 
   # Instance 2 (Query)
-  usersQ-2:
-    image: ${USERS_QUERY_IMAGE}
+  lendingsQ-2:
+    image: ${LENDINGS_QUERY_IMAGE}
     build:
-      context: ../../apps/User/UserQ
+      context: ../../apps/Lendings/LendingsQ
       dockerfile: Dockerfile
     deploy:
       replicas: 1
@@ -84,13 +84,13 @@ services:
         condition: none
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
-      SPRING_DATASOURCE_URL: bolt://neo4j-usersQ-2:7687
+      SPRING_DATASOURCE_URL: bolt://neo4j-lendingsQ-2:7687
       SPRING_DATASOURCE_USERNAME: neo4j
       SPRING_DATASOURCE_PASSWORD: test
     networks:
       - network
 
-  neo4j-usersQ-2:
+  neo4j-lendingsQ-2:
     image: neo4j:4.4
     deploy:
       replicas: 1
@@ -118,15 +118,15 @@ services:
       NEO4J_dbms_default__database: neo4j
       NEO4J_AUTH: neo4j/test
     ports:
-      - "7475:7474"
+      - "7471:7474"
     networks:
       - network
 
   # Instance 3 (Query)
-  usersQ-3:
-    image: ${USERS_QUERY_IMAGE}
+  lendingsQ-3:
+    image: ${LENDINGS_QUERY_IMAGE}
     build:
-      context: ../../apps/User/UserQ
+      context: ../../apps/Lendings/LendingsQ
       dockerfile: Dockerfile
     deploy:
       replicas: 1
@@ -144,13 +144,13 @@ services:
         condition: none
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
-      SPRING_DATASOURCE_URL: bolt://neo4j-usersQ-3:7687
+      SPRING_DATASOURCE_URL: bolt://neo4j-lendingsQ-3:7687
       SPRING_DATASOURCE_USERNAME: neo4j
       SPRING_DATASOURCE_PASSWORD: test
     networks:
       - network
 
-  neo4j-usersQ-3:
+  neo4j-lendingsQ-3:
     image: neo4j:4.4
     deploy:
       replicas: 1
@@ -178,7 +178,7 @@ services:
       NEO4J_dbms_default__database: neo4j
       NEO4J_AUTH: neo4j/test
     ports:
-      - "7476:7474"
+      - "7472:7474"
     networks:
       - network
 

@@ -36,3 +36,9 @@ export BOOKS_COMMAND_MONGO_EXPRESS_TARGET_PORT=8081
 export SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka1:29092,kafka2:29093,kafka3:29094
 export NETWORK_NAME=network
 export ALLOW_EMPTY_PASSWORD=yes
+
+export BOOKS_QUERY_IMAGE=book-q-image:development
+export USERS_QUERY_IMAGE=user-c-image:development
+export USERS_COMMAND_IMAGE=users-c-image:development
+export LENDINGS_COMMAND_IMAGE=lendings-c-image:development
+export LENDINGS_QUERY_IMAGE=lendings-q-image:development

@@ -5,10 +5,10 @@ volumes:
 
 services:
   # Instance 1 (Command)
-  usersC-1:
-    image: ${USERS_COMMAND_IMAGE}
+  lendingsC-1:
+    image: ${LENDINGS_COMMAND_IMAGE}
     build:
-      context: ../apps/User/UserC
+      context: ../apps/Lendings/LendingsC
       dockerfile: Dockerfile
     deploy:
       replicas: 1
@@ -26,8 +26,8 @@ services:
         condition: none
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
-      SPRING_DATA_DB_HOST: db-usersC-1
-      SPRING_DATA_DATABASE_TYPE: ${USERS_COMMAND_DATABASE_TO_USE}
+      SPRING_DATA_DB_HOST: db-lendingsC-1
+      SPRING_DATA_DATABASE_TYPE: ${LENDINGS_COMMAND_DATABASE_TO_USE}
       ID_GENERATOR: ${ID_GENERATOR}
       RECOMMENDATION_ALGORITHM: ${RECOMMENDATION_ALGORITHM}
       RECOMMENDATION_X: ${RECOMMENDATION_X}
@@ -37,8 +37,8 @@ services:
     networks:
       - network
 
-  db-usersC-1:
-    image: ${USERS_COMMAND_DATABASE_IMAGE}
+  db-lendingsC-1:
+    image: ${LENDINGS_COMMAND_DATABASE_IMAGE}
     deploy:
       replicas: 1
       resources:
@@ -60,7 +60,7 @@ services:
     networks:
       - network
 
-  mongo-express-users-1:
+  mongo-express-lendings-1:
     image: mongo-express:latest
     deploy:
       replicas: 1
@@ -76,22 +76,22 @@ services:
       restart_policy:
         condition: none
     environment:
-      - ME_CONFIG_MONGODB_SERVER=db-usersC-1
+      - ME_CONFIG_MONGODB_SERVER=db-lendingsC-1
       - ME_CONFIG_BASICAUTH_USERNAME=user
       - ME_CONFIG_BASICAUTH_PASSWORD=pass
     ports:
       - target: 8081
-        published: 8091
+        published: 8094
         protocol: tcp
         mode: host
     networks:
       - network
 
   # Additional instances follow the same structure
-  usersC-2:
-    image: ${USERS_COMMAND_IMAGE}
+  lendingsC-2:
+    image: ${LENDINGS_COMMAND_IMAGE}
     build:
-      context: ../apps/User/UserC
+      context: ../apps/Lendings/LendingsC
       dockerfile: Dockerfile
     deploy:
       replicas: 1
@@ -109,8 +109,8 @@ services:
         condition: none
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
-      SPRING_DATA_DB_HOST: db-usersC-2
-      SPRING_DATA_DATABASE_TYPE: ${USERS_COMMAND_DATABASE_TO_USE}
+      SPRING_DATA_DB_HOST: db-lendingsC-2
+      SPRING_DATA_DATABASE_TYPE: ${LENDINGS_COMMAND_DATABASE_TO_USE}
       ID_GENERATOR: ${ID_GENERATOR}
       RECOMMENDATION_ALGORITHM: ${RECOMMENDATION_ALGORITHM}
       RECOMMENDATION_X: ${RECOMMENDATION_X}
@@ -120,8 +120,8 @@ services:
     networks:
       - network
 
-  db-usersC-2:
-    image: ${USERS_COMMAND_DATABASE_IMAGE}
+  db-lendingsC-2:
+    image: ${LENDINGS_COMMAND_DATABASE_IMAGE}
     deploy:
       replicas: 1
       resources:
@@ -143,7 +143,7 @@ services:
     networks:
       - network
 
-  mongo-express-users-2:
+  mongo-express-lendings-2:
     image: mongo-express:latest
     deploy:
       replicas: 1
@@ -159,21 +159,21 @@ services:
       restart_policy:
         condition: none
     environment:
-      - ME_CONFIG_MONGODB_SERVER=db-usersC-2
+      - ME_CONFIG_MONGODB_SERVER=db-lendingsC-2
       - ME_CONFIG_BASICAUTH_USERNAME=user
       - ME_CONFIG_BASICAUTH_PASSWORD=pass
     ports:
       - target: 8081
-        published: 8092
+        published: 8095
         protocol: tcp
         mode: host
     networks:
       - network
 
-  usersC-3:
-    image: ${USERS_COMMAND_IMAGE}
+  lendingsC-3:
+    image: ${LENDINGS_COMMAND_IMAGE}
     build:
-      context: ../apps/User/UserC
+      context: ../apps/Lendings/LendingsC
       dockerfile: Dockerfile
     deploy:
       replicas: 1
@@ -191,8 +191,8 @@ services:
         condition: none
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka1:29092, kafka2:29093, kafka3:29094
-      SPRING_DATA_DB_HOST: db-usersC-3
-      SPRING_DATA_DATABASE_TYPE: ${USERS_COMMAND_DATABASE_TO_USE}
+      SPRING_DATA_DB_HOST: db-lendingsC-3
+      SPRING_DATA_DATABASE_TYPE: ${LENDINGS_COMMAND_DATABASE_TO_USE}
       ID_GENERATOR: ${ID_GENERATOR}
       RECOMMENDATION_ALGORITHM: ${RECOMMENDATION_ALGORITHM}
       RECOMMENDATION_X: ${RECOMMENDATION_X}
@@ -202,8 +202,8 @@ services:
     networks:
       - network
 
-  db-usersC-3:
-    image: ${USERS_COMMAND_DATABASE_IMAGE}
+  db-lendingsC-3:
+    image: ${LENDINGS_COMMAND_DATABASE_IMAGE}
     deploy:
       replicas: 1
       resources:
@@ -225,7 +225,7 @@ services:
     networks:
       - network
 
-  mongo-express-users-3:
+  mongo-express-lendings-3:
     image: mongo-express:latest
     deploy:
       replicas: 1
@@ -241,12 +241,12 @@ services:
       restart_policy:
         condition: none
     environment:
-      - ME_CONFIG_MONGODB_SERVER=db-usersC-3
+      - ME_CONFIG_MONGODB_SERVER=db-lendingsC-3
       - ME_CONFIG_BASICAUTH_USERNAME=user
       - ME_CONFIG_BASICAUTH_PASSWORD=pass
     ports:
       - target: 8081
-        published: 8093
+        published: 8096
         protocol: tcp
         mode: host
     networks:
