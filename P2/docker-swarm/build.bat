@@ -12,6 +12,10 @@ start /B docker-compose --env-file %ENV_FILE% -f boot-services.yml -p boot-servi
 start /B docker-compose --env-file %ENV_FILE% -f populate-databases.yml -p populate-databases build
 start /B docker-compose --env-file %ENV_FILE% -f books-query.yml -p books-query build
 start /B docker-compose --env-file %ENV_FILE% -f books-command.yml -p books-command build
+start /B docker-compose --env-file %ENV_FILE% -f users-query.yml -p users-query build
+start /B docker-compose --env-file %ENV_FILE% -f users-command.yml -p users-command build
+start /B docker-compose --env-file %ENV_FILE% -f lendings-query.yml -p lendings-query build
+start /B docker-compose --env-file %ENV_FILE% -f lendings-command.yml -p lendings-command build
 REM todo add more services here
 start /B docker-compose --env-file %ENV_FILE% -f after-services.yml -p after-services build
 

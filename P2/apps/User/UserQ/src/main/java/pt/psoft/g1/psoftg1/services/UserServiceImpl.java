@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Optional<UserDTO> findByUsername(String username) {
 		Optional<User> user = userRepository.findByUsername(username);
-		return user.map(u -> new UserDTO(u.getUsername(), u.getPassword(), u.getName(), u.getAuthorities()));
+		return user.map(u -> new UserDTO(u.getUsername(), u.getPassword(), u.getName(), u.getAuthority()));
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 		Iterable<User> users = userRepository.findByName(name);
 		List<UserDTO> userDTOs = new ArrayList<>();
 		for (User user : users) {
-			userDTOs.add(new UserDTO(user.getUsername(), user.getPassword(), user.getName(), user.getAuthorities()));
+			userDTOs.add(new UserDTO(user.getUsername(), user.getPassword(), user.getName(), user.getAuthority()));
 		}
 		return userDTOs;
 	}
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 		Iterable<User> users =  userRepository.findAll();
 		List<UserDTO> userDTOs = new ArrayList<>();
 		for (User user : users) {
-			userDTOs.add(new UserDTO(user.getUsername(), user.getPassword(), user.getName(), user.getAuthorities()));
+			userDTOs.add(new UserDTO(user.getUsername(), user.getPassword(), user.getName(), user.getAuthority()));
 		}
 		return userDTOs;
 	}
@@ -54,13 +54,15 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Optional<UserDTO> findById(String id) {
 		Optional<User> user = userRepository.findById(id);
-		return user.map(u -> new UserDTO(u.getUsername(), u.getPassword(), u.getName(), u.getAuthorities()));
+		return user.map(u -> new UserDTO(u.getUsername(), u.getPassword(), u.getName(), u.getAuthority()));
 	}
 
 	@Override
 	public void createUser(CreateUserEvent event) {
 	User user = new User(event.getUsername(), event.getName(), event.getPassword());
-	event.getAuthorities().forEach(user::addAuthority);
+	if(event.getAuthority() != null) {
+		user.setAuthority(event.getAuthority());
+	}
 	userRepository.save(user);
 	log.debug("Persisted user: " + user);
 	}
