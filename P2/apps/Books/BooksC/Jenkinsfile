@@ -80,7 +80,7 @@ node {
             sh ". ${CONFIG_FILE}"
     
             // Check if the .env file exists
-            sh "test -f P2/docker-swarm${env.ENV_FILE} || (echo '.env file not found' && exit 1)"
+            sh "test -f P2/docker-swarm/${env.ENV_FILE} || (echo '.env file not found' && exit 1)"
             
             // Source the .env file to load environment variables
             sh """
