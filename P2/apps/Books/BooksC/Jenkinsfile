@@ -60,16 +60,9 @@ node {
             def config = sh(script: """#!/bin/bash
                 . ${CONFIG_FILE}
                 . ${ENVIRONMENT_FILE}
-                echo "BOOKS_COMMAND_DATABASE_IMAGE=\$BOOKS_COMMAND_DATABASE_IMAGE"
-                echo "BOOKS_COMMAND_DATABASE_TO_USE=\$BOOKS_COMMAND_DATABASE_TO_USE"
-                echo "BOOKS_COMMAND_DB_PORT=\$BOOKS_COMMAND_DB_PORT"
-                echo "ID_GENERATOR=\$ID_GENERATOR"
-                echo "RECOMMENDATION_ALGORITHM=\$RECOMMENDATION_ALGORITHM"
-                echo "RECOMMENDATION_X=\$RECOMMENDATION_X"
-                echo "RECOMMENDATION_Y=\$RECOMMENDATION_Y"
-                echo "MINIMUM_AGE=\$MINIMUM_AGE"
-                echo "MAXIMUM_AGE=\$MAXIMUM_AGE"
-            """, returnStdout: true).trim()
+                
+                declare -p | grep -E 'declare -x' | sed 's/declare -x //'
+                """, returnStdout: true).trim()
             
             // Parse the output and set environment variables
             config.split('\n').each { line ->
