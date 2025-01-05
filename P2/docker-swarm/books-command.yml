@@ -85,7 +85,7 @@ services:
       - ME_CONFIG_BASICAUTH_PASSWORD=${BOOKS_COMMAND_ME_CONFIG_BASICAUTH_PASSWORD}
     ports:
       - target: ${BOOKS_COMMAND_MONGO_EXPRESS_TARGET_PORT}
-        published: ${BOOKS_COMMAND_MONGO_EXPRESS_PUBLISHED_PORT_1}
+        published: ${BOOKS_COMMAND_MONGO_EXPRESS_PUBLISHED_PORT_1:-8087}
         protocol: tcp
         mode: host
     networks:
@@ -174,7 +174,7 @@ services:
       - ME_CONFIG_BASICAUTH_PASSWORD=${BOOKS_COMMAND_ME_CONFIG_BASICAUTH_PASSWORD}
     ports:
       - target: ${BOOKS_COMMAND_MONGO_EXPRESS_TARGET_PORT}
-        published: ${BOOKS_COMMAND_MONGO_EXPRESS_PUBLISHED_PORT_2}
+        published: ${BOOKS_COMMAND_MONGO_EXPRESS_PUBLISHED_PORT_2:-8088}
         protocol: tcp
         mode: host
     networks:
@@ -262,7 +262,7 @@ services:
       - ME_CONFIG_BASICAUTH_PASSWORD=${BOOKS_COMMAND_ME_CONFIG_BASICAUTH_PASSWORD}
     ports:
       - target: ${BOOKS_COMMAND_MONGO_EXPRESS_TARGET_PORT}
-        published: ${BOOKS_COMMAND_MONGO_EXPRESS_PUBLISHED_PORT_3}
+        published: ${BOOKS_COMMAND_MONGO_EXPRESS_PUBLISHED_PORT_3:-8089}
         protocol: tcp
         mode: host
     networks:
