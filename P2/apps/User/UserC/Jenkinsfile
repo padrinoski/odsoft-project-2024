@@ -2,7 +2,7 @@ properties([
     parameters([
         choice(
             name: 'ENV',
-            choices: ['development', 'testing', 'production'],
+            choices: ['development', 'testing', 'production', 'latest'],
             description: 'Select the environment for deployment'
         )
     ])
