@@ -83,14 +83,21 @@ node {
             echo "Checking if the .env file exists"
             sh 'if [ -f P2/docker-swarm/development.env ]; then echo "File exists"; else echo "File not found"; fi'
         }
-
+        
         stage('Load Environment Variables') {
             echo "Loading environment variables from ${params.ENV}.env"
             sh '''
-                # Use bash to ensure support for the 'source' command
-                set -o allexport
-                bash -c "source P2/docker-swarm/$ENV.env"
-                set +o allexport
+                # Check if the file exists
+                if [ -f P2/docker-swarm/$ENV.env ]; then
+                    echo "File exists, loading environment variables..."
+                    # Export variables from the file
+                    export $(cat P2/docker-swarm/$ENV.env | xargs)
+                else
+                    echo "File P2/docker-swarm/$ENV.env not found!"
+                    exit 1
+                fi
+                
+                # Print environment variables
                 echo "Environment variables loaded:"
                 printenv
             '''
