@@ -36,6 +36,8 @@ services:
       MAXIMUM_AGE: ${MAXIMUM_AGE}
     networks:
       - ${NETWORK_NAME}
+    env_file:
+      - ${ENV_FILE}
 
   db-booksC-1:
     image: ${BOOKS_COMMAND_DATABASE_IMAGE}
@@ -59,6 +61,8 @@ services:
       - mongo-initdb:/docker-entrypoint-initdb.d/
     networks:
       - ${NETWORK_NAME}
+    env_file:
+      - ${ENV_FILE}
 
   mongo-express-books-1:
     image: ${BOOKS_COMMAND_MONGO_EXPRESS_IMAGE}
@@ -86,6 +90,8 @@ services:
         mode: host
     networks:
       - network
+    env_file:
+      - ${ENV_FILE}
 
   # Additional instances follow the same structure
   booksC-2:
@@ -119,6 +125,8 @@ services:
       MAXIMUM_AGE: ${MAXIMUM_AGE}
     networks:
       - ${NETWORK_NAME}
+    env_file:
+      - ${ENV_FILE}
 
   db-booksC-2:
     image: ${BOOKS_COMMAND_DATABASE_IMAGE}
@@ -142,6 +150,8 @@ services:
       - mongo-initdb:/docker-entrypoint-initdb.d/
     networks:
       - ${NETWORK_NAME}
+    env_file:
+      - ${ENV_FILE}
 
   mongo-express-books-2:
     image: ${BOOKS_COMMAND_MONGO_EXPRESS_IMAGE}
@@ -169,6 +179,8 @@ services:
         mode: host
     networks:
       - ${NETWORK_NAME}
+    env_file:
+      - ${ENV_FILE}
 
   booksC-3:
     image: ${BOOKS_COMMAND_IMAGE}
@@ -201,6 +213,8 @@ services:
       MAXIMUM_AGE: ${MAXIMUM_AGE}
     networks:
       - ${NETWORK_NAME}
+    env_file:
+      - ${ENV_FILE}
 
   db-booksC-3:
     image: ${BOOKS_COMMAND_DATABASE_IMAGE}
@@ -224,6 +238,8 @@ services:
       - mongo-initdb:/docker-entrypoint-initdb.d/
     networks:
       - ${NETWORK_NAME}
+    env_file:
+      - ${ENV_FILE}
 
   mongo-express-books-3:
     image: ${BOOKS_COMMAND_MONGO_EXPRESS_IMAGE}
@@ -251,6 +267,8 @@ services:
         mode: host
     networks:
       - ${NETWORK_NAME}
+    env_file:
+      - ${ENV_FILE}
 networks:
   ${NETWORK_NAME}:
     external: true
