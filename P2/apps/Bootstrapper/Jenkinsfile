@@ -1,10 +1,21 @@
-node {
+properties([
+    parameters([
+        choice(
+            name: 'ENV',
+            choices: ['development', 'testing', 'production'],
+            description: 'Select the environment for deployment'
+        )
+    ])
+])
+
+
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     def DOCKER_IMAGE = 'populate-dbs-image'
     def DOCKER_REGISTRY = 'hellensantos'
     def DOCKERFILE_PATH = 'P2/apps/Bootstrapper/Dockerfile'
     def STACK_NAME = 'populate-databases'
     def COMPOSE_FILE = 'P2/docker-swarm/populate-databases.yml'
+    def ENV_FILE = "${params.ENV}.env"
 
     try {
         stage('Checkout') {
@@ -13,38 +24,34 @@ node {
         }
 
         stage('Build') {
-            echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest"
-            sh 'ls'
-            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest", "-f ${DOCKERFILE_PATH} P2/apps/Bootstrapper")
+            echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}"
+            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}", "-f ${DOCKERFILE_PATH} P2/apps/Bootstrapper")
         }
 
         stage('Push') {
             echo "Pushing Docker image to ${DOCKER_REGISTRY}"
             docker.withRegistry("", DOCKER_CREDENTIALS_ID) {
-                docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest").push()
+                docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}").push()
             }
         }
 
         stage('Deploy') {
-            echo "Deploying with Docker stack"
-            
+            echo "Deploying to ${params.ENV} environment"
+
             // Ensure the compose file exists
-            sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
+            sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found for ${params.ENV}' && exit 1)"
             
-            // Optional: Update image tag in compose file if using latest
-            // sh "sed -i 's|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest|' ${COMPOSE_FILE}"
-            
-            // Deploy the stack
+            // Deploy the stack with the appropriate .env file
             sh """
                 docker stack deploy \
                     --with-registry-auth \
-                    -c ${COMPOSE_FILE} \
+                    --compose-file ${COMPOSE_FILE} \
+                    --env-file ${ENV_FILE} \
                     ${STACK_NAME}
             """
             
             // Wait for services to be running
             sh """
-                # Wait for service to be updated
                 ATTEMPTS=0
                 MAX_ATTEMPTS=30
                 until docker stack services ${STACK_NAME} | grep -q '1/1' || [ \$ATTEMPTS -eq \$MAX_ATTEMPTS ]; do
@@ -61,7 +68,7 @@ node {
         }
 
         stage('Test') {
-            echo "Running tests (to be implemented)"
+            echo "Running tests for ${params.ENV} environment"
             // Add your test logic here
         }
 
