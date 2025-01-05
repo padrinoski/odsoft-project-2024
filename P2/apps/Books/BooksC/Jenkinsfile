@@ -77,7 +77,6 @@ node {
 
         stage('Deploy') {
             echo "Deploying with Docker stack"
-            sh "printenv"
             // Ensure the compose file exists
             sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
             

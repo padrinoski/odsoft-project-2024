@@ -1,11 +1,22 @@
+properties([
+    parameters([
+        choice(
+            name: 'ENV',
+            choices: ['development', 'testing', 'production'],
+            description: 'Select the environment for deployment'
+        )
+    ])
+])
+
 node {
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     def DOCKER_IMAGE = 'user-q-image'
     def DOCKER_REGISTRY = 'hellensantos'
     def DOCKERFILE_PATH = 'P2/apps/User/UserC/Dockerfile'
-    def STACK_NAME = 'users-command'
+    def STACK_NAME = "users-command-${params.ENV}"
     def COMPOSE_FILE = 'P2/docker-swarm/users-command.yml'
     def CONFIG_FILE = "P2/docker-swarm/config.sh"
+    def ENVIRONMENT_FILE = "P2/docker-swarm/${params.ENV}.sh"
     def USERS_COMMAND_DATABASE_IMAGE = ''
     def USERS_COMMAND_DATABASE_TO_USE = ''
     def USERS_COMMAND_DB_PORT = ''
@@ -23,50 +34,49 @@ node {
         }
 
         stage('Build') {
-            echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest"
-            sh 'ls'
-            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest", "-f ${DOCKERFILE_PATH} P2/apps/User/UserC")
+            echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}"
+
+            // Build the Docker image with the appropriate environment file
+            def image = docker.build(
+                "${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}",
+                "-f ${DOCKERFILE_PATH} P2/apps/Users/UsersC"
+            )
         }
 
         stage('Push') {
             echo "Pushing Docker image to ${DOCKER_REGISTRY}"
             docker.withRegistry("", DOCKER_CREDENTIALS_ID) {
-                docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest").push()
+                docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}").push()
             }
         }
-        stage('Load Config'){
-            // Read and parse the config file
+        stage('Load Config') {
             def config = sh(script: """#!/bin/bash
+                # Source both config files
                 . ${CONFIG_FILE}
-                echo "USERS_COMMAND_DATABASE_IMAGE=\$USERS_COMMAND_DATABASE_IMAGE"
-                echo "USERS_COMMAND_DATABASE_TO_USE=\$USERS_COMMAND_DATABASE_TO_USE"
-                echo "USERS_COMMAND_DB_PORT=\$USERS_COMMAND_DB_PORT"
-                echo "ID_GENERATOR=\$ID_GENERATOR"
-                echo "RECOMMENDATION_ALGORITHM=\$RECOMMENDATION_ALGORITHM"
-                echo "RECOMMENDATION_X=\$RECOMMENDATION_X"
-                echo "RECOMMENDATION_Y=\$RECOMMENDATION_Y"
-                echo "MINIMUM_AGE=\$MINIMUM_AGE"
-                echo "MAXIMUM_AGE=\$MAXIMUM_AGE"
+                . ${ENVIRONMENT_FILE}
+
+                # Output all exported variables
+                declare -px | sed 's/declare -x //' | grep -E '^[A-Za-z_][A-Za-z0-9_]*='
             """, returnStdout: true).trim()
-            
-            // Parse the output and set environment variables
+
+            // Parse the output and set environment variables in Jenkins
             config.split('\n').each { line ->
-                def (key, value) = line.split('=')
-                env[key] = value
+                if (line.contains('=')) { // Check if the line contains '='
+                    def (key, value) = line.split('=', 2)
+                    env[key] = value.replaceAll(/^"|"$/, '') // Remove surrounding quotes
+                } else {
+                    echo "Skipping malformed line: ${line}" // Optional: log malformed lines for debugging
+                }
             }
         }
+
+
+
         stage('Deploy') {
             echo "Deploying with Docker stack"
-            
             // Ensure the compose file exists
             sh "test -f ${COMPOSE_FILE} || (echo 'Compose file not found' && exit 1)"
             
-            // Optional: Update image tag in compose file if using latest
-            // sh "sed -i 's|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:.*|image: ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:latest|' ${COMPOSE_FILE}"
-            
-            sh ". ${CONFIG_FILE}"
-
-
             // Deploy the stack
             sh """
                 docker stack deploy \
@@ -105,7 +115,7 @@ node {
     } finally {
         stage('Cleanup') {
             echo 'Cleaning up Docker system'
-            deleteDir()
+            // deleteDir()
             sh 'docker system prune -f'
         }
     }
