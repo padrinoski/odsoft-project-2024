@@ -115,7 +115,7 @@ node {
     } finally {
         stage('Cleanup') {
             echo 'Cleaning up Docker system'
-            // deleteDir()
+            deleteDir()
             sh 'docker system prune -f'
         }
     }
