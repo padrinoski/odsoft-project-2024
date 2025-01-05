@@ -12,7 +12,7 @@ properties([
 node {
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     def DOCKER_IMAGE = 'books-c-image'
-    def DOCKER_REGISTRY = 'jazzmattaz'
+    def DOCKER_REGISTRY = 'hellensantos'
     def DOCKERFILE_PATH = 'P2/apps/Books/BooksC/Dockerfile'
     def STACK_NAME = "books-command-${params.ENV}"
     def COMPOSE_FILE = 'P2/docker-swarm/books-command.yml'
