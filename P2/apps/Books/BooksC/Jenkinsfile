@@ -45,7 +45,7 @@ node {
             // Build the Docker image with the appropriate environment file
             def image = docker.build(
                 "${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}",
-                "--build-arg ENV_FILE=${envFile} -f ${DOCKERFILE_PATH} P2/apps/Books/BooksC"
+                "-f ${DOCKERFILE_PATH} P2/apps/Books/BooksC"
             )
         }
 
