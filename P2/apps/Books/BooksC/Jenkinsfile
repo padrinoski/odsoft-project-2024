@@ -56,25 +56,26 @@ node {
             }
         }
         stage('Load Config') {
-            // Load variables from both config files
-            def config = sh(script: '''#!/bin/bash
-                # Source both files
+            def config = sh(script: """#!/bin/bash
+                # Source both config files
                 . ${CONFIG_FILE}
                 . ${ENVIRONMENT_FILE}
-                # Print all exported variables
-                declare -p | grep -E '^declare -x ' | sed 's/declare -x //' | sed 's/"$//;s/^"//'
-            ''', returnStdout: true).trim()
 
+                # Output all exported variables
+                declare -px | sed 's/declare -x //' | grep -E '^[A-Za-z_][A-Za-z0-9_]*='
+            """, returnStdout: true).trim()
 
-            // Parse and set environment variables in Jenkins
+            // Parse the output and set environment variables in Jenkins
             config.split('\n').each { line ->
-                def (key, value) = line.split('=', 2) // Split key and value
-                env[key] = value?.trim()?.replaceFirst(/^"|"$/, '') // Clean up quotes and spaces
+                if (line.contains('=')) { // Check if the line contains '='
+                    def (key, value) = line.split('=', 2)
+                    env[key] = value.replaceFirst(/^"|"$/, '') // Remove surrounding quotes
+                } else {
+                    echo "Skipping malformed line: ${line}" // Optional: log malformed lines for debugging
+                }
             }
-
-            // Debug: Output loaded environment variables
-            echo "Loaded environment variables:\n${config}"
         }
+
 
 
         stage('Deploy') {
