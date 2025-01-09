@@ -36,7 +36,7 @@ node {
 
         stage('Build') {
             echo "Building Docker image ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}"
-            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}", "-f ${DOCKERFILE_PATH} P2/apps/Users/UsersQ")
+            def image = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${params.ENV}", "-f ${DOCKERFILE_PATH} P2/apps/User/UserQ")
         }
 
         stage('Push') {
