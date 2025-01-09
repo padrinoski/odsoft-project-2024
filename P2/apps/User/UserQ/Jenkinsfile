@@ -13,7 +13,7 @@ node {
     def DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     def DOCKER_IMAGE = 'user-q-image'
     def DOCKER_REGISTRY = 'hellensantos'
-    def DOCKERFILE_PATH = 'P2/apps/Users/UsersQ/Dockerfile'
+    def DOCKERFILE_PATH = 'P2/apps/User/UserQ/Dockerfile'
     def STACK_NAME = "users-query-${params.ENV}"
     def COMPOSE_FILE = 'P2/docker-swarm/users-query.yml'
     def CONFIG_FILE = "P2/docker-swarm/config.sh"
